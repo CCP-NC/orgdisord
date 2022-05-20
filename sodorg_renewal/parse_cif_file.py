@@ -13,7 +13,7 @@ class CifParser:
     '''
     Class to parse cif file containing marked up disorder.
     '''
-    def __init__(self, cif_file):
+    def __init__(self, cif_file, verbose = False):
         self.cif_file = cif_file
         # use ASE to read in cif and info
         self.atoms = read(self.cif_file, store_tags=True)
@@ -36,11 +36,18 @@ class CifParser:
 
 
         # spacegroup info:
-        sg = get_spacegroup(self.atoms)
+        sg = self.atoms.info['spacegroup']
+        if sg.centrosymmetric:
+            warnings.warn('Warning: crystal read as centrosymmetric, but we will proceed as if it is not!'
+                        'This is usually fine in my experience... ')
+            sg._centrosymmetric = 0
         self.sg = sg
         self.nops = sg.nsymop
         # symmetry operations — tuples of (rotation, translation)
         self.symops = sg.get_symop()
+
+        if verbose:
+            print(f'Found {self.nops} symmetry operations. Spacegroup {sg}')
 
 
         # TODO: better way to get Z?
@@ -78,20 +85,24 @@ class CifParser:
         mask = self.ordered_mask
         symbols = self.asymmetric_symbols[mask]
         scaled_coords = self.asymmetric_scaled_coords[mask]
-        sg = self.sg
         if len(symbols) > 0:
             ordered_atoms = crystal(symbols=symbols,
                                     basis=scaled_coords,
                                     occupancies=None,
-                                    spacegroup=sg.no,
-                                    setting=sg.setting,
+                                    spacegroup=self.atoms.info['spacegroup'],
                                     cell=self.atoms.cell,
                                     onduplicates='warn',
                                     symprec=symprec,
                                     pbc=True,
                                     primitive_cell=False)
-            
             self.ordered_atoms = ordered_atoms
+        
+        # temp_atoms = Atoms(symbols=symbols, scaled_positions = scaled_coords, cell = self.cell)
+        # if len(temp_atoms) > 0:
+        #     ordered_atoms = crystal(temp_atoms, spacegroup=sg.no,
+        #                             setting=sg.setting, primitive_cell=False, occupancies=None )
+        #     self.ordered_atoms = ordered_atoms
+            
         else:
             # empty box of the right shape
             self.ordered_atoms = Atoms(cell=self.atoms.cell, pbc=True)

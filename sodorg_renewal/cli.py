@@ -14,7 +14,7 @@ from ase.io import write
 # add option to specify supercell
 @click.option('--supercell', '-s', nargs=3, type=click.INT, default=[1,1,1], help='Supercell size e.g. 2 1 1')
 # add option to specify max number of iterations
-@click.option('--maxiters', '-N', type=click.INT, default=100, help='Maximum number of configurations generated')
+@click.option('--maxiters', '-N', type=click.INT, default=512, help='Maximum number of configurations generated')
 # add option to include ordered configurations
 @click.option('--exclude_ordered', is_flag=True, default=False, help='Exclude ordered part of structure in output structures?')
 # add option to generate random configurations
@@ -67,7 +67,7 @@ def main(cif_file,
 
     print('Parsing disorder in cif file...')
     # parse cif file containing disordered structure
-    cif = CifParser(cif_file)
+    cif = CifParser(cif_file, verbose=verbose)
     symops = cif.symops
 
     # enumerate ordered configurations
@@ -76,7 +76,8 @@ def main(cif_file,
                     supercell = supercell,
                     maxiters = maxiters,
                     exclude_ordered = exclude_ordered,
-                    random_configs=random)
+                    random_configs=random,
+                    verbose=verbose)
 
     
     

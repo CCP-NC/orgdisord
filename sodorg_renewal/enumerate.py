@@ -88,75 +88,68 @@ class OrderedfromDisordered:
         asymmetric_scaled_coords = self.cif.asymmetric_scaled_coords
         asymmetric_symbols = self.cif.asymmetric_symbols
         groups = self.cif.disorder_groups
-        
+
+        # this is not general but works for some cases... 
+        special_case = False
         if nops_all != Z:
+            warnings.warn(f'Special case for nops != Z. nops = {nops_all} and Z = {Z}')
+            special_case = True
             Zprime = Z / nops_all
             chunksize = int(1 / Zprime)
             assert chunksize == 2 # TODO: does this generalise beyond this? 
             assert nassemblies == 1 # TODO: is this always the case? 
             ops = [chunk[c] for chunk, c in zip(chunks(ops, chunksize), config)]
-
         # now loop over symmetry operations   
         sites = []
         symbols = []
         tags = []
         for iops, op in enumerate(ops):
-            
-            # loop over groups
-            for igroup in range(ndisordergroups):
-                
-                if nops_all != Z:
-                    iassembly = 0
-                else:
-                    iassembly = config[iops]
-                
-                group = np.array(groups[iassembly][igroup])
-                if len(group) > 0:
-                    unique_positions = asymmetric_scaled_coords[group]
-                    unique_symbols   =       asymmetric_symbols[group]
-                    kinds = range(len(unique_symbols))
-                    # loop over site in each disorder group:
-                    for kind, pos in enumerate(unique_positions):
-                        # apply symmetry operation
-                        rot, trans = op
-                        site = np.mod(np.dot(rot, pos) + trans, 1.)                  
+            for iassembly in range(nassemblies):
 
-                        if not sites:
-                            sites.append(site)
-                            symbols.append(unique_symbols[kind])
-                            tags.append(igroup + 1)
-                            continue
-                        t = site - sites
-                        mask = np.all(
-                            (abs(t) < self.symprec) | (abs(abs(t) - 1.0) < self.symprec), axis=1)
-                        if np.any(mask):
+                # loop over groups
+                for igroup in range(ndisordergroups):
+                    
+                    # this is not general but works for some cases...
+                    # if nops_all != Z:
+                    #     iassembly = 0
+                    # else:
+                    #     iassembly = config[iops]
+                    
+                    # iassembly = 0
+                    g = config[iops]
+                    group = np.array(groups[iassembly][g])
+                    if special_case:
+                        group = np.array(groups[iassembly][igroup])
+                    if len(group) > 0:
+                        unique_positions = asymmetric_scaled_coords[group]
+                        unique_symbols   =       asymmetric_symbols[group]
+                        kinds = range(len(unique_symbols))
+                        # loop over site in each disorder group:
+                        for kind, pos in enumerate(unique_positions):
+                            # apply symmetry operation
+                            rot, trans = op
+                            site = np.mod(np.dot(rot, pos) + trans, 1.)                  
 
-                            # TODO: simplify this ? We don't need all these options i think
-                            inds = np.argwhere(mask).flatten()
-                            for ind in inds:
-                                # then we would just add the same thing again -> skip
-                                if kinds[ind] == kind:
-                                    pass
-                                elif onduplicates == 'keep':
-                                    pass
-                                elif onduplicates == 'replace':
-                                    kinds[ind] = kind
-                                elif onduplicates == 'warn':
-                                    warnings.warn('scaled_positions %d and %d '
-                                                    'are equivalent' %
-                                                    (kinds[ind], kind))
-                                elif onduplicates == 'error':
-                                    raise SpacegroupValueError(
-                                        'scaled_positions %d and %d are equivalent' %
-                                        (kinds[ind], kind))
+                            if not sites:
+                                sites.append(site)
+                                symbols.append(unique_symbols[kind])
+                                tags.append(igroup + 1)
+                                continue
+                            t = site - sites
+                            mask = np.all(
+                                (abs(t) < self.symprec) | (abs(abs(t) - 1.0) < self.symprec), axis=1)
+                            if np.any(mask):
+
+                                inds = np.argwhere(mask).flatten()
+                                if len(inds) > 1:
+                                     raise SpacegroupValueError(
+                                            'Found multiple equivalent sites!'.format())
                                 else:
-                                    raise SpacegroupValueError(
-                                        'Argument "onduplicates" must be one of: '
-                                        '"keep", "replace", "warn" or "error".')
-                        else:
-                            sites.append(site)
-                            symbols.append(unique_symbols[kind])
-                            tags.append(igroup + 1)
+                                    pass
+                            else:
+                                sites.append(site)
+                                symbols.append(unique_symbols[kind])
+                                tags.append(igroup + 1)
         # print(config, groups, Z, len(symbols), nops_all)
         return [symbols, sites, tags]
     
@@ -187,7 +180,9 @@ class OrderedfromDisordered:
         return atoms
     def get_all_configs(self, exclude_ordered = False):
         if self.cif.ndisordergroups != 2:
-            raise ValueError('Error: we cannot yet handle cases of ngroups != 2')
+            warnings.warn('Warning: the number of disorder groups for an assembly group is != 2')
+        if self.cif.ndisordergroups != 1 and self.cif.ndisordergroups != 2:
+            raise ValueError('Error: we cannot yet handle cases where ngroups != 1 or 2')
         # generate all possible ndisordergroups^Z combinations
         Z = self.cif.Z
         all_combinations = np.array(list(itertools.product(list(range(self.cif.ndisordergroups)), repeat=Z)))
@@ -198,7 +193,8 @@ class OrderedfromDisordered:
                               supercell, 
                               maxiters = 5000, 
                               exclude_ordered = False, 
-                              random_configs=False):
+                              random_configs=False,
+                              verbose = False):
         '''
         loop over supercell cells,
         add in one of the ndisordergroups^Z configurations per cell
@@ -219,6 +215,8 @@ class OrderedfromDisordered:
             n_configs = min([maxiters, ncombinations])
         
         # pre-compute all primitive cells
+        if verbose:
+            print('Pre-computing all primitive configurations...')
         images = self.get_all_configs(exclude_ordered)
         images_mol = reload_as_molecular_crystal(images)
         
