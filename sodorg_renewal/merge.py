@@ -172,7 +172,7 @@ def rematcher(re, features1, features2, eps):
     return abs(val - 1) < eps 
 
 
-def merge_rematch(supercell_images, eps=1e-2):
+def merge_rematch(supercell_images, eps=1e-3):
         '''
         This merging algorithm creates a fingerprint for each structure 
         bases on the SOAP representation and then used the 

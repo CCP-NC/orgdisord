@@ -34,7 +34,7 @@ from ase.io import write
 # add option to view structures using ASE gui
 @click.option('--view', is_flag=True, default=False, help='View structures using ASE gui?')
 # Add option to specify oxidation states
-@click.option('--ox', type=click.Tuple([str, int]), multiple=True, default=None)
+@click.option('--ox', type=click.Tuple([str, int]), multiple=True, default=None, help='Specify oxidation states for each species e.g. --ox H 1 --ox O -2')
 
 
 # ox = {'C':1, 'O':-2}

@@ -225,7 +225,11 @@ class OrderedfromDisordered:
         all_combinations = itertools.product(list(range(2)), repeat=Z*na*nb*nc)
         
         all_supercells = []
-        print(f'Generating {n_configs} in {supercell} supercell')
+        if random_configs:
+            print(f'Generating {n_configs} random configurations in a {supercell} supercell')
+        else:
+            print(f'Generating {n_configs} out of the {ncombinations} possible configurations in the {supercell} supercell')
+
         for i in tqdm(range(n_configs), disable=not self.verbose):
             if random_configs:
                 config = np.random.randint(2, size=Z*na*nb*nc)

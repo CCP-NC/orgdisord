@@ -45,12 +45,7 @@ def test_cifparser():
     assert len(np.where(cif.ordered_mask)[0]) == 25
     
 
-    cif = CifParser('tests/VAGKUM.cif')
-    from ase.visualize import view
-    import spglib
-    from ase.spacegroup import get_spacegroup
-    # print('my final sg is: ',cif.sg, cif.sg.nsymop)
-    
+    cif = CifParser('tests/VAGKUM.cif')    
     assert cif.nassemblies == 1
     assert cif.ndisordergroups == 2
     # # test that the spacegroup is correct
@@ -59,7 +54,20 @@ def test_cifparser():
     assert cif.Z == 8
     # check number of ordered sites
     assert len(np.where(cif.ordered_mask)[0]) == 34
-    
+
+
+    cif = CifParser('tests/MICKEP.cif')
+    assert cif.nassemblies == 7
+    # assert cif.ndisordergroups == 2
+    # # test that the spacegroup is correct
+    assert cif.sg.no == 14
+    assert cif.nops == 4
+    assert cif.Z == 4
+    # check number of ordered sites
+    # (note that this is based on the occupancy of the sites, not the
+    #  assembly/disorder group labels!)
+    assert len(np.where(cif.ordered_mask)[0]) == 22
+
 
 if __name__ == '__main__':
     test_cifparser()
