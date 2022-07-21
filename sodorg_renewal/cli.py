@@ -9,6 +9,8 @@ import spglib
 import time
 from ase.io import write
 from ase.units import _amu
+from ase.units import kB # kB is the Boltzmann constant in eV/K
+from ase.units import kJ, mol
 import pandas as pd
 import numpy as np
 import time
@@ -28,7 +30,13 @@ LOGHEADER = '''
 #                                                                   CCP-NC    #
 ###############################################################################
 '''
-@click.command()
+
+@click.group()
+def cli():
+    pass
+
+
+@cli.command()
 @click.pass_context
 @click.argument('cif_file', type=click.Path(exists=True))
 # add option to specify supercell
@@ -63,16 +71,6 @@ LOGHEADER = '''
 @click.option('--view', is_flag=True, default=False, help='View structures using ASE gui?')
 # Add option to specify oxidation states
 @click.option('--ox', type=click.Tuple([str, int]), multiple=True, default=None, help='Specify oxidation states for each species e.g. --ox H 1 --ox O -2')
-
-
-# ox = {'C':1, 'O':-2}
-# # combine all ox options into a dictionary
-# def get_oxidations(ox):
-#     ox_dict = {}
-#     if ox:
-#         for ox_name, ox_val in ox:
-#             ox_dict[ox_name] = ox_val
-#     return ox_dict
 
 
 def main(ctx,
@@ -138,6 +136,8 @@ def main(ctx,
     # -- DATA FRAME -- #
     # store information to dataframe
     df['Unique index'] = np.arange(len(images))
+    # start out with equal weights
+    df['Multiplicity'] = np.ones(len(images))
     df['Configuration'] = configs
     ratios = [1-sum(config) / len(config) for config in configs]
     # TODO should we define this as the reverse? 
@@ -145,7 +145,7 @@ def main(ctx,
     
     df['Supercell'] = "x".join(map(str, supercell))
     # TODO: units
-    df['Free Energy per atom / kJ/mol'] = np.NaN
+    df['Free Energy / kJ/mol'] = np.NaN
     df['Enthalpy per atom / kJ/mol'] = np.NaN
     df['Entropy per atom / kJ/mol'] = np.NaN
     # volume of simulation cell
@@ -200,9 +200,9 @@ def main(ctx,
         # merge df by Unique index
         df = df.groupby('Unique index').aggregate(np.mean).reset_index()
         # add multiplicity to df
-        df['multiplicity'] = [g[1] for g in groups]
+        df['Multiplicity'] = [g[1] for g in groups]
         # add spacegroup to df
-        df['spacegroup'] = unique_spacegroups
+        df['Spacegroup'] = unique_spacegroups
         # add groups to df
         df['Group indices'] = group_indices
     
@@ -240,6 +240,194 @@ def main(ctx,
 
 
     return 0
+
+
+
+@cli.command()
+@click.pass_context
+@click.argument('csv_file', type=click.Path(exists=True))
+@click.option('--prefix', type=click.STRING, default='sodorg', help='Prefix for output file names.')
+# add option to specify verbosity
+@click.option('--quiet', '-q', is_flag=True, default=False, help='Suppress output?')
+# add option to specify log file
+@click.option('--log', '-l', type=click.Path(exists=False), default="sodorg.analyse.log", help='Log file name.')
+# specify temperature range and number of steps
+@click.option('--temperatures', '-t', nargs=2, type=click.FLOAT, default=[10, 300], help='Temperature range in K (inclusive of end points).')
+@click.option('--steps', '-s', type=click.INT, default=50, help='Number of temperature steps.')
+# or set dT
+@click.option('--dt', type=click.FLOAT, default=None, help='Temperature step size in K.')
+
+
+def analyse(ctx,
+         csv_file, 
+         quiet,
+         prefix,
+         temperatures,
+         steps,
+         dt,
+         log,
+         ):
+
+    """Command line interface for sodorg_renewal thermodynamics.
+
+    TODO energy units!
+    TODO: slight numerical inconsistencies wrt to Jonas' code
+    """
+
+    # set up logging
+    logging.basicConfig(filename=log, level=logging.DEBUG, format='%(asctime)s \t %(message)s')
+    # add console handler
+    console = logging.StreamHandler()
+    if quiet:
+        console.setLevel(logging.WARNING)
+    else:
+        console.setLevel(logging.INFO)
+
+    # set a format which is simpler for console use
+    consolefmt = logging.Formatter('%(message)s')
+    console.setFormatter(consolefmt)
+    logger = logging.getLogger("sodorg.analyse")
+    # add the handler to the main logger
+    logger.addHandler(console)
+    logger.info(LOGHEADER)
+    
+    # log the Click command line arguments and options used
+    logger.debug("Run sodorg analyse with these command line arguments: ")
+    for param, value in ctx.params.items():
+        logger.debug(f"          {param}: {value}")
+
+    # read in csv file
+    df = pd.read_csv(csv_file)
+    
+    # log the number of rows and columns
+    logger.info(f'Read in {len(df)} rows and {len(df.columns)} columns from {csv_file}')
+    
+    # check that the df contains the required columns
+    required_columns = ['Multiplicity', 'Free Energy / kJ/mol', 'formula units per cell']
+    for col in required_columns:
+        if col not in df.columns:
+            raise ValueError(f'Column {col} not found in {csv_file}')
+    # check that if df doens't contain the ratios it at least contains the configuration
+    if 'Ratio of maj:min' not in df.columns:
+
+        if 'Configuration' not in df.columns:
+            raise ValueError(f'Neither Ratio nor Configuration found in {csv_file}')
+        else:
+            logger.debug("Computing the ratios from the configuration specification in the csv file.")
+            # compute the ratio from the configuration
+            # convert to list of ints
+            configs = [c.strip('(').strip(')').split(',') for c in df['Configuration']]
+            configs = [[int(c) for c in c] for c in configs]
+            ratios = [sum(config) / len(config) for config in configs]
+            df['Ratio of maj:min'] = ratios
+
+    # check that there are no missing values
+    if df.isnull().values.any():
+        raise ValueError(f'Missing values found in {csv_file}')
+
+    # Make new df for the thermodynamic properties
+    df_thermo = pd.DataFrame()
+    ratios = df['Ratio of maj:min']
+    logger.debug(ratios)
+    multiplicities = df['Multiplicity']
+    n_formula_units = df['formula units per cell']
+    energies = df['Free Energy / kJ/mol'] * kJ / mol # convert to eV
+    energies = energies / n_formula_units # convert to eV/f.u.
+    minE = min(energies)
+    rel_energies = energies - minE
+
+    # array of temperatures
+    if dt:
+        # (include end points)
+        temperatures = np.arange(temperatures[0], temperatures[1]+dt, dt)
+    else:
+        temperatures = np.linspace(temperatures[0], temperatures[1], steps)
+    # loop over temperatures
+    Zs = []
+    taus = []
+    Ss = []
+    Elatts = []
+    Us = []
+    delta_As = []
+    for T in temperatures:
+        # partition functions
+        Z = get_partition_function(T, multiplicities, rel_energies)
+        probabilities = np.array([get_probability(multiplicity, energy, T, Z ) for (multiplicity, energy) in zip(multiplicities, rel_energies)])
+        tau = get_tau(ratios, probabilities)
+        S = get_S(probabilities)
+        Elatt = get_Elatt(probabilities, rel_energies, n_formula_units)
+        U = Elatt  # TODO streamline this!
+        deltaA = get_deltaA(U, T, S)
+
+        Zs.append(Z)
+        taus.append(tau)
+        # convert back to kJ/mol
+        Ss.append(S*1e3 * (mol / kJ))
+        Elatts.append(Elatt * (mol/kJ))
+        Us.append(U * (mol/kJ))
+        delta_As.append(deltaA * (mol/kJ))
+
+    # add to df_thermo
+    df_thermo['Temperature'] = temperatures
+    df_thermo['Z'] = Zs
+    df_thermo['tau'] = taus
+    df_thermo['S_config (J/mol /K)'] = Ss
+    # df_thermo['E_latt (kJ/mol per f.u.)'] = Elatts # TODO do we need both?
+    df_thermo['Delta U (kJ/mol per f.u.)'] = Us
+    df_thermo['Delta A (kJ/mol per f.u.)'] = delta_As
+
+    # set df print options number of decimal places
+    pd.set_option("display.precision", 5)
+    logger.info(df_thermo)
+    df_thermo.to_csv(prefix + '_thermo.csv', index=False)
+
+    
+    
+
+
+def get_boltzmann_weight(multiplicity, energy, temperature):
+    """Calculate the Boltzmann weight for a given temperature.
+    """
+    return multiplicity * np.exp(-energy / (kB * temperature))
+
+def get_partition_function(temperature, multiplicities, energies):
+    """Calculate the partition function for a given temperature.
+    Args:
+        temperature: temperature in K
+        multiplicities: array/list of multiplicities (e.g. [2,2,8,2])
+        energies: array/list of energies in kJ/mol
+
+    """
+    return np.sum(get_boltzmann_weight(multiplicities, energies, temperature))
+
+def get_probability(multiplicity, energy, temperature, Z):
+    """Calculate the probability of a configuration for a given temperature and partition function, Z.
+    """
+    return get_boltzmann_weight(multiplicity, energy, temperature) / Z
+
+
+def get_tau(ratios, probabilities):
+    """Calculate the tau factor for a given temperature.
+    """
+    return np.sum(np.array(ratios) * np.array(probabilities))
+def get_S(probabilities):
+    """Calculate the entropy S factor for a given temperature (implicit in probabilities).
+    """
+    return -kB*np.sum(np.array(probabilities) * np.log(probabilities))
+def get_Elatt(probabilities, energies, n_formula_units):
+    """Calculate the lattice energy Elatt for a given temperature.
+    """
+    return np.sum(np.array(probabilities) * np.array(energies))
+
+def get_deltaA(U, T, S):
+    """Calculate the change in free energy deltaA for a given temperature.
+    Args:   
+        U: lattice energy in kJ/mol
+        T: temperature in K
+        S: entropy in kJ/mol/K
+    """
+    return U - (T*S)
+
 
 
 if __name__ == "__main__":
