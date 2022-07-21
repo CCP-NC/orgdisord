@@ -9,6 +9,10 @@ import spglib
 import itertools
 from tqdm import tqdm
 from scipy.spatial.distance import pdist
+import logging
+
+logger = logging.getLogger("sodorg.enumerate")
+
 
 
 def binary_to_idx(config):
@@ -59,14 +63,20 @@ def chunks(lst, n):
         yield lst[i:i + n]
 
 class OrderedfromDisordered:
-    def __init__(self, cif, symprec=1e-4, verbose=False):
+    def __init__(self, cif, symprec=1e-4,quiet = False):
         '''
         cif must be an instance of CifParser from parse_cif_file.py
 
         '''
+        self.quiet = quiet
         self.cif = cif
         self.symprec = symprec
-        self.verbose = verbose
+        self.logger = logging.getLogger("sodorg.enumerate")
+        self.logger.debug("\n\n")
+        self.logger.debug("------------------------------")
+        self.logger.debug("--- ENUMERATING STRUCTURES ---")
+        self.logger.debug("------------------------------")
+
 
     def _get_config_symbols_coords(self, config, onduplicates='error'):
         '''
@@ -194,10 +204,11 @@ class OrderedfromDisordered:
                               maxiters = 5000, 
                               exclude_ordered = False, 
                               random_configs=False,
-                              verbose = False):
+                              return_configs=False):
         '''
         loop over supercell cells,
         add in one of the ndisordergroups^Z configurations per cell
+        if return_configs is True, return the configs as well as the supercells
         '''
         # some aliases
         Z = self.cif.Z
@@ -215,28 +226,28 @@ class OrderedfromDisordered:
             n_configs = min([maxiters, ncombinations])
         
         # pre-compute all primitive cells
-        if verbose:
-            print('Pre-computing all primitive configurations...')
+        self.logger.debug('Pre-computing all primitive configurations...')
         images = self.get_all_configs(exclude_ordered)
         images_mol = reload_as_molecular_crystal(images)
         
         # this iterator generates all 
         # possible lists of 0s and 1s of length Z*na*nb*nc
         all_combinations = itertools.product(list(range(2)), repeat=Z*na*nb*nc)
-        
-        all_supercells = []
-        if random_configs:
-            print(f'Generating {n_configs} random configurations in a {supercell} supercell')
-        else:
-            print(f'Generating {n_configs} out of the {ncombinations} possible configurations in the {supercell} supercell')
 
-        for i in tqdm(range(n_configs), disable=not self.verbose):
+        all_supercells = []
+        all_configs = []
+        if random_configs:
+            self.logger.info(f'Generating {n_configs} random configurations in a {supercell} supercell:')
+        else:
+            self.logger.info(f'Generating {n_configs} out of the {ncombinations} possible configurations in the {supercell} supercell:')
+
+        for i in tqdm(range(n_configs), disable=self.quiet):
             if random_configs:
                 config = np.random.randint(2, size=Z*na*nb*nc)
             else:
-                config = all_combinations.__next__()
-            # config = gen_random_config(Z*na*nb*nc)
+                config = np.array(all_combinations.__next__())
             # make ncells copies of the relevant config
+            self.logger.debug(f'         {config}')
             supercell_atoms = Atoms(cell = cell * supercell, pbc = True)
             for icell, c in enumerate(select_configs(config, supercell=supercell)):
                 # make a copy of prim config c
@@ -257,12 +268,14 @@ class OrderedfromDisordered:
             #     continue
             # else:
             all_supercells.append(supercell_atoms)
+            all_configs.append(config)
 
             
             # if get_duplicate_atoms(supercell_atoms, cutoff=0.5, delete=False) is None:
             # else:
             #     continue
-        
+        if return_configs:
+            return all_supercells, all_configs
         return all_supercells
     
 

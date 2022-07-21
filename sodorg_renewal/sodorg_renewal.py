@@ -4,9 +4,9 @@ generates the enumerated ordered confugurations.
 """
 import numpy as np
 import warnings
-from parse_cif_file import CifParser
-from enumerate import OrderedfromDisordered
-from merge import merge_structures
+from sodorg_renewal.parse_cif_file import CifParser
+from sodorg_renewal.enumerate import OrderedfromDisordered
+from sodorg_renewal.merge import merge_structures
 
 cif_file = 'tests/EROHEA_modified.cif'
 

@@ -29,7 +29,7 @@ groups = merge_structures(
                         symops=symops,
                         use_disordered_only = True,
                         symprec=1e-4,
-                        verbose=False)
+                        quiet = True)
 
 
 print(f'Found {len(groups)} groups')
@@ -50,7 +50,7 @@ groups = merge_structures(
                         symops=symops,
                         use_disordered_only = True,
                         symprec=1e-2,
-                        verbose=False)
+                        quiet = True)
 
 print(f'Found {len(groups)} groups')
 for g in groups:
@@ -67,7 +67,7 @@ groups = merge_structures(
                         symops=symops,
                         use_disordered_only = True,
                         symprec=1e-2,
-                        verbose=False)
+                        quiet=False)
 
 print(f'Found {len(groups)} groups')
 for g in groups:

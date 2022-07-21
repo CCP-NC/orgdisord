@@ -2,10 +2,8 @@
 to reduce a list of ASE atoms objects to the symmetry inequivalent ones.'''
 
 # import modules
-from tabnanny import verbose
 import numpy as np
-import warnings
-
+import logging
 # try to import tqdm if not define dummy version
 try:
     from tqdm import tqdm
@@ -13,8 +11,18 @@ except ImportError:
     def tqdm(x, **kwargs):
             return x
 
+logger = logging.getLogger("sodorg.merge")
 
-def merge_structures(images, algo='symm', symops=None, use_disordered_only=True, symprec=1e-3, verbose=False, oxidation_states=None):
+
+
+def merge_structures(images,
+                     algo='symm',
+                     symops=None,
+                     use_disordered_only=True,
+                     symprec=1e-3,
+                     oxidation_states=None,
+                     return_group_indices=False,
+                     quiet=False):
     '''Merge a list of ASE atoms objects to the symmetry inequivalent ones.
     
     Args:
@@ -25,13 +33,20 @@ def merge_structures(images, algo='symm', symops=None, use_disordered_only=True,
         use_disordered_only (bool): If True, use the disordered atoms (tag != 0)
                                     instead of the full structure when comparing.
         symprec (float): The tolerance for symmetry equivalence.
-        verbose (bool): If True, print out the number of atoms in each structure.
         oxidation_states (dict): A dictionary of oxidation states for each element.
                                 (Only needed for the 'ewald' algorithm.)
+        return_group_indices (bool): If True, return the indices of the merged structures 
+                                    in addition to the merged structures.
         
     Returns:
-        list: A list of ASE atoms objects.
+        Tuple of one structure per group and the group multiplicity. If return_group_indices is True,
+        the indices of the merged structures in the original list are also returned.
     '''
+    logger.debug("\n\n")
+    logger.debug("-----------------------------")
+    logger.debug("---  MERGING STRUCTURES  ---")
+    logger.debug("-----------------------------")
+    logger.debug("Algorithm: {}".format(algo))
     
     # get the number of atoms in each structure
     natoms = [len(atoms) for atoms in images]
@@ -48,16 +63,34 @@ def merge_structures(images, algo='symm', symops=None, use_disordered_only=True,
         # if symops is not provided, raise an error
         if symops is None:
             raise ValueError('symops must be provided for the symmetric merging algorithm')
-        images = merge_symm(images, symops, symprec=symprec)
+        groups = merge_symm(images,
+                            symops,
+                            use_disordered_only=use_disordered_only,
+                            symprec=symprec,
+                            quiet=quiet)
     elif algo == 'rematch': 
-        images = merge_rematch(images, eps=symprec)
+        groups = merge_rematch(images,
+                               eps=symprec,
+                               quiet=quiet)
     elif algo == 'ewald':
-        images = merge_ewald(images, oxidation_states, eps=symprec, parallel=True, verbose=verbose)
+        groups = merge_ewald(images,
+                            oxidation_states,
+                            eps=symprec,
+                            parallel=True,
+                            quiet=quiet)
 
     else:
         raise ValueError('Unknown merging algorithm: {}'.format(algo))
-    
-    return images
+
+    logger.debug(f"Merged into {len(groups)} groups:")
+    for group in groups:
+        logger.debug(f"    {group}")
+
+    merged_images = [(images[g[0]], len(g)) for g in groups]
+    if return_group_indices:
+        return merged_images, groups
+    else:
+        return merged_images
 
 
 
@@ -118,7 +151,7 @@ def compare_ref_unmatched(ref, unmatched, symops, symprec=1e-4, parallel = True)
 
         return matching_inds
 
-def merge_symm(supercell_images, symops, symprec = 1e-4, use_disordered_only =True):
+def merge_symm(supercell_images, symops, symprec = 1e-4, use_disordered_only =True, quiet = False):
 
         if use_disordered_only:
             frac_positions = []
@@ -134,7 +167,7 @@ def merge_symm(supercell_images, symops, symprec = 1e-4, use_disordered_only =Tr
         tagged_images = [[i,np.array(sites)] for i, sites in enumerate(frac_positions)]
         unmatched = tagged_images.copy()
         # set up progress bar
-        pbar = tqdm(desc='Checking symmetry-equivalence', total=len(tagged_images))
+        pbar = tqdm(desc='Checking symmetry-equivalence', total=len(tagged_images), disable=quiet)
         # loop over unmatched images
         while len(unmatched) > 0:
             i, ref_coords = unmatched.pop(0)
@@ -148,8 +181,8 @@ def merge_symm(supercell_images, symops, symprec = 1e-4, use_disordered_only =Tr
                 pbar.update(1)
         pbar.close()
         
-        # print(all_groups)
-        return [(supercell_images[g[0]], len(g)) for g in all_groups]
+        # return groups
+        return all_groups
 
 
 
@@ -172,7 +205,7 @@ def rematcher(re, features1, features2, eps):
     return abs(val - 1) < eps 
 
 
-def merge_rematch(supercell_images, eps=1e-3):
+def merge_rematch(supercell_images, eps=1e-3, quiet=False):
         '''
         This merging algorithm creates a fingerprint for each structure 
         bases on the SOAP representation and then used the 
@@ -200,11 +233,11 @@ def merge_rematch(supercell_images, eps=1e-3):
                     periodic=True, 
                     crossover=True, 
                     sparse=False)
+        logger.info(f'generating descriptors for {nimages} atoms objects')
+        features = [desc.create(sub, n_jobs=4, verbose = not quiet) 
+                        for sub in supercell_images]
 
-        print(f'generating descriptors for {nimages} atoms objects')
-        features = [desc.create(sub, n_jobs=4) for sub in supercell_images]
-
-        print('performing structure matching')
+        logger.info('performing structure matching')
         # Any metric supported by scikit-learn will work: e.g. a Gaussian.
         re = REMatchKernel(metric="rbf", gamma=1, alpha=1, threshold=1e-6)
         
@@ -218,8 +251,9 @@ def merge_rematch(supercell_images, eps=1e-3):
             matches += inds
             unmatched = [u for u in unmatched if u not in matches]
             all_groups.append(matches)
-        # return tuple of one structure per group and the group multiplicity
-        return [(supercell_images[g[0]], len(g)) for g in all_groups]
+        # return groups
+        return all_groups
+
 
 def coords_match(a1, a2, symprec = 1e-4):
     """
@@ -238,7 +272,7 @@ def coords_match(a1, a2, symprec = 1e-4):
 
 
 
-def merge_ewald(supercell_images, oxidation_states, eps=1e-2, parallel = True, verbose=False):
+def merge_ewald(supercell_images, oxidation_states, eps=1e-2, parallel = True, quiet = False):
     '''
     This merging algorithm calculates the ewald sum of each structure 
     and then uses the ewald sum to try to find equivalences.
@@ -262,7 +296,7 @@ def merge_ewald(supercell_images, oxidation_states, eps=1e-2, parallel = True, v
     if oxidation_states is None:
         raise ValueError('Oxidation states must be provided')
 
-    print('Adding oxidation states')
+    logger.info('Adding oxidation states')
     # convert to pymatgen structure
     ewalds = []
     for i, atoms in enumerate(supercell_images):
@@ -271,23 +305,23 @@ def merge_ewald(supercell_images, oxidation_states, eps=1e-2, parallel = True, v
         # structures.append(structure)
         acc_factor=4.0
         ewalds.append(EwaldSummation(structure, acc_factor=acc_factor))
-    print('Calculating Ewald energies')
+    logger.info('Calculating Ewald energies')
     if parallel:
         from multiprocessing import Pool, cpu_count
         ncores = cpu_count()
-        print(f'using {ncores} cores')
+        logger.info(f'using {ncores} cores')
 
         pool = Pool(processes=ncores)
 
         energies = []
         for energy in tqdm(pool.imap(func=ewald_energy,
                            iterable=ewalds),
-                           total=len(ewalds)):
+                           total=len(ewalds), disable=quiet):
             energies.append(energy)
     else:
-        print('Csing serial')
-        print(f'Calculating Ewald energies for {len(ewalds)} structures')
-        energies = [ewald_energy(ewald) for ewald in tqdm(ewalds)]
+        logger.info('Serial calculation')
+        logger.info(f'Calculating Ewald energies for {len(ewalds)} structures')
+        energies = [ewald_energy(ewald) for ewald in tqdm(ewalds, disable=quiet)]
     
     # compare the ewald sums
     unmatched = list(range(len(supercell_images)))
@@ -299,10 +333,10 @@ def merge_ewald(supercell_images, oxidation_states, eps=1e-2, parallel = True, v
         matches += inds
         unmatched = [u for u in unmatched if u not in matches]
         all_groups.append(matches)
-    # return tuple of one structure per group and the group multiplicity
-    if verbose:
-        print(all_groups)
-    return [(supercell_images[g[0]], len(g)) for g in all_groups]
+
+    # return groups
+    return all_groups
+    
 
 def ewald_energy(ewald):
         '''

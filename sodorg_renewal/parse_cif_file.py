@@ -6,32 +6,40 @@ from ase import Atoms
 import warnings
 from ase.spacegroup import get_spacegroup, crystal
 import numpy as np
-
+import logging
 
 
 class CifParser:
     '''
     Class to parse cif file containing marked up disorder.
     '''
-    def __init__(self, cif_file, verbose = False):
+    def __init__(self, cif_file):
         self.cif_file = cif_file
         # use ASE to read in cif and info
         self.atoms = read(self.cif_file, store_tags=True)
         self.cell = self.atoms.cell
         # save the info dictionary
         self.info = self.atoms.info
+        self.logger = logging.getLogger("sodorg.parse_cif_file")
+        self.logger.debug("\n\n")
+        self.logger.debug("------------------------------")
+        self.logger.debug("---    PARSING CIF FILE    ---")
+        self.logger.debug("------------------------------")
+        self.logger.debug(f"{self.cif_file}")
         
 
         # Disorder assemblies and groups
-        # check if the info dictionary contains the disorder tags
+        # Make sure the info dictionary contains the disorder tags
         if not '_atom_site_disorder_assembly' in self.info:
-            warnings.warn('No disorder tags found in cif file.')
-        else:
-            # split into assembly and disorder groups
-            self.disorder_groups = self.split_disorder_groups()
-            # first index is assembly group, second is disorder group
-            self.nassemblies = len(self.disorder_groups)
-            self.ndisordergroups = len(self.disorder_groups[0])
+            raise ValueError(f'Cif file {self.cif_file} does not contain the disorder assembly tags')
+            # TODO more helpful error message -- guidance on using these tags
+        
+
+        # split into assembly and disorder groups
+        self.disorder_groups = self.split_disorder_groups()
+        # first index is assembly group, second is disorder group
+        self.nassemblies = len(self.disorder_groups)
+        self.ndisordergroups = len(self.disorder_groups[0])
         
 
 
@@ -46,8 +54,7 @@ class CifParser:
         # symmetry operations — tuples of (rotation, translation)
         self.symops = sg.get_symop()
 
-        if verbose:
-            print(f'Found {self.nops} symmetry operations. Spacegroup {sg}')
+        self.logger.debug(f'Found {self.nops} symmetry operations. Spacegroup {sg}')
 
 
         # TODO: better way to get Z?
@@ -55,7 +62,7 @@ class CifParser:
             Z = self.info['_cell_formula_units_z']
         except:
             Z = 4
-            print(f"WARNING: Couldn't parse Z -- taking Z = {Z} for now and proceeding")
+            self.logger.info(f"WARNING: Couldn't parse Z -- taking Z = {Z} for now and proceeding")
         self.Z = Z
 
         # scaled coordinates of the asymmetric sites:
@@ -71,6 +78,16 @@ class CifParser:
         # let's define the ordered sites as those with 100% occupancy
         self.ordered_mask = occupancies == 1
 
+        # report the disorder groups to user
+        for iass, assembly in enumerate(self.disorder_groups):
+            self.logger.debug(f'Assembly {iass}: contains {len(assembly)} disorder groups:')
+            for igroup, group in enumerate(assembly):
+                self.logger.debug(f'  Group {igroup}:')
+                for ig in group:
+                    self.logger.debug(f"     label: {self.info['_atom_site_label'][ig]: >8}, index: {ig: 5d},  species: {self.asymmetric_symbols[ig]: <4} ")
+        
+        self.logger.debug("Check to make sure these are the groups you were expecting!")
+        self.logger.debug("Otherwise, try editing the cif file and rerunning.")
 
         # build out the full crystal with the ordered sites
         self.gen_ordered_atoms() # (saves to self.ordered_atoms)
@@ -129,7 +146,7 @@ class CifParser:
         if '.' in labels:
             labels.remove('.')
         labels.sort()
-        # print('assembly labels: ', labels)
+        self.logger.debug(f'Found the following disorder assembly labels: {labels}')
         
         indices = range(len(disorder_assemblies))
         
@@ -161,20 +178,27 @@ class CifParser:
         if '.' in labels:
             labels.remove('.')
         labels.sort()
+
+        self.logger.debug(f'Found the following disorder group labels: {labels}')
         
         
         
         assembly_groups = self.split_assembly_groups(self)
-        # print('disorder group labels: ', labels)
+        self.logger.debug(f'Found {len(assembly_groups)} assembly groups:')
+        self.logger.debug(f'    Python indices: {assembly_groups}')
         
         
         disorder_groups = []
         
-        for assembly in assembly_groups:        
+        for iass, assembly in enumerate(assembly_groups):
             disorder_group = []
             # now loop over disorder groups
             for label in labels:
                 disorder_group.append([idx for idx in assembly if site_disorder_groups[idx] == label])
             disorder_groups.append(disorder_group)
+
+            self.logger.debug(f'Found {len(disorder_group)} disorder groups in assembly group {iass}:')
+            self.logger.debug(f'    Python indices: {disorder_group}')
+
         return disorder_groups
 
