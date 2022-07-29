@@ -15,10 +15,10 @@ logger = logging.getLogger("sodorg.enumerate")
 
 
 
-def binary_to_idx(config):
-    return sum([j*(2**i) for i,j in list(enumerate(reversed(config)))])
+def binary_to_idx(config, maxgroups):
+    return sum([j*(maxgroups**i) for i,j in list(enumerate(reversed(config)))])
 
-def select_configs(config, supercell):
+def select_configs(config, supercell, maxgroups):
     '''
     from the supercell config, return indices of each
     component primitive cell 
@@ -38,23 +38,46 @@ def select_configs(config, supercell):
     nsuper = na * nb * nc
     chunk = len(config) // nsuper
     # should equal Z
-    return [binary_to_idx(c) for c in  chunks(config, chunk)]
+    return [binary_to_idx(c, maxgroups) for c in  chunks(config, chunk)]
 
-def reload_as_molecular_crystal(images):
+def reload_as_molecular_crystal(images, parallel=True, cheap=False):
     '''
     takes in a list of atoms,
     identifies molecules,
     unwraps molecules so that they're 'connected' 
     across periodic boundaries
     '''
-    images_new = []
-    for atoms in images:
-        mols = Molecules.get(atoms)
-        temp = mols[0].subset(atoms, use_cell_indices=True)
-        for mol in mols[1:]:
-            temp.extend(mol.subset(atoms, use_cell_indices=True))
-        images_new.append(temp)
-    return images_new
+    nimages = len(images)
+    if cheap:
+        # we assume the connectivity is the same for all images
+        mols = Molecules.get(images[0])
+        images_new = []
+        for atoms in images:
+            temp = mols[0].subset(atoms, use_cell_indices=True)
+            for mol in mols[1:]:
+                temp.extend(mol.subset(atoms, use_cell_indices=True))
+            images_new.append(temp)
+        return images_new
+    else:
+
+        if parallel:
+            from multiprocessing import Pool, cpu_count
+            # we can only run efficiently on about 100 structures per core
+            # fewer than that and we'll just use serial
+            ncores = min([cpu_count(), nimages//20])
+        if parallel and ncores > 1:
+            with Pool(processes=ncores) as pool:
+                images = pool.map(unwrap_molecules, images)
+        else:
+            images = [unwrap_molecules(image) for image in images]
+        return images
+
+def unwrap_molecules(atoms):
+    mols = Molecules.get(atoms)
+    temp = mols[0].subset(atoms, use_cell_indices=True)
+    for mol in mols[1:]:
+        temp.extend(mol.subset(atoms, use_cell_indices=True))
+    return temp
 
 
 def chunks(lst, n):
@@ -99,14 +122,16 @@ class OrderedfromDisordered:
         asymmetric_symbols = self.cif.asymmetric_symbols
         groups = self.cif.disorder_groups
 
+
+        # TODO: move this check outside -- we need to know this when generating the configs! e.g. for the DASRAU case
         # this is not general but works for some cases... 
         special_case = False
         if nops_all != Z:
-            warnings.warn(f'Special case for nops != Z. nops = {nops_all} and Z = {Z}')
             special_case = True
             Zprime = Z / nops_all
             chunksize = int(1 / Zprime)
-            assert chunksize == 2 # TODO: does this generalise beyond this? 
+            warnings.warn(f'Special case for nops != Z. nops = {nops_all} and Z = {Z}. Chunksize = {chunksize}, Zprime = {Zprime}')
+            # assert chunksize == 2 # TODO: does this generalise beyond this? 
             assert nassemblies == 1 # TODO: is this always the case? 
             ops = [chunk[c] for chunk, c in zip(chunks(ops, chunksize), config)]
         # now loop over symmetry operations   
@@ -143,7 +168,7 @@ class OrderedfromDisordered:
                             if not sites:
                                 sites.append(site)
                                 symbols.append(unique_symbols[kind])
-                                tags.append(igroup + 1)
+                                tags.append(1e2*(iassembly+1) + igroup + 1)
                                 continue
                             t = site - sites
                             mask = np.all(
@@ -159,7 +184,7 @@ class OrderedfromDisordered:
                             else:
                                 sites.append(site)
                                 symbols.append(unique_symbols[kind])
-                                tags.append(igroup + 1)
+                                tags.append(1e2*(iassembly+1) + igroup + 1)
         # print(config, groups, Z, len(symbols), nops_all)
         return [symbols, sites, tags]
     
@@ -181,22 +206,36 @@ class OrderedfromDisordered:
             atoms.set_tags(0)
 
 
-        # add in disordered sites, ordered according to config, tag = 1
+        # add in disordered sites, ordered according to config, (tag = 1e2*(iassembly+1) + igroup + 1)
         symbols, sites, tags = self._get_config_symbols_coords(config)
         for site, symbol, tag in zip(sites, symbols, tags):
             atom = Atom(symbol=symbol, position = self.cif.cell.T.dot(site), tag=tag)
             atoms.append(atom)
 
         return atoms
-    def get_all_configs(self, exclude_ordered = False):
+    def get_all_configs(self, exclude_ordered = False, parallel = True):
         if self.cif.ndisordergroups != 2:
-            warnings.warn('Warning: the number of disorder groups for an assembly group is != 2')
-        if self.cif.ndisordergroups != 1 and self.cif.ndisordergroups != 2:
-            raise ValueError('Error: we cannot yet handle cases where ngroups != 1 or 2')
+            self.logger.warn('Warning: the number of disorder groups for an assembly group is != 2')
+        # TODO: make sure we generalise to ndisorder groups > 2!
+        # if self.cif.ndisordergroups != 1 and self.cif.ndisordergroups != 2:
+        #     raise ValueError('Error: we cannot yet handle cases where ngroups != 1 or 2')
         # generate all possible ndisordergroups^Z combinations
         Z = self.cif.Z
-        all_combinations = np.array(list(itertools.product(list(range(self.cif.ndisordergroups)), repeat=Z)))
-        return [self.get_config(config, exclude_ordered) for config in all_combinations]
+        ndisordergroups = self.cif.ndisordergroups
+        ncombinations = ndisordergroups**(Z)
+        all_combinations = itertools.product(list(range(ndisordergroups)), repeat=Z)
+        if parallel:
+            from multiprocessing import Pool, cpu_count
+            # we can only run efficiently on about 100 structures per core
+            # fewer than that and we'll just use serial
+            ncores = min([cpu_count(), ncombinations//100])
+        if parallel and ncores > 1:
+            self.logger.debug(f'Using {ncores} cores to generate all primitive configs')
+            with Pool(ncores) as p:
+                all_configs = p.map(self.get_config, all_combinations)
+        else:
+            all_configs = [self.get_config(config, exclude_ordered) for config in all_combinations]
+        return all_configs
 
 
     def get_supercell_configs(self,
@@ -204,18 +243,41 @@ class OrderedfromDisordered:
                               maxiters = 5000, 
                               exclude_ordered = False, 
                               random_configs=False,
-                              return_configs=False):
+                              return_configs=False,
+                              molecular_crystal = True):
         '''
         loop over supercell cells,
         add in one of the ndisordergroups^Z configurations per cell
         if return_configs is True, return the configs as well as the supercells
+        if molecular_crystal is True, then the structure is reloaded as a molecular crystal
+             -- trying to keep the pieces in tact
         '''
+        # pre-compute all primitive cells
+        self.logger.debug('Pre-computing all primitive configurations...')
+        # TODO: include a maxiters argument here?
+        images = self.get_all_configs(exclude_ordered)
+        if molecular_crystal:
+            self.logger.debug(f'Reloading {len(images)} images as molecular crystals')
+            if len(images) > 256:
+                # this seems to be get pretty slow for large numbers of images
+                self.logger.warn('Warning: reloading molecular crystals is slow for this many images.\n'
+                'Consider skipping this step with the --not_molecular_crystal flag!\n'
+                'We will use a cheaper method to reload the images as molecular crystals instead\n'
+                ' -- assuming the connectivity is the same for each image')
+                cheap_method = True
+            else:
+                cheap_method = False
+            images = reload_as_molecular_crystal(images, cheap=cheap_method)
+
         # some aliases
         Z = self.cif.Z
         cell = self.cif.cell
         na, nb, nc = supercell
+        # we previously just took ndisordergroups = self.cif.ndisordergroups, but 
+        # this gets tricky when we have multiple assemblies etc. Safer to just take this:
+        ndisordergroups = int(np.exp(np.log(len(images))/Z))
         # total number of configs given this supercell:
-        ncombinations = 2**(Z*na*nb*nc)
+        ncombinations = ndisordergroups**(Z*na*nb*nc)
         # how many configs to actually generate:
         if random_configs:
             # just take maxiters
@@ -225,14 +287,10 @@ class OrderedfromDisordered:
             # maxiters and ncombinations
             n_configs = min([maxiters, ncombinations])
         
-        # pre-compute all primitive cells
-        self.logger.debug('Pre-computing all primitive configurations...')
-        images = self.get_all_configs(exclude_ordered)
-        images_mol = reload_as_molecular_crystal(images)
         
         # this iterator generates all 
-        # possible lists of 0s and 1s of length Z*na*nb*nc
-        all_combinations = itertools.product(list(range(2)), repeat=Z*na*nb*nc)
+        # possible lists of 0s and 1s etc of length Z*na*nb*nc
+        all_combinations = itertools.product(list(range(ndisordergroups)), repeat=Z*na*nb*nc)
 
         all_supercells = []
         all_configs = []
@@ -249,9 +307,9 @@ class OrderedfromDisordered:
             # make ncells copies of the relevant config
             self.logger.debug(f'         {config}')
             supercell_atoms = Atoms(cell = cell * supercell, pbc = True)
-            for icell, c in enumerate(select_configs(config, supercell=supercell)):
+            for icell, c in enumerate(select_configs(config, supercell=supercell, maxgroups=ndisordergroups)):
                 # make a copy of prim config c
-                temp = images_mol[c].copy()
+                temp = images[c].copy()
                 # work out what the translation vector should be:
                 ia = icell % na
                 ib = (icell // na) % nb
@@ -261,6 +319,7 @@ class OrderedfromDisordered:
                 temp.translate(R)
                 # add this block into the supercell
                 supercell_atoms.extend(temp)
+            # TODO
             # check for overlapping atoms
             # cutoff = 0.25
             # dists = pdist(supercell_atoms.get_positions(), 'sqeuclidean')

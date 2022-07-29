@@ -56,17 +56,17 @@ def test_cifparser():
     assert len(np.where(cif.ordered_mask)[0]) == 34
 
 
-    cif = CifParser('tests/MICKEP.cif')
-    assert cif.nassemblies == 7
-    # assert cif.ndisordergroups == 2
-    # # test that the spacegroup is correct
-    assert cif.sg.no == 14
-    assert cif.nops == 4
-    assert cif.Z == 4
-    # check number of ordered sites
-    # (note that this is based on the occupancy of the sites, not the
-    #  assembly/disorder group labels!)
-    assert len(np.where(cif.ordered_mask)[0]) == 22
+    # cif = CifParser('tests/MICKEP.cif')
+    # assert cif.nassemblies == 7
+    # # assert cif.ndisordergroups == 2
+    # # # test that the spacegroup is correct
+    # assert cif.sg.no == 14
+    # assert cif.nops == 4
+    # assert cif.Z == 4
+    # # check number of ordered sites
+    # # (note that this is based on the occupancy of the sites, not the
+    # #  assembly/disorder group labels!)
+    # assert len(np.where(cif.ordered_mask)[0]) == 22
 
 
 if __name__ == '__main__':

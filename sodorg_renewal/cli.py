@@ -36,7 +36,7 @@ def cli():
     pass
 
 
-@cli.command()
+@cli.command("enumerate", context_settings={'show_default': True})
 @click.pass_context
 @click.argument('cif_file', type=click.Path(exists=True))
 # add option to specify supercell
@@ -71,7 +71,8 @@ def cli():
 @click.option('--view', is_flag=True, default=False, help='View structures using ASE gui?')
 # Add option to specify oxidation states
 @click.option('--ox', type=click.Tuple([str, int]), multiple=True, default=None, help='Specify oxidation states for each species e.g. --ox H 1 --ox O -2')
-
+# option to not reload as molecular crystal
+@click.option('--not_molecular_crystal', is_flag=True, default=False, help='Do not reload as molecular crystal?')
 
 def main(ctx,
          cif_file, 
@@ -89,7 +90,8 @@ def main(ctx,
          format,
          ox,
          log,
-         view
+         view,
+         not_molecular_crystal,
          ):
 
     """Command line interface for sodorg_renewal.
@@ -123,6 +125,7 @@ def main(ctx,
     cif = CifParser(cif_file)
     symops = cif.symops
 
+    logger.info('Enumerating ordering configurations.')
     # enumerate ordered configurations
     od = OrderedfromDisordered(cif, quiet=quiet)
     images, configs = od.get_supercell_configs(
@@ -131,6 +134,7 @@ def main(ctx,
                         exclude_ordered = exclude_ordered,
                         random_configs=random,
                         return_configs=True,
+                        molecular_crystal=not not_molecular_crystal,
                         )
 
     # -- DATA FRAME -- #
@@ -139,9 +143,12 @@ def main(ctx,
     # start out with equal weights
     df['Multiplicity'] = np.ones(len(images))
     df['Configuration'] = configs
-    ratios = [1-sum(config) / len(config) for config in configs]
+    
+    # count the number of each group
+    ratios = [np.bincount(config, minlength=np.max(configs)+1) for config in configs]
+    # ratios = [1-sum(config) / len(config) for config in configs]
     # TODO should we define this as the reverse? 
-    df['Ratio of maj:min'] = ratios
+    df['Ratio'] = ratios
     
     df['Supercell'] = "x".join(map(str, supercell))
     # TODO: units
@@ -243,7 +250,7 @@ def main(ctx,
 
 
 
-@cli.command()
+@cli.command(context_settings={'show_default': True})
 @click.pass_context
 @click.argument('csv_file', type=click.Path(exists=True))
 @click.option('--prefix', type=click.STRING, default='sodorg', help='Prefix for output file names.')

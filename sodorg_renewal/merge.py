@@ -4,6 +4,7 @@ to reduce a list of ASE atoms objects to the symmetry inequivalent ones.'''
 # import modules
 import numpy as np
 import logging
+from multiprocessing import Pool, cpu_count
 # try to import tqdm if not define dummy version
 try:
     from tqdm import tqdm
@@ -133,7 +134,7 @@ def compare_ref_unmatched(ref, unmatched, symops, symprec=1e-4, parallel = True)
         return the indices of the unmatched atoms
         '''
         if parallel:
-            from multiprocessing import Pool, cpu_count
+            
             # we can only run efficiently on about 100 structures per core
             # fewer than that and we'll just use serial
             ncores = min([cpu_count(), len(unmatched)//100])
@@ -307,7 +308,6 @@ def merge_ewald(supercell_images, oxidation_states, eps=1e-2, parallel = True, q
         ewalds.append(EwaldSummation(structure, acc_factor=acc_factor))
     logger.info('Calculating Ewald energies')
     if parallel:
-        from multiprocessing import Pool, cpu_count
         ncores = cpu_count()
         logger.info(f'using {ncores} cores')
 
