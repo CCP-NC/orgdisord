@@ -170,11 +170,11 @@ class OrderedfromDisordered:
                         # apply symmetry operation
                         rot, trans = op
                         site = np.mod(np.dot(rot, pos) + trans, 1.)                  
-
+                        tag = g + 1 if self.cif.nassemblies == 1 else 1e2*(iassembly+1) + g + 1
                         if not sites:
                             sites.append(site)
                             symbols.append(unique_symbols[kind])
-                            tags.append(1e2*(iassembly+1) + igroup + 1)
+                            tags.append(tag)
                             continue
                         t = site - sites
                         mask = np.all(
@@ -190,7 +190,7 @@ class OrderedfromDisordered:
                         else:
                             sites.append(site)
                             symbols.append(unique_symbols[kind])
-                            tags.append(1e2*(iassembly+1) + igroup + 1)
+                            tags.append(tag)
         # print(config, groups, Z, len(symbols), nops_all)
         return [symbols, sites, tags]
     
