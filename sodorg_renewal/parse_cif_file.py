@@ -51,7 +51,7 @@ class CifParser:
         # for now raise error if there are different numer of disorder groups in different assemblies
         ngroups = [len(group) for group in self.disorder_groups]
         if len(set(ngroups)) > 1:
-            raise ValueError(f'Cif file {self.cif_file} contains different numbers'
+            self.logger.warn(f'Cif file {self.cif_file} contains different numbers'
             ' of disorder groups in different assemblies. This is not supported for now.')
         self.ndisordergroups = len(self.disorder_groups[0])
         

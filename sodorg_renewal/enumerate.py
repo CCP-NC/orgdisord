@@ -101,16 +101,23 @@ class OrderedfromDisordered:
         self.logger.debug("------------------------------")
 
 
-    def _get_config_symbols_coords(self, config, onduplicates='error'):
+    def _get_config_symbols_coords(self, config, iassembly):
         '''
-        takes config as a binary list (i.e. list of ones and zeros)
+        takes config as an int (often binary) binary list
         of length Z (number of disordered molecular units in cell)
+        and the index of the chosen assembly
 
-        onduplicates must be one of "keep", "replace", "warn" or "error"
-            - says what to do if duplicate atoms are created. defaults to error
+        Args:
+            config (list): list of integers representing the config
+            iassembly (int): index of the assembly
 
-        returns lists of [symbols, coordinates] for each generated site for the specified
-        configuration
+        Returns:
+            [
+                symbols (list): list of symbols for the config
+                sites (list): list of sites for the config
+                tags (list): list of tags for the config
+            ]
+
         '''
         # a few aliases
         Z = self.cif.Z
@@ -118,6 +125,7 @@ class OrderedfromDisordered:
         ops  = self.cif.symops
         ndisordergroups = self.cif.ndisordergroups
         nassemblies     = self.cif.nassemblies
+        assert iassembly < nassemblies, "assembly index out of range"
         asymmetric_scaled_coords = self.cif.asymmetric_scaled_coords
         asymmetric_symbols = self.cif.asymmetric_symbols
         groups = self.cif.disorder_groups
@@ -128,77 +136,98 @@ class OrderedfromDisordered:
         special_case = False
         if nops_all != Z:
             special_case = True
-            Zprime = Z / nops_all
+            Zprime = Z / (nops_all)
             chunksize = int(1 / Zprime)
             warnings.warn(f'Special case for nops != Z. nops = {nops_all} and Z = {Z}. Chunksize = {chunksize}, Zprime = {Zprime}')
             # assert chunksize == 2 # TODO: does this generalise beyond this? 
-            assert nassemblies == 1 # TODO: is this always the case? 
+            # assert nassemblies == 1 # TODO: is this always the case? 
             ops = [chunk[c] for chunk, c in zip(chunks(ops, chunksize), config)]
         # now loop over symmetry operations   
         sites = []
         symbols = []
         tags = []
         for iops, op in enumerate(ops):
-            for iassembly in range(nassemblies):
+            # loop over groups
+            for igroup in range(ndisordergroups):
+                
+                # this is not general but works for some cases...
+                # if nops_all != Z:
+                #     iassembly = 0
+                # else:
+                #     iassembly = config[iops]
+                
+                # iassembly = 0
+                g = config[iops]
+                group = np.array(groups[iassembly][g])
+                if special_case:
+                    group = np.array(groups[iassembly][igroup])
+                if len(group) > 0:
+                    unique_positions = asymmetric_scaled_coords[group]
+                    unique_symbols   =       asymmetric_symbols[group]
+                    kinds = range(len(unique_symbols))
+                    # loop over site in each disorder group:
+                    for kind, pos in enumerate(unique_positions):
+                        # apply symmetry operation
+                        rot, trans = op
+                        site = np.mod(np.dot(rot, pos) + trans, 1.)                  
 
-                # loop over groups
-                for igroup in range(ndisordergroups):
-                    
-                    # this is not general but works for some cases...
-                    # if nops_all != Z:
-                    #     iassembly = 0
-                    # else:
-                    #     iassembly = config[iops]
-                    
-                    # iassembly = 0
-                    g = config[iops]
-                    group = np.array(groups[iassembly][g])
-                    if special_case:
-                        group = np.array(groups[iassembly][igroup])
-                    if len(group) > 0:
-                        unique_positions = asymmetric_scaled_coords[group]
-                        unique_symbols   =       asymmetric_symbols[group]
-                        kinds = range(len(unique_symbols))
-                        # loop over site in each disorder group:
-                        for kind, pos in enumerate(unique_positions):
-                            # apply symmetry operation
-                            rot, trans = op
-                            site = np.mod(np.dot(rot, pos) + trans, 1.)                  
+                        if not sites:
+                            sites.append(site)
+                            symbols.append(unique_symbols[kind])
+                            tags.append(1e2*(iassembly+1) + igroup + 1)
+                            continue
+                        t = site - sites
+                        mask = np.all(
+                            (abs(t) < self.symprec) | (abs(abs(t) - 1.0) < self.symprec), axis=1)
+                        if np.any(mask):
 
-                            if not sites:
-                                sites.append(site)
-                                symbols.append(unique_symbols[kind])
-                                tags.append(1e2*(iassembly+1) + igroup + 1)
-                                continue
-                            t = site - sites
-                            mask = np.all(
-                                (abs(t) < self.symprec) | (abs(abs(t) - 1.0) < self.symprec), axis=1)
-                            if np.any(mask):
-
-                                inds = np.argwhere(mask).flatten()
-                                if len(inds) > 1:
-                                     raise SpacegroupValueError(
-                                            'Found multiple equivalent sites!'.format())
-                                else:
-                                    pass
+                            inds = np.argwhere(mask).flatten()
+                            if len(inds) > 1:
+                                    raise SpacegroupValueError(
+                                        'Found multiple equivalent sites!'.format())
                             else:
-                                sites.append(site)
-                                symbols.append(unique_symbols[kind])
-                                tags.append(1e2*(iassembly+1) + igroup + 1)
+                                pass
+                        else:
+                            sites.append(site)
+                            symbols.append(unique_symbols[kind])
+                            tags.append(1e2*(iassembly+1) + igroup + 1)
         # print(config, groups, Z, len(symbols), nops_all)
         return [symbols, sites, tags]
     
-    def get_config(self, config, exclude_ordered=False):
+    def get_config(self, config, iassembly):
         '''
         Return a fully ordered atoms object for the specified config
 
-        exclude_ordered (boolean) sets whether or not to include the non-disordered part of the crystal
-
         '''
+        # set up base atoms object to which sites will be 
+        # added (just an empty box).
+        atoms = Atoms(cell=self.cif.cell, pbc=True)
+        
+        # add in disordered sites, ordered according to config, (tag = 1e2*(iassembly+1) + igroup + 1)
+        symbols, sites, tags = self._get_config_symbols_coords(config, iassembly=iassembly)
+        for site, symbol, tag in zip(sites, symbols, tags):
+            atom = Atom(symbol=symbol, position = self.cif.cell.T.dot(site), tag=tag)
+            atoms.append(atom)
+
+        return atoms
+
+    def get_all_configs(self, exclude_ordered = False, correlated_assemblies=False):
+        '''Generate all possible configs for the primitive cell.'''
+        
+        # TODO this could be made more efficient!
+
+        if self.cif.ndisordergroups != 2:
+            self.logger.warn('Warning: the number of disorder groups for an assembly group is != 2\n'
+                             'This is not very well tested so proceed with caution.')
+        # TODO: make sure we generalise to ndisorder groups > 2!
+        # if self.cif.ndisordergroups != 1 and self.cif.ndisordergroups != 2:
+        #     raise ValueError('Error: we cannot yet handle cases where ngroups != 1 or 2')
+        # generate all possible ndisordergroups^Z combinations
+
         # set up base atoms object to which sites will be 
         # added. 
         if exclude_ordered:
-            # just an empty box
+        # just an empty box
             atoms = Atoms(cell=self.cif.cell, pbc=True)
         else: 
             atoms = self.cif.ordered_atoms.copy()
@@ -206,35 +235,55 @@ class OrderedfromDisordered:
             atoms.set_tags(0)
 
 
-        # add in disordered sites, ordered according to config, (tag = 1e2*(iassembly+1) + igroup + 1)
-        symbols, sites, tags = self._get_config_symbols_coords(config)
-        for site, symbol, tag in zip(sites, symbols, tags):
-            atom = Atom(symbol=symbol, position = self.cif.cell.T.dot(site), tag=tag)
-            atoms.append(atom)
-
-        return atoms
-    def get_all_configs(self, exclude_ordered = False, parallel = True):
-        if self.cif.ndisordergroups != 2:
-            self.logger.warn('Warning: the number of disorder groups for an assembly group is != 2')
-        # TODO: make sure we generalise to ndisorder groups > 2!
-        # if self.cif.ndisordergroups != 1 and self.cif.ndisordergroups != 2:
-        #     raise ValueError('Error: we cannot yet handle cases where ngroups != 1 or 2')
-        # generate all possible ndisordergroups^Z combinations
         Z = self.cif.Z
-        ndisordergroups = self.cif.ndisordergroups
-        ncombinations = ndisordergroups**(Z)
-        all_combinations = itertools.product(list(range(ndisordergroups)), repeat=Z)
-        if parallel:
-            from multiprocessing import Pool, cpu_count
-            # we can only run efficiently on about 100 structures per core
-            # fewer than that and we'll just use serial
-            ncores = min([cpu_count(), ncombinations//100])
-        if parallel and ncores > 1:
-            self.logger.debug(f'Using {ncores} cores to generate all primitive configs')
-            with Pool(ncores) as p:
-                all_configs = p.map(self.get_config, all_combinations)
+        if correlated_assemblies:
+            self.logger.debug('Treating the assemblies as correlated. \n'
+            'This means that the same index from each assembly is chosen for each configuration.')
         else:
-            all_configs = [self.get_config(config, exclude_ordered) for config in all_combinations]
+            self.logger.debug('Treating the assemblies as uncorrelated '
+            '(i.e. the assemblies are independent) and we will therefore generate lots of structures!')
+
+        # what's the final number of configs we will generate?
+        nconfigs_per_assembly = [len(self.cif.disorder_groups[iassembly])**Z for iassembly in range(self.cif.nassemblies)]
+        if correlated_assemblies:
+            nconfigs = nconfigs_per_assembly[0]
+        else:
+            nconfigs = np.product(nconfigs_per_assembly)
+
+        self.logger.debug(f'Generating {nconfigs} configs in primitive cell.')
+        if nconfigs > 1e4:
+            self.logger.warn(f'Warning: {nconfigs} is a large number of configs. This may take a while!')
+
+        all_configs = []
+        for iassembly in range(self.cif.nassemblies):
+            ndisordergroups = len(self.cif.disorder_groups[iassembly])
+            config_indices = itertools.product(list(range(ndisordergroups)), repeat=Z)
+            assembly_configs = [self.get_config(config_idx, iassembly) for config_idx in config_indices]
+            self.logger.debug(f'Assembly {iassembly} has {len(assembly_configs)} configs')
+            if all_configs:
+                if correlated_assemblies:
+                    # then just add the config atoms to the existing ones!
+                    assert len(assembly_configs) == len(all_configs)
+                    for iconfig in range(len(assembly_configs)):
+                        temp = all_configs[iconfig].copy()
+                        temp.extend(assembly_configs[iconfig])
+                        all_configs[iconfig] = temp
+                else:
+                    ref_configs = [config.copy() for config in all_configs]
+                    all_configs = []
+                    for iconfig in range(len(ref_configs)):
+                        for jconfig in range(len(assembly_configs)):
+                            temp = ref_configs[iconfig].copy()
+                            temp.extend(assembly_configs[jconfig])
+                            all_configs.append(temp)
+            else:
+                # must the be first assembly -- all_configs is empty so let's start from scratch
+                for config in assembly_configs:
+                    temp = atoms.copy()
+                    temp.extend(config)
+                    all_configs.append(temp)
+            
+        self.logger.debug(f"Generated a total of {len(all_configs)} primitive configs")
         return all_configs
 
 
@@ -275,9 +324,10 @@ class OrderedfromDisordered:
         na, nb, nc = supercell
         # we previously just took ndisordergroups = self.cif.ndisordergroups, but 
         # this gets tricky when we have multiple assemblies etc. Safer to just take this:
-        ndisordergroups = int(np.exp(np.log(len(images))/Z))
+        ndisordergroups = int(np.round(np.exp(np.log(len(images))/Z)))
         # total number of configs given this supercell:
         ncombinations = ndisordergroups**(Z*na*nb*nc)
+        self.logger.debug(f'Found {len(images)} nimages,  {ncombinations} configs for this supercell (Z={Z}, na={na}, nb={nb}, nc={nc}), ndisordergroups={ndisordergroups}')
         # how many configs to actually generate:
         if random_configs:
             # just take maxiters
