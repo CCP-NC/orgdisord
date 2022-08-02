@@ -243,7 +243,10 @@ def main(ctx,
             # cif can save labels if we manually specify them
             if format == 'cif':
                 kwargs = {'labels': [image.get_array('labels')]}
-            image.write(f"{directory}/{filename}", format=format, **kwargs)
+            else:
+                kwargs = {}
+                
+            image.write(f"{directory}/{filename}", **kwargs)
             
             logger.info(f'Wrote structure to file: {directory}/{filename}')
 

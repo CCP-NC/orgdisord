@@ -41,21 +41,19 @@ class CifParser:
 
         # split into assembly and disorder groups
         self.disorder_groups = self.split_disorder_groups(assemblies_present=assemblies_present)
-        # first index is assembly group, second is disorder group
-        self.nassemblies = len(self.disorder_groups)
+        # structure is {assembly label: {disorder group label: [indices]}}
+        self.nassemblies = len(self.disorder_groups.keys())
 
         if self.nassemblies == 0:
             # this should never happen now that we check above... 
             raise ValueError(f'Cif file {self.cif_file} does not contain any marked up disorder assemblies/groups')
 
         # for now raise error if there are different numer of disorder groups in different assemblies
-        ngroups = [len(group) for group in self.disorder_groups]
+        ngroups = [len(group) for asslabel, group in self.disorder_groups.items()]
         if len(set(ngroups)) > 1:
             self.logger.warn(f'Cif file {self.cif_file} contains different numbers'
             ' of disorder groups in different assemblies. We therefore assume that they are not correlated.\n'
-            'This is a bit experimental, so double check your results!')
-        self.ndisordergroups = len(self.disorder_groups[0])
-        
+            'This is a bit experimental, so double check your results!')        
 
 
         # spacegroup info:
@@ -97,15 +95,15 @@ class CifParser:
         self.ordered_mask = occupancies == 1
 
         # report the disorder groups to user
-        for iass, assembly in enumerate(self.disorder_groups):
-            self.logger.debug(f'Assembly {iass} contains {len(assembly)} disorder groups:')
-            for igroup, group in enumerate(assembly):
-                self.logger.debug(f'  Group {igroup} contains {len(group)} sites:')
+        for asslabel, groups in self.disorder_groups.items():
+            self.logger.debug(f'Assembly {asslabel} contains {len(groups)} disorder groups:')
+            for grouplabel, group in groups.items():
+                self.logger.debug(f'  Group {grouplabel} contains {len(group)} sites:')
                 for ig in group:
                     self.logger.debug(f"     label: {self.info['_atom_site_label'][ig]: >8}, index: {ig: 5d},  species: {self.asymmetric_symbols[ig]: >4}, occupancy: {occupancies[ig]: >5.2f}")
                 tol = 1e-4
                 if any(abs(1 - occupancies[group]) < tol):
-                    self.logger.warning(f"WARNING: Disorder group {igroup} from assembly {iass} contains site(s) with full occupancy. Please check the log file and your cif file carefully!")
+                    self.logger.warning(f"WARNING: Disorder group {grouplabel} from assembly {asslabel} contains site(s) with full occupancy. Please check the log file and your cif file carefully!")
         self.logger.debug("Check to make sure these are the groups you were expecting!")
         self.logger.debug("Otherwise, try editing the cif file and rerunning.")
 
@@ -175,10 +173,16 @@ class CifParser:
         self.logger.debug(f'Found the following disorder assembly labels: {labels}')
         
         indices = range(len(disorder_assemblies))
+        # dictionary of indices grouped by the sorted assembly label
+        indices_by_assembly = {label: [] for label in labels}
+        for i, label in enumerate(disorder_assemblies):
+            if label in labels:
+                indices_by_assembly[label].append(indices[i])
+        return indices_by_assembly
         
-        assembly_groups = [[idx for idx in indices if disorder_assemblies[idx] == label] for label in labels]
+        # assembly_groups = [[idx for idx in indices if disorder_assemblies[idx] == label] for label in labels]
 
-        return assembly_groups
+        # return assembly_groups
 
 
     def split_disorder_groups(self, assemblies_present=True):
@@ -210,26 +214,33 @@ class CifParser:
         
         if assemblies_present:
             assembly_groups = self.split_assembly_groups(self)
-            self.logger.debug(f'Found {len(assembly_groups)} assembly groups:')
-            self.logger.debug(f'    Python indices: {assembly_groups}')
+            self.logger.debug(f'Found {len(assembly_groups.keys())} assembly group(s):')
+            for label, indices in assembly_groups.items():
+                self.logger.debug(f'  Assembly {label}: {len(indices)} sites: {indices}')
         else:
-            assembly_groups = [[idx for idx in range(len(site_disorder_groups))]]
+            # no assemblies present, so just group by disorder group and give label 'A'
+            assembly_groups = {'A': [idx for idx in range(len(site_disorder_groups))]}
         
-        disorder_groups = []
+        disorder_groups = {asslabel: {label: [] for label in labels} for asslabel in assembly_groups.keys()}
         
-        for iass, assembly in enumerate(assembly_groups):
-            disorder_group = []
-            # now loop over disorder groups
-            for label in labels:
-                disorder_group.append([idx for idx in assembly if site_disorder_groups[idx] == label])
-            # drop empty groups
-            disorder_group = [group for group in disorder_group if len(group) > 0]
-            if len(disorder_group) > 0:
-                disorder_groups.append(disorder_group)
-            # disorder_groups.append(disorder_group)
+        for asslabel, indices in assembly_groups.items():
+            for i, label in enumerate(site_disorder_groups):
+                if label in labels:
+                    if len(indices) > 0:
+                        if i in indices:
+                            disorder_groups[asslabel][label].append(i)
+                    else:
+                        del disorder_groups[asslabel][label]
+        
 
-            self.logger.debug(f'Found {len(disorder_group)} disorder groups in assembly group {iass}:')
-            self.logger.debug(f'    Python indices: {disorder_group}')
+            self.logger.debug(f'Found {len(disorder_groups[asslabel])} disorder groups in assembly group {asslabel}:')
+            self.logger.debug(f'    Python indices: {disorder_groups[asslabel]}')
+        
+        # warning if any are in an assebmly but not in a disorder group
+        for asslabel, indices in assembly_groups.items():
+            for i in indices:
+                if site_disorder_groups[i] not in labels:
+                    self.logger.warning(f'Warning: Site {i} in assembly {asslabel} has no disorder group. Double check the CIF file.')
 
         return disorder_groups
 

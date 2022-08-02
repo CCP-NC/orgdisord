@@ -106,7 +106,7 @@ class OrderedfromDisordered:
         self.logger.debug("------------------------------")
 
 
-    def _get_config_symbols_coords(self, config, iassembly):
+    def _get_config_symbols_coords(self, config, asslabel):
         '''
         takes config as an int (often binary) binary list
         of length Z (number of disordered molecular units in cell)
@@ -114,7 +114,7 @@ class OrderedfromDisordered:
 
         Args:
             config (list): list of integers representing the config
-            iassembly (int): index of the assembly
+            asslabel (str): Assembly label e.g. 'A'
 
         Returns:
             [
@@ -125,15 +125,19 @@ class OrderedfromDisordered:
             ]
 
         '''
+        # Let's always use the sorted labels
+        assembly_labels = sorted(self.cif.disorder_groups.keys())
+        disorder_group_labels = sorted(self.cif.disorder_groups[asslabel].keys())
+        # get the assembly index for the specified assembly label
+        iassembly = assembly_labels.index(asslabel)
+
         # at this point Z = len(config)
         assert len(config) == self.cif.Z
         # a few aliases
         Zprime = self.cif.Zprime
+        groups = self.cif.disorder_groups[asslabel]
         # how many disorder groups in this assembly?
-        ndisordergroups = len(self.cif.disorder_groups[iassembly])
-        # how many assemblies?
-        nassemblies     = self.cif.nassemblies
-        assert iassembly < nassemblies, "assembly index out of range"
+        ndisordergroups = len(groups)
         # fractional coordinates of disordered sites
         asymmetric_scaled_coords = self.cif.asymmetric_scaled_coords
         # symbols of the disordered sites
@@ -142,7 +146,6 @@ class OrderedfromDisordered:
 
         ops = self.cif.symops
 
-        groups = self.cif.disorder_groups[iassembly]
 
         if Zprime < 1:
             ngroups = int(1/Zprime)
@@ -169,10 +172,11 @@ class OrderedfromDisordered:
 
                 # Which group should we pick? 
                 if Zprime >=1:
-                    group = groups[g]
+                    grouplabel = disorder_group_labels[g]
                 else:
-                    group = groups[igroup]
+                    grouplabel = disorder_group_labels[igroup]
 
+                group = groups[grouplabel]
                 
                 if len(group) > 0:
                     unique_positions = asymmetric_scaled_coords[group]
@@ -209,7 +213,7 @@ class OrderedfromDisordered:
                             labels.append(unique_labels[kind])
         return [symbols, sites, tags, labels]
     
-    def get_config(self, config, iassembly):
+    def get_config(self, config, asslabel):
         '''
         Return a fully ordered atoms object for the specified config
 
@@ -219,7 +223,7 @@ class OrderedfromDisordered:
         atoms = Atoms(cell=self.cif.cell, pbc=True)
         
         # add in disordered sites, ordered according to config, (tag = 1e2*(iassembly+1) + igroup + 1)
-        symbols, sites, tags, labels = self._get_config_symbols_coords(config, iassembly=iassembly)
+        symbols, sites, tags, labels = self._get_config_symbols_coords(config, asslabel=asslabel)
         for site, symbol, tag in zip(sites, symbols, tags):
             atom = Atom(symbol=symbol, position = self.cif.cell.T.dot(site), tag=tag)
             atoms.append(atom)
@@ -237,12 +241,7 @@ class OrderedfromDisordered:
         Z = self.cif.Z
         Zprime = self.cif.Zprime
         nops_all = self.cif.nops
-        ops = self.cif.symops
-        ndisordergroups = self.cif.ndisordergroups
 
-        if self.cif.ndisordergroups != 2:
-            self.logger.warn('Warning: the number of disorder groups for an assembly group is != 2\n'
-                             'This is not very well tested so proceed with caution.')
         # TODO: make sure we generalise to ndisorder groups > 2!
         # if self.cif.ndisordergroups != 1 and self.cif.ndisordergroups != 2:
         #     raise ValueError('Error: we cannot yet handle cases where ngroups != 1 or 2')
@@ -253,15 +252,17 @@ class OrderedfromDisordered:
         if exclude_ordered:
         # just an empty box
             atoms = Atoms(cell=self.cif.cell, pbc=True)
+            max_spacegroup_kinds = 0
         else: 
             atoms = self.cif.ordered_atoms.copy()
             # give ordered sites a tag of 0
             atoms.set_tags(0)
+            max_spacegroup_kinds = atoms.get_array('spacegroup_kinds').max()
 
 
 
         # what's the final number of configs we will generate?
-        nconfigs_per_assembly = [len(self.cif.disorder_groups[iassembly])**Z for iassembly in range(self.cif.nassemblies)]
+        nconfigs_per_assembly = [len(groups)**Z for asslabel, groups in self.cif.disorder_groups.items()]
         if correlated_assemblies:
             self.logger.debug('Treating the assemblies as correlated. \n'
             'This means that the same index from each assembly is chosen for each configuration.')
@@ -282,12 +283,13 @@ class OrderedfromDisordered:
         
 
 
-
+        disorder_groups = self.cif.disorder_groups
 
         all_configs = []
-        for iassembly in range(self.cif.nassemblies):
+        for asslabel, assgroups in disorder_groups.items():
+        # for iassembly in range(self.cif.nassemblies):
             # normally ngroups = ndisorder groups
-            ngroups = len(self.cif.disorder_groups[iassembly])
+            ngroups = len(assgroups)
             # but when Zprime is less than 1, we need to be more careful!
             if Zprime < 1: # means more symmetry operations than we have Z
                 # in this case the actual number of groups (1/Zprime) will be larger than the number of disorder groups
@@ -302,8 +304,13 @@ class OrderedfromDisordered:
                     'If you encounter any issues, please contact the developers.')
 
             config_indices = itertools.product(list(range(ngroups)), repeat=Z)
-            assembly_configs = [self.get_config(config_idx, iassembly) for config_idx in config_indices]
-            self.logger.debug(f'Assembly {iassembly} has {len(assembly_configs)} configs')
+            assembly_configs = [self.get_config(config_idx, asslabel) for config_idx in config_indices]
+            # update max_spacegroup_kinds tags
+            for config in assembly_configs:
+                labels = config.get_array('labels')
+                u, spacegroup_kinds = np.unique(labels, return_inverse=True)
+                config.set_array('spacegroup_kinds', spacegroup_kinds + max_spacegroup_kinds + 1)
+            self.logger.debug(f'Assembly {asslabel} has {len(assembly_configs)} configs')
             if all_configs:
                 if correlated_assemblies:
                     # then just add the config atoms to the existing ones!

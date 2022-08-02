@@ -13,8 +13,9 @@ def test_cifparser():
     cif = CifParser('tests/EROHEA_modified.cif')
     assert cif.nassemblies == 1
     group1 = [26, 31, 32, 33, 34]
-    assert all([a==b for a,b in zip(group1, cif.disorder_groups[0][0])])
-    assert cif.ndisordergroups == 2
+    disorder_groups = cif.disorder_groups
+    assert len(disorder_groups) == 1
+    assert all([a==b for a,b in zip(group1, disorder_groups['A'][-2])])
     # # test that the spacegroup is correct
     assert cif.sg.no == 15
     assert cif.nops == 8
@@ -25,8 +26,11 @@ def test_cifparser():
 
 
     cif = CifParser('tests/704722.cif')
+    disorder_groups = cif.disorder_groups
+    ngroupsperass = [len(x) for x in disorder_groups.values()]
     assert cif.nassemblies == 1
-    assert cif.ndisordergroups == 2
+    assert len(ngroupsperass) == 1
+    assert ngroupsperass[0] == 2
     # # test that the spacegroup is correct
     assert cif.sg.no == 14
     assert cif.nops == 4
@@ -35,8 +39,11 @@ def test_cifparser():
     assert len(np.where(cif.ordered_mask)[0]) == 0
 
     cif = CifParser('tests/VIFQIL01.cif')
+    disorder_groups = cif.disorder_groups
+    ngroupsperass = [len(x) for x in disorder_groups.values()]
     assert cif.nassemblies == 1
-    assert cif.ndisordergroups == 2
+    assert len(ngroupsperass) == 1
+    assert ngroupsperass[0] == 2
     # # test that the spacegroup is correct
     assert cif.sg.no == 14
     assert cif.nops == 4
@@ -45,9 +52,11 @@ def test_cifparser():
     assert len(np.where(cif.ordered_mask)[0]) == 25
     
 
-    cif = CifParser('tests/VAGKUM.cif')    
+    cif = CifParser('tests/VAGKUM.cif')
+    disorder_groups = cif.disorder_groups
+    ngroupsperass = [len(x) for x in disorder_groups.values()]
     assert cif.nassemblies == 1
-    assert cif.ndisordergroups == 2
+    assert ngroupsperass[0] == 2
     # # test that the spacegroup is correct
     assert cif.sg.no == 15
     assert cif.nops == 8
