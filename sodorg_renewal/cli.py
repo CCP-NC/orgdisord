@@ -73,6 +73,10 @@ def cli():
 @click.option('--ox', type=click.Tuple([str, int]), multiple=True, default=None, help='Specify oxidation states for each species e.g. --ox H 1 --ox O -2')
 # option to not reload as molecular crystal
 @click.option('--not_molecular_crystal', is_flag=True, default=False, help='Do not reload as molecular crystal?')
+# correlated assemblies?
+@click.option('--correlated_assemblies', '-c', is_flag=True, default=False, help='Are the disorder assemblies correlated?'
+              'i.e. are the disorder groups within each assembly to be selected with the same index? '
+              '(The number of disorder groups in each assembly must be the same in such cases.)')
 
 def main(ctx,
          cif_file, 
@@ -92,6 +96,7 @@ def main(ctx,
          log,
          view,
          not_molecular_crystal,
+         correlated_assemblies,
          ):
 
     """Command line interface for sodorg_renewal.
@@ -125,7 +130,7 @@ def main(ctx,
     cif = CifParser(cif_file)
     symops = cif.symops
 
-    logger.info('Enumerating ordering configurations.')
+    logger.info('Enumerating ordered configurations.')
     # enumerate ordered configurations
     od = OrderedfromDisordered(cif, quiet=quiet)
     images, configs = od.get_supercell_configs(
@@ -135,6 +140,7 @@ def main(ctx,
                         random_configs=random,
                         return_configs=True,
                         molecular_crystal=not not_molecular_crystal,
+                        correlated_assemblies=correlated_assemblies,
                         )
 
     # -- DATA FRAME -- #
@@ -234,7 +240,11 @@ def main(ctx,
         nleading_zeros = len(str(len(images)))
         for i, image in enumerate(images):
             filename = f"{prefix}-{str(i).zfill(nleading_zeros)}.{format}"
-            image.write(f"{directory}/{filename}")
+            # cif can save labels if we manually specify them
+            if format == 'cif':
+                kwargs = {'labels': [image.get_array('labels')]}
+            image.write(f"{directory}/{filename}", format=format, **kwargs)
+            
             logger.info(f'Wrote structure to file: {directory}/{filename}')
 
     # write out pandas dataframe containing the groups and multiplicities

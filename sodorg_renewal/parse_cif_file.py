@@ -52,7 +52,8 @@ class CifParser:
         ngroups = [len(group) for group in self.disorder_groups]
         if len(set(ngroups)) > 1:
             self.logger.warn(f'Cif file {self.cif_file} contains different numbers'
-            ' of disorder groups in different assemblies. This is not supported for now.')
+            ' of disorder groups in different assemblies. We therefore assume that they are not correlated.\n'
+            'This is a bit experimental, so double check your results!')
         self.ndisordergroups = len(self.disorder_groups[0])
         
 
@@ -76,8 +77,9 @@ class CifParser:
             Z = self.info['_cell_formula_units_z']
         except:
             Z = 4
-            self.logger.info(f"WARNING: Couldn't parse Z -- taking Z = {Z} for now and proceeding")
+            self.logger.warn(f"WARNING: Couldn't parse Z -- taking Z = {Z} for now and proceeding")
         self.Z = Z
+        self.Zprime = Z / self.nops
 
         # scaled coordinates of the asymmetric sites:
         asymmetric_x = self.info['_atom_site_fract_x']
@@ -86,6 +88,8 @@ class CifParser:
         self.asymmetric_scaled_coords = np.array([asymmetric_x, asymmetric_y, asymmetric_z]).T
         # element symbols of the asymmetric sites:
         self.asymmetric_symbols = np.array(self.info['_atom_site_type_symbol'])
+        # labels of the asymmetric sites:
+        self.asymmetric_labels = np.array(self.info['_atom_site_label'])
         # occupancies of the asymmetric sites:
         occupancies = np.array(self.info['_atom_site_occupancy'])
         self.occupancies = occupancies
@@ -117,6 +121,7 @@ class CifParser:
         '''
         mask = self.ordered_mask
         symbols = self.asymmetric_symbols[mask]
+        labels = self.asymmetric_labels[mask]
         scaled_coords = self.asymmetric_scaled_coords[mask]
         if len(symbols) > 0:
             ordered_atoms = crystal(symbols=symbols,
@@ -128,6 +133,11 @@ class CifParser:
                                     symprec=symprec,
                                     pbc=True,
                                     primitive_cell=False)
+            # now map the labels onto the corresponding atoms
+            kinds = ordered_atoms.get_array('spacegroup_kinds')
+            all_labels = np.array([labels[kind] for kind in kinds])
+            ordered_atoms.set_array('labels', all_labels)
+            
             self.ordered_atoms = ordered_atoms
         
         # temp_atoms = Atoms(symbols=symbols, scaled_positions = scaled_coords, cell = self.cell)
