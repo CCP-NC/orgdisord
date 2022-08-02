@@ -403,7 +403,7 @@ class OrderedfromDisordered:
 
         for i in tqdm(range(n_configs), disable=self.quiet):
             if random_configs:
-                config = np.random.randint(2, size=Z*na*nb*nc)
+                config = np.random.randint(ndisordergroups, size=Z*na*nb*nc)
             else:
                 config = np.array(all_combinations.__next__())
             # make ncells copies of the relevant config
