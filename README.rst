@@ -97,3 +97,5 @@ The :doc:`command line interface documentation <cli>` has full details of the av
         
         We also included the ``--view`` option to visualise the merged configurations using ASE. In the ASE GUI, you can click View→Colors and select color By Tag to easily see the different disorder assemblies and groups. You can also click View→Show Tags to see the tags associated with each atom.
 
+
+For more examples and case studies, see the :doc:`case_studies` page.

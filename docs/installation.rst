@@ -28,6 +28,7 @@ Once you have a copy of the source, you can install it with:
 .. code-block:: console
 
     $ python setup.py install
+
 or 
 
 .. code-block:: console
@@ -63,7 +64,7 @@ We will eventually publish a PyPi package such that you can install it with:
     $ pip install sodorg_renewal
 
 
-**but this is not yet available**. See below for how to build it from source. 
+**but this is not yet available**. See above for how to build it from source. 
 
 .. To install SODORG Renewal, run this command in your terminal:
 

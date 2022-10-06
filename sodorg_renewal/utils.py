@@ -7,12 +7,14 @@ from typing import List
 def get_molecules(atoms: Atoms, use_cell_indices: bool=True):
     """
     Get the molecules from an atoms object.
+
     Args:
         atoms (Atoms): The atoms object.
         use_cell_indices (bool): Whether to connect molecules across periodic boundaries.
-    
+
     Returns:
         list: A list of atoms objects, each corresponding to a molecule within Atoms.
+
     """
     molecules = []
     for mol in Molecules.get(atoms):
@@ -37,8 +39,8 @@ def reload_as_molecular_crystal(
         parallel (bool): whether to use parallel processing. 
                         Only gives a speedup if there are 
                         ~100 structures per core. Fewer than that and we
-                         just run in serial
-                         Default: True
+                        just run in serial
+                        Default: True
         cheap (bool): whether to use cheap mode. This is faster, but
                         doesn't work for all lists of structures. 
                         Avoid if possible.
@@ -53,6 +55,7 @@ def reload_as_molecular_crystal(
         images_new (list): list of atoms objects
 
     '''
+
     nimages = len(images)
     if cheap:
         # we assume the connectivity is the same for all images
