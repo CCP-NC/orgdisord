@@ -98,13 +98,13 @@
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="../../cli.html">
-   Command line interface
+  <a class="reference internal" href="../../case_studies.html">
+   Case Studies
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="../../case_studies.html">
-   Case Studies
+  <a class="reference internal" href="../../cli.html">
+   Command line interface
   </a>
  </li>
  <li class="toctree-l1">
@@ -479,12 +479,14 @@ title="Source repository"
 <div class="viewcode-block" id="get_molecules"><a class="viewcode-back" href="../../_autosummary/sodorg_renewal.utils.get_molecules.html#sodorg_renewal.utils.get_molecules">[docs]</a><span class="k">def</span> <span class="nf">get_molecules</span><span class="p">(</span><span class="n">atoms</span><span class="p">:</span> <span class="n">Atoms</span><span class="p">,</span> <span class="n">use_cell_indices</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the molecules from an atoms object.</span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        atoms (Atoms): The atoms object.</span>
 <span class="sd">        use_cell_indices (bool): Whether to connect molecules across periodic boundaries.</span>
-<span class="sd">    </span>
+
 <span class="sd">    Returns:</span>
 <span class="sd">        list: A list of atoms objects, each corresponding to a molecule within Atoms.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">molecules</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">mol</span> <span class="ow">in</span> <span class="n">Molecules</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">atoms</span><span class="p">):</span>
@@ -509,8 +511,8 @@ title="Source repository"
 <span class="sd">        parallel (bool): whether to use parallel processing. </span>
 <span class="sd">                        Only gives a speedup if there are </span>
 <span class="sd">                        ~100 structures per core. Fewer than that and we</span>
-<span class="sd">                         just run in serial</span>
-<span class="sd">                         Default: True</span>
+<span class="sd">                        just run in serial</span>
+<span class="sd">                        Default: True</span>
 <span class="sd">        cheap (bool): whether to use cheap mode. This is faster, but</span>
 <span class="sd">                        doesn&#39;t work for all lists of structures. </span>
 <span class="sd">                        Avoid if possible.</span>
@@ -525,6 +527,7 @@ title="Source repository"
 <span class="sd">        images_new (list): list of atoms objects</span>
 
 <span class="sd">    &#39;&#39;&#39;</span>
+
     <span class="n">nimages</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">cheap</span><span class="p">:</span>
         <span class="c1"># we assume the connectivity is the same for all images</span>

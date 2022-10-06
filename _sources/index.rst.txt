@@ -7,8 +7,8 @@ Welcome to SODORG Renewal's documentation!
 
    readme
    installation
-   cli
    case_studies
+   cli
    usage
    modules
    contributing

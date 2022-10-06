@@ -101,13 +101,13 @@
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="../cli.html">
-   Command line interface
+  <a class="reference internal" href="../case_studies.html">
+   Case Studies
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="../case_studies.html">
-   Case Studies
+  <a class="reference internal" href="../cli.html">
+   Command line interface
   </a>
  </li>
  <li class="toctree-l1">
@@ -532,14 +532,11 @@ TODO: Test wrap in parallel mode and in cheap mode.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>images</strong> (<em>list</em>) – list of atoms objects</p></li>
-<li><p><strong>parallel</strong> (<em>bool</em>) – <p>whether to use parallel processing.
+<li><p><strong>parallel</strong> (<em>bool</em>) – whether to use parallel processing.
 Only gives a speedup if there are
-~100 structures per core. Fewer than that and we</p>
-<blockquote>
-<div><p>just run in serial
-Default: True</p>
-</div></blockquote>
-</p></li>
+~100 structures per core. Fewer than that and we
+just run in serial
+Default: True</p></li>
 <li><p><strong>cheap</strong> (<em>bool</em>) – whether to use cheap mode. This is faster, but
 doesn’t work for all lists of structures.
 Avoid if possible.
