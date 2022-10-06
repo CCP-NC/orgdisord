@@ -1,0 +1,6 @@
+sodorg\_renewal.enumerate.OrderedfromDisordered
+===============================================
+
+.. currentmodule:: sodorg_renewal.enumerate
+
+.. autoclass:: OrderedfromDisordered

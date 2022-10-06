@@ -1,0 +1,1920 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Case Studies &#8212; SODORG Renewal 0.1.0 documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Usage as library" href="usage.html" />
+    <link rel="prev" title="Command line interface" href="cli.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="index.html">
+      
+      
+      
+      <h1 class="site-logo" id="site-title">SODORG Renewal 0.1.0 documentation</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Contents:
+ </span>
+</p>
+<ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="readme.html">
+   SODORG Renewal
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="installation.html">
+   Installation
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="cli.html">
+   Command line interface
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Case Studies
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="usage.html">
+   Usage as library
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="modules.html">
+   API reference
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="_autosummary/sodorg_renewal.html">
+     sodorg_renewal
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+    <label for="toctree-checkbox-2">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="_autosummary/sodorg_renewal.cli.html">
+       sodorg_renewal.cli
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+      <label for="toctree-checkbox-3">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/sodorg_renewal.cli.get_Elatt.html">
+         sodorg_renewal.cli.get_Elatt
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/sodorg_renewal.cli.get_S.html">
+         sodorg_renewal.cli.get_S
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/sodorg_renewal.cli.get_boltzmann_weight.html">
+         sodorg_renewal.cli.get_boltzmann_weight
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/sodorg_renewal.cli.get_deltaA.html">
+         sodorg_renewal.cli.get_deltaA
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/sodorg_renewal.cli.get_partition_function.html">
+         sodorg_renewal.cli.get_partition_function
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/sodorg_renewal.cli.get_probability.html">
+         sodorg_renewal.cli.get_probability
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/sodorg_renewal.cli.get_tau.html">
+         sodorg_renewal.cli.get_tau
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="_autosummary/sodorg_renewal.disordered_structure.html">
+       sodorg_renewal.disordered_structure
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+      <label for="toctree-checkbox-4">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/sodorg_renewal.disordered_structure.DisorderAssembly.html">
+         sodorg_renewal.disordered_structure.DisorderAssembly
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/sodorg_renewal.disordered_structure.DisorderGroup.html">
+         sodorg_renewal.disordered_structure.DisorderGroup
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/sodorg_renewal.disordered_structure.DisorderedStructure.html">
+         sodorg_renewal.disordered_structure.DisorderedStructure
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="_autosummary/sodorg_renewal.enumerate.html">
+       sodorg_renewal.enumerate
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+      <label for="toctree-checkbox-5">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/sodorg_renewal.enumerate.binary_to_idx.html">
+         sodorg_renewal.enumerate.binary_to_idx
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/sodorg_renewal.enumerate.chunks.html">
+         sodorg_renewal.enumerate.chunks
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/sodorg_renewal.enumerate.select_configs.html">
+         sodorg_renewal.enumerate.select_configs
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/sodorg_renewal.enumerate.OrderedfromDisordered.html">
+         sodorg_renewal.enumerate.OrderedfromDisordered
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="_autosummary/sodorg_renewal.merge.html">
+       sodorg_renewal.merge
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+      <label for="toctree-checkbox-6">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/sodorg_renewal.merge.compare_ref_unmatched.html">
+         sodorg_renewal.merge.compare_ref_unmatched
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/sodorg_renewal.merge.coords_match.html">
+         sodorg_renewal.merge.coords_match
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/sodorg_renewal.merge.coords_match_symmops.html">
+         sodorg_renewal.merge.coords_match_symmops
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/sodorg_renewal.merge.ewald_energy.html">
+         sodorg_renewal.merge.ewald_energy
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/sodorg_renewal.merge.merge_ewald.html">
+         sodorg_renewal.merge.merge_ewald
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/sodorg_renewal.merge.merge_rematch.html">
+         sodorg_renewal.merge.merge_rematch
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/sodorg_renewal.merge.merge_structures.html">
+         sodorg_renewal.merge.merge_structures
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/sodorg_renewal.merge.merge_symm.html">
+         sodorg_renewal.merge.merge_symm
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/sodorg_renewal.merge.rematcher.html">
+         sodorg_renewal.merge.rematcher
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="_autosummary/sodorg_renewal.parse_cif_file.html">
+       sodorg_renewal.parse_cif_file
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+      <label for="toctree-checkbox-7">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/sodorg_renewal.parse_cif_file.CifParser.html">
+         sodorg_renewal.parse_cif_file.CifParser
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="_autosummary/sodorg_renewal.utils.html">
+       sodorg_renewal.utils
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/>
+      <label for="toctree-checkbox-8">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/sodorg_renewal.utils.get_molecules.html">
+         sodorg_renewal.utils.get_molecules
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/sodorg_renewal.utils.molecule_collide.html">
+         sodorg_renewal.utils.molecule_collide
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/sodorg_renewal.utils.reload_as_molecular_crystal.html">
+         sodorg_renewal.utils.reload_as_molecular_crystal
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/sodorg_renewal.utils.unwrap_molecules.html">
+         sodorg_renewal.utils.unwrap_molecules
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="_autosummary/sodorg_renewal.utils.wrap_molecule.html">
+         sodorg_renewal.utils.wrap_molecule
+        </a>
+       </li>
+      </ul>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="contributing.html">
+   Contributing
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="authors.html">
+   Credits
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="history.html">
+   History
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+<a href="https://github.com/jkshenton/sodorg_renewal"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="bottom"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="_sources/case_studies.rst.txt"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.rst</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#straightforward-case-ababub">
+   Straightforward case (ABABUB)
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#parsing-the-cif-file">
+     Parsing the CIF file
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#enumerating-ordered-structures">
+     Enumerating ordered structures
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#merging-equivalent-structures">
+     Merging equivalent structures
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#supercells-and-random-structures">
+     Supercells and random structures
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#another-straightforward-case-axurix">
+   Another straightforward case (AXURIX)
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#z-1-and-multiple-disorder-groups-erohea">
+   Z’ &lt; 1 and multiple disorder groups (EROHEA)
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id1">
+     Parsing the CIF file
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id2">
+     Enumerating ordered structures
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id3">
+     Merging equivalent structures
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#z-1-and-only-one-disorder-group-dasrau">
+   Z’&lt; 1 and only one disorder group (DASRAU)
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#multiple-assemblies-each-with-same-number-of-groups-haxpih">
+   Multiple assemblies, each with same number of groups (HAXPIH)
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#correlated-assemblies">
+     Correlated assemblies
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id4">
+     Parsing the CIF file
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#merging-the-equivalent-structures">
+     Merging the equivalent structures
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Case Studies</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#straightforward-case-ababub">
+   Straightforward case (ABABUB)
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#parsing-the-cif-file">
+     Parsing the CIF file
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#enumerating-ordered-structures">
+     Enumerating ordered structures
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#merging-equivalent-structures">
+     Merging equivalent structures
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#supercells-and-random-structures">
+     Supercells and random structures
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#another-straightforward-case-axurix">
+   Another straightforward case (AXURIX)
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#z-1-and-multiple-disorder-groups-erohea">
+   Z’ &lt; 1 and multiple disorder groups (EROHEA)
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id1">
+     Parsing the CIF file
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id2">
+     Enumerating ordered structures
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id3">
+     Merging equivalent structures
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#z-1-and-only-one-disorder-group-dasrau">
+   Z’&lt; 1 and only one disorder group (DASRAU)
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#multiple-assemblies-each-with-same-number-of-groups-haxpih">
+   Multiple assemblies, each with same number of groups (HAXPIH)
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#correlated-assemblies">
+     Correlated assemblies
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#id4">
+     Parsing the CIF file
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#merging-the-equivalent-structures">
+     Merging the equivalent structures
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section id="case-studies">
+<h1>Case Studies<a class="headerlink" href="#case-studies" title="Permalink to this headline">#</a></h1>
+<p>Here are some case studies of specific systems that have been explored using sodorg_renewal.</p>
+<p>The names refer to the CSD code/CIF file in the ./examples/ directory.</p>
+<section id="straightforward-case-ababub">
+<h2>Straightforward case (ABABUB)<a class="headerlink" href="#straightforward-case-ababub" title="Permalink to this headline">#</a></h2>
+<p>This is a relatively straightforward system consisting of one disorder assembly and two disorder groups.</p>
+<ul class="simple">
+<li><p><a class="reference download internal" download="" href="_downloads/581c9ae798db8311e0e869a25f82eb04/ABABUB.cif"><code class="xref download docutils literal notranslate"><span class="pre">ABABUB</span> <span class="pre">CIF</span> <span class="pre">file</span></code></a></p></li>
+</ul>
+<p>When we run the code with (mostly) default options:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sodorg_renewal</span> <span class="nb">enumerate</span> <span class="n">ABABUB</span><span class="o">.</span><span class="n">cif</span> <span class="o">--</span><span class="n">prefix</span> <span class="n">ababub</span>
+</pre></div>
+</div>
+<section id="parsing-the-cif-file">
+<h3>Parsing the CIF file<a class="headerlink" href="#parsing-the-cif-file" title="Permalink to this headline">#</a></h3>
+<p>We get the following output:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">Parsing disorder in cif file: ABABUB.cif</span>
+<span class="go">Warning: Site 0  (O1)   in assembly A has no disorder group. This site will be considered *ordered*.</span>
+<span class="go">Warning: Site 1  (O2)   in assembly A has no disorder group. This site will be considered *ordered*.</span>
+<span class="go">Warning: Site 2  (N1)   in assembly A has no disorder group. This site will be considered *ordered*.</span>
+<span class="go">Warning: Site 29 (C6)   in assembly A has no disorder group. This site will be considered *ordered*.</span>
+<span class="go">Warning: Site 32 (H8A)  in assembly A has no disorder group. This site will be considered *ordered*.</span>
+<span class="go">Warning: Site 34 (C9)   in assembly A has no disorder group. This site will be considered *ordered*.</span>
+<span class="go">Warning: Site 38 (H10A) in assembly A has no disorder group. This site will be considered *ordered*.</span>
+<span class="go">Warning: Site 40 (C11)  in assembly A has no disorder group. This site will be considered *ordered*.</span>
+
+<span class="go">Disordered structure:</span>
+<span class="go">Disorder assembly: A</span>
+<span class="go">Contains the following groups:</span>
+<span class="go">Disorder group: 1 contains 4 symm. ops. and 12 sites:</span>
+<span class="go">        label:       C2, species:    C, occupancy:  0.59</span>
+<span class="go">        label:      H2A, species:    H, occupancy:  0.59</span>
+<span class="go">        label:      H2B, species:    H, occupancy:  0.59</span>
+<span class="go">        label:       C3, species:    C, occupancy:  0.59</span>
+<span class="go">        label:      H3A, species:    H, occupancy:  0.59</span>
+<span class="go">        label:      H3B, species:    H, occupancy:  0.59</span>
+<span class="go">        label:       C4, species:    C, occupancy:  0.59</span>
+<span class="go">        label:      H4A, species:    H, occupancy:  0.59</span>
+<span class="go">        label:      H4B, species:    H, occupancy:  0.59</span>
+<span class="go">        label:       C5, species:    C, occupancy:  0.59</span>
+<span class="go">        label:      H5A, species:    H, occupancy:  0.59</span>
+<span class="go">        label:      H5B, species:    H, occupancy:  0.59</span>
+
+<span class="go">Disorder group: 2 contains 4 symm. ops. and 12 sites:</span>
+<span class="go">        label:      C2&#39;, species:    C, occupancy:  0.41</span>
+<span class="go">        label:     H2&#39;1, species:    H, occupancy:  0.41</span>
+<span class="go">        label:     H2&#39;2, species:    H, occupancy:  0.41</span>
+<span class="go">        label:      C3&#39;, species:    C, occupancy:  0.41</span>
+<span class="go">        label:     H3&#39;1, species:    H, occupancy:  0.41</span>
+<span class="go">        label:     H3&#39;2, species:    H, occupancy:  0.41</span>
+<span class="go">        label:      C4&#39;, species:    C, occupancy:  0.41</span>
+<span class="go">        label:     H4&#39;1, species:    H, occupancy:  0.41</span>
+<span class="go">        label:     H4&#39;2, species:    H, occupancy:  0.41</span>
+<span class="go">        label:      C5&#39;, species:    C, occupancy:  0.41</span>
+<span class="go">        label:     H5&#39;1, species:    H, occupancy:  0.41</span>
+<span class="go">        label:     H5&#39;2, species:    H, occupancy:  0.41</span>
+</pre></div>
+</div>
+<p>As we can see, the code warns about certain sites that are part of disorder assembly A yet have no disorder group (they also have an occupancy of 1).
+The sites are therefore considered ordered by the code.</p>
+</section>
+<section id="enumerating-ordered-structures">
+<h3>Enumerating ordered structures<a class="headerlink" href="#enumerating-ordered-structures" title="Permalink to this headline">#</a></h3>
+<p>The code correctly generates a total of 16 (2<sup>4</sup> ) ordered structures and outputs the following table:</p>
+<table class="table" id="id5">
+<caption><span class="caption-text">ABABUB enumerated configurations</span><a class="headerlink" href="#id5" title="Permalink to this table">#</a></caption>
+<colgroup>
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Unique index</p></th>
+<th class="head"><p>Multiplicity</p></th>
+<th class="head"><p>Configuration</p></th>
+<th class="head"><p>Ratio</p></th>
+<th class="head"><p>Supercell</p></th>
+<th class="head"><p>Free Energy / kJ/mol</p></th>
+<th class="head"><p>Enthalpy per atom / kJ/mol</p></th>
+<th class="head"><p>Entropy per atom / kJ/mol</p></th>
+<th class="head"><p>Volume/A^3</p></th>
+<th class="head"><p>N atoms</p></th>
+<th class="head"><p>Density/g/mol^3</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>1e+00</p></td>
+<td><p>[0 0 0 0]</p></td>
+<td><p>[4 0]</p></td>
+<td><p>1x1x1</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>1031.314680509039</p></td>
+<td><p>120</p></td>
+<td><p>1.3219525259353389</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>1.0</p></td>
+<td><p>[0 0 0 1]</p></td>
+<td><p>[3 1]</p></td>
+<td><p>1x1x1</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>1031.314680509039</p></td>
+<td><p>120</p></td>
+<td><p>1.3219525259353389</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>1.0</p></td>
+<td><p>[0 0 1 0]</p></td>
+<td><p>[3 1]</p></td>
+<td><p>1x1x1</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>1031.314680509039</p></td>
+<td><p>120</p></td>
+<td><p>1.3219525259353389</p></td>
+</tr>
+<tr class="row-odd"><td><p>3</p></td>
+<td><p>1.0</p></td>
+<td><p>[0 0 1 1]</p></td>
+<td><p>[2 2]</p></td>
+<td><p>1x1x1</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>1031.314680509039</p></td>
+<td><p>120</p></td>
+<td><p>1.3219525259353389</p></td>
+</tr>
+<tr class="row-even"><td><p>4</p></td>
+<td><p>1.0</p></td>
+<td><p>[0 1 0 0]</p></td>
+<td><p>[3 1]</p></td>
+<td><p>1x1x1</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>1031.314680509039</p></td>
+<td><p>120</p></td>
+<td><p>1.3219525259353389</p></td>
+</tr>
+<tr class="row-odd"><td><p>5</p></td>
+<td><p>1.0</p></td>
+<td><p>[0 1 0 1]</p></td>
+<td><p>[2 2]</p></td>
+<td><p>1x1x1</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>1031.314680509039</p></td>
+<td><p>120</p></td>
+<td><p>1.3219525259353389</p></td>
+</tr>
+<tr class="row-even"><td><p>6</p></td>
+<td><p>1.0</p></td>
+<td><p>[0 1 1 0]</p></td>
+<td><p>[2 2]</p></td>
+<td><p>1x1x1</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>1031.314680509039</p></td>
+<td><p>120</p></td>
+<td><p>1.3219525259353389</p></td>
+</tr>
+<tr class="row-odd"><td><p>7</p></td>
+<td><p>1.0</p></td>
+<td><p>[0 1 1 1]</p></td>
+<td><p>[1 3]</p></td>
+<td><p>1x1x1</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>1031.314680509039</p></td>
+<td><p>120</p></td>
+<td><p>1.3219525259353389</p></td>
+</tr>
+<tr class="row-even"><td><p>8</p></td>
+<td><p>1.0</p></td>
+<td><p>[1 0 0 0]</p></td>
+<td><p>[3 1]</p></td>
+<td><p>1x1x1</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>1031.314680509039</p></td>
+<td><p>120</p></td>
+<td><p>1.3219525259353389</p></td>
+</tr>
+<tr class="row-odd"><td><p>9</p></td>
+<td><p>1.0</p></td>
+<td><p>[1 0 0 1]</p></td>
+<td><p>[2 2]</p></td>
+<td><p>1x1x1</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>1031.314680509039</p></td>
+<td><p>120</p></td>
+<td><p>1.3219525259353389</p></td>
+</tr>
+<tr class="row-even"><td><p>10</p></td>
+<td><p>1.0</p></td>
+<td><p>[1 0 1 0]</p></td>
+<td><p>[2 2]</p></td>
+<td><p>1x1x1</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>1031.314680509039</p></td>
+<td><p>120</p></td>
+<td><p>1.3219525259353389</p></td>
+</tr>
+<tr class="row-odd"><td><p>11</p></td>
+<td><p>1.0</p></td>
+<td><p>[1 0 1 1]</p></td>
+<td><p>[1 3]</p></td>
+<td><p>1x1x1</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>1031.314680509039</p></td>
+<td><p>120</p></td>
+<td><p>1.3219525259353389</p></td>
+</tr>
+<tr class="row-even"><td><p>12</p></td>
+<td><p>1.0</p></td>
+<td><p>[1 1 0 0]</p></td>
+<td><p>[2 2]</p></td>
+<td><p>1x1x1</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>1031.314680509039</p></td>
+<td><p>120</p></td>
+<td><p>1.3219525259353389</p></td>
+</tr>
+<tr class="row-odd"><td><p>13</p></td>
+<td><p>1.0</p></td>
+<td><p>[1 1 0 1]</p></td>
+<td><p>[1 3]</p></td>
+<td><p>1x1x1</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>1031.314680509039</p></td>
+<td><p>120</p></td>
+<td><p>1.3219525259353389</p></td>
+</tr>
+<tr class="row-even"><td><p>14</p></td>
+<td><p>1.0</p></td>
+<td><p>[1 1 1 0]</p></td>
+<td><p>[1 3]</p></td>
+<td><p>1x1x1</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>1031.314680509039</p></td>
+<td><p>120</p></td>
+<td><p>1.3219525259353389</p></td>
+</tr>
+<tr class="row-odd"><td><p>15</p></td>
+<td><p>1.0</p></td>
+<td><p>[1 1 1 1]</p></td>
+<td><p>[0 4]</p></td>
+<td><p>1x1x1</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>1031.314680509039</p></td>
+<td><p>120</p></td>
+<td><p>1.3219525259353389</p></td>
+</tr>
+</tbody>
+</table>
+<p>Where columns for the (free) energies have been added in anticipation of next steps.
+Once these energies have been and added to the table, the code can then be used to analyse the results.
+See the <a class="reference internal" href="cli.html"><span class="doc">command line interface documentation</span></a> for the analysis options.</p>
+<p>The code will also make a directory (&lt;prefix&gt;-results) in which the structure files are written.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>By default the code will output the structures in the <a class="reference external" href="https://github.com/libAtoms/extxyz">extended .xyz format</a>.
+This has the advantage of being able to store artibrary additional information site-specific and structure-specific information.
+For example, tags specfying the disorder group/assembly and the original CIF labels are preserved.</p>
+<p>For CIF and CASTEP .cell files, the code will also preserve the CIF-labels, but these may be harder to post-process using <a class="reference external" href="https://wiki.fysik.dtu.dk/ase/">ASE</a> should you wish to do so.</p>
+<p>You can specify the output format using the <code class="docutils literal notranslate"><span class="pre">-f</span></code> option. See the <a class="reference internal" href="cli.html"><span class="doc">command line interface documentation</span></a> for more details.</p>
+</div>
+</section>
+<section id="merging-equivalent-structures">
+<h3>Merging equivalent structures<a class="headerlink" href="#merging-equivalent-structures" title="Permalink to this headline">#</a></h3>
+<p>If we instead re-run the code with the <code class="docutils literal notranslate"><span class="pre">-m</span></code> flag, the code will merge symmetry-equivalent structures:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">Enumerating ordered configurations.</span>
+<span class="go">Generating 16 out of the 16 possible configurations in the (1, 1, 1) supercell:</span>
+<span class="go">100%|██████████████████████████████| 16/16 [00:00&lt;00:00, 3912.83it/s]</span>
+<span class="go">Merging structures...</span>
+<span class="go">Checking symmetry-equivalence: 100%|█| 16/16 [00:00&lt;00:00, 1967.25it/</span>
+<span class="go">Merging took     0.01 s and found 7 groups</span>
+<span class="go">Spacegroup: P2_1/c (14)          multiplicity: 1</span>
+<span class="go">Spacegroup: P1 (1)               multiplicity: 4</span>
+<span class="go">Spacegroup: P2_1 (4)             multiplicity: 2</span>
+<span class="go">Spacegroup: P-1 (2)              multiplicity: 2</span>
+<span class="go">Spacegroup: Pc (7)               multiplicity: 2</span>
+<span class="go">Spacegroup: P1 (1)               multiplicity: 4</span>
+<span class="go">Spacegroup: P2_1/c (14)          multiplicity: 1</span>
+</pre></div>
+</div>
+<p>and the corresponding table is:</p>
+<table class="table" id="id6">
+<caption><span class="caption-text">ABABUB enumerated configurations (merged)</span><a class="headerlink" href="#id6" title="Permalink to this table">#</a></caption>
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Unique index</p></th>
+<th class="head"><p>Multiplicity</p></th>
+<th class="head"><p>Free Energy / kJ/mol</p></th>
+<th class="head"><p>Enthalpy per atom / kJ/mol</p></th>
+<th class="head"><p>Entropy per atom / kJ/mol</p></th>
+<th class="head"><p>Volume/A^3</p></th>
+<th class="head"><p>N atoms</p></th>
+<th class="head"><p>Density/g/mol^3</p></th>
+<th class="head"><p>Spacegroup</p></th>
+<th class="head"><p>Group indices</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>1</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>1.031314680509039e+03</p></td>
+<td><p>120.0</p></td>
+<td><p>1.3219525259353389</p></td>
+<td><p>P2_1/c (14)</p></td>
+<td><p>[0]</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>4</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>1031.314680509039</p></td>
+<td><p>120.0</p></td>
+<td><p>1.3219525259353389</p></td>
+<td><p>P1 (1)</p></td>
+<td><p>[1, 2, 4, 8]</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>2</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>1031.314680509039</p></td>
+<td><p>120.0</p></td>
+<td><p>1.3219525259353389</p></td>
+<td><p>P2_1 (4)</p></td>
+<td><p>[3, 12]</p></td>
+</tr>
+<tr class="row-odd"><td><p>3</p></td>
+<td><p>2</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>1031.314680509039</p></td>
+<td><p>120.0</p></td>
+<td><p>1.3219525259353389</p></td>
+<td><p>P-1 (2)</p></td>
+<td><p>[5, 10]</p></td>
+</tr>
+<tr class="row-even"><td><p>4</p></td>
+<td><p>2</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>1031.314680509039</p></td>
+<td><p>120.0</p></td>
+<td><p>1.3219525259353389</p></td>
+<td><p>Pc (7)</p></td>
+<td><p>[6, 9]</p></td>
+</tr>
+<tr class="row-odd"><td><p>5</p></td>
+<td><p>4</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>1031.314680509039</p></td>
+<td><p>120.0</p></td>
+<td><p>1.3219525259353389</p></td>
+<td><p>P1 (1)</p></td>
+<td><p>[7, 11, 13, 14]</p></td>
+</tr>
+<tr class="row-even"><td><p>6</p></td>
+<td><p>1</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>1031.314680509039</p></td>
+<td><p>120.0</p></td>
+<td><p>1.3219525259353389</p></td>
+<td><p>P2_1/c (14)</p></td>
+<td><p>[15]</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="supercells-and-random-structures">
+<h3>Supercells and random structures<a class="headerlink" href="#supercells-and-random-structures" title="Permalink to this headline">#</a></h3>
+<p>We would typically want to then generate ordered structures for a larger supercell.
+Because of the combinatorial explosion, caution is advised when doing this and a conservative number of maximum structures is generated: 512 by default.
+To generate more than this, the <code class="docutils literal notranslate"><span class="pre">-N</span></code> flag can be used. For example, to generate 1024 structures:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">sodorg_renewal enumerate ABABUB.cif --prefix ababub -N 1024 --supercell 2 2 1</span>
+</pre></div>
+</div>
+<p>This will enumerate, in order, all possible configurations in a 2x2x1 supercell up to a maximum of 1024 structures.</p>
+<p>Sometimes, however, we may want to generate a sample of random configurations for a given supercell size.
+This can be done with the <code class="docutils literal notranslate"><span class="pre">-r</span></code> flag:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">sodorg_renewal enumerate ABABUB.cif --prefix ababub -r 1024 --supercell 2 2 1</span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>To visualise the generated structures, you can add the <code class="docutils literal notranslate"><span class="pre">--view</span></code> flag.
+This will open the structures in <a class="reference external" href="https://wiki.fysik.dtu.dk/ase/ase/gui/gui.html">ASE’s GUI viewer</a>.</p>
+<p>The ordered sites are tagged with 0 and the disordered sites are tagged according to the disorder group/assembly.
+It’s useful to color-by tag to see the disorder groups/assembly in the GUI viewer.
+You can do this by clicking on <code class="docutils literal notranslate"><span class="pre">View-&gt;Colors</span></code> button and selecting <code class="docutils literal notranslate"><span class="pre">By</span> <span class="pre">tag</span></code>.
+You can then choose the range of tags you’re interested in and also change the color map (cmap).</p>
+</div>
+</section>
+</section>
+<section id="another-straightforward-case-axurix">
+<h2>Another straightforward case (AXURIX)<a class="headerlink" href="#another-straightforward-case-axurix" title="Permalink to this headline">#</a></h2>
+<p>This is another relatively straightforward system consisting of one disorder assembly and two disorder groups.
+The main difference is that here Z=8 and so the code generates 256 (2<sup>8</sup> ) ordered structures.
+This takes significantly longer than the previous example, but the code still completes in a reasonable time.
+The main additional cost is in reloading this configurations as molecular crystals (i.e. making sure molecular units are connected together in a reasonable way.).
+You can disable this check using the <code class="docutils literal notranslate"><span class="pre">--not_molecular_crystal</span></code> flag, though the results of this are not well-tested!</p>
+<ul class="simple">
+<li><p><a class="reference download internal" download="" href="_downloads/cbb2bcffa9f19e2a486c27bfc161e05c/AXURIX.cif"><code class="xref download docutils literal notranslate"><span class="pre">AXURIX</span> <span class="pre">CIF</span> <span class="pre">file</span></code></a></p></li>
+</ul>
+<dl class="simple">
+<dt>We can run the code and merge the structures as before: ::</dt><dd><p>sodorg_renewal enumerate AXURIX.cif –prefix axurix_merged -m</p>
+</dd>
+</dl>
+<p>The CIF file is parsed as:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">Parsing disorder in cif file: AXURIX.cif</span>
+<span class="go">Disordered structure:</span>
+<span class="go">Disorder assembly: A</span>
+<span class="go">Contains the following groups:</span>
+<span class="go">Disorder group: 1 contains 8 symm. ops. and 12 sites:</span>
+<span class="go">        label:     C28A, species:    C, occupancy:  0.75</span>
+<span class="go">        label:     H28A, species:    H, occupancy:  0.75</span>
+<span class="go">        label:     H28B, species:    H, occupancy:  0.75</span>
+<span class="go">        label:     H28C, species:    H, occupancy:  0.75</span>
+<span class="go">        label:     C29A, species:    C, occupancy:  0.75</span>
+<span class="go">        label:     H29A, species:    H, occupancy:  0.75</span>
+<span class="go">        label:     H29B, species:    H, occupancy:  0.75</span>
+<span class="go">        label:     H29C, species:    H, occupancy:  0.75</span>
+<span class="go">        label:     C30A, species:    C, occupancy:  0.75</span>
+<span class="go">        label:     H30A, species:    H, occupancy:  0.75</span>
+<span class="go">        label:     H30B, species:    H, occupancy:  0.75</span>
+<span class="go">        label:     H30C, species:    H, occupancy:  0.75</span>
+
+<span class="go">Disorder group: 2 contains 8 symm. ops. and 12 sites:</span>
+<span class="go">        label:     C28B, species:    C, occupancy:  0.25</span>
+<span class="go">        label:     H28D, species:    H, occupancy:  0.25</span>
+<span class="go">        label:     H28E, species:    H, occupancy:  0.25</span>
+<span class="go">        label:     H28F, species:    H, occupancy:  0.25</span>
+<span class="go">        label:     C29B, species:    C, occupancy:  0.25</span>
+<span class="go">        label:     H29D, species:    H, occupancy:  0.25</span>
+<span class="go">        label:     H29E, species:    H, occupancy:  0.25</span>
+<span class="go">        label:     H29F, species:    H, occupancy:  0.25</span>
+<span class="go">        label:     C30B, species:    C, occupancy:  0.25</span>
+<span class="go">        label:     H30D, species:    H, occupancy:  0.25</span>
+<span class="go">        label:     H30E, species:    H, occupancy:  0.25</span>
+<span class="go">        label:     H30F, species:    H, occupancy:  0.25</span>
+</pre></div>
+</div>
+<p>The 256 structures are generated and merged as follows:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">Enumerating ordered configurations.</span>
+<span class="go">Generating 256 out of the 256 possible configurations in the (1, 1, 1) supercell:</span>
+<span class="go">100%|████████████████████████████| 256/256 [00:00&lt;00:00, 1939.00it/s]</span>
+<span class="go">Merging structures...</span>
+<span class="go">Checking symmetry-equivalence: 100%|█| 256/256 [00:04&lt;00:00, 57.51it/</span>
+<span class="go">Merging took     4.48 s and found 46 groups</span>
+<span class="go">Spacegroup: Pbca (61)            multiplicity: 1</span>
+<span class="go">Spacegroup: P1 (1)               multiplicity: 8</span>
+<span class="go">Spacegroup: P2_1 (4)             multiplicity: 4</span>
+<span class="go">Spacegroup: P2_1 (4)             multiplicity: 4</span>
+<span class="go">Spacegroup: P2_1 (4)             multiplicity: 4</span>
+<span class="go">Spacegroup: P1 (1)               multiplicity: 8</span>
+<span class="go">Spacegroup: P2_12_12_1 (19)      multiplicity: 2</span>
+<span class="go">Spacegroup: P-1 (2)              multiplicity: 4</span>
+<span class="go">Spacegroup: Pc (7)               multiplicity: 4</span>
+<span class="go">Spacegroup: P1 (1)               multiplicity: 8</span>
+<span class="go">Spacegroup: Pc (7)               multiplicity: 4</span>
+<span class="go">Spacegroup: P1 (1)               multiplicity: 8</span>
+<span class="go">Spacegroup: P1 (1)               multiplicity: 8</span>
+<span class="go">Spacegroup: P1 (1)               multiplicity: 8</span>
+<span class="go">Spacegroup: Pc (7)               multiplicity: 4</span>
+<span class="go">Spacegroup: P1 (1)               multiplicity: 8</span>
+<span class="go">Spacegroup: P1 (1)               multiplicity: 8</span>
+<span class="go">Spacegroup: P1 (1)               multiplicity: 8</span>
+<span class="go">Spacegroup: P1 (1)               multiplicity: 8</span>
+<span class="go">Spacegroup: P1 (1)               multiplicity: 8</span>
+<span class="go">Spacegroup: P1 (1)               multiplicity: 8</span>
+<span class="go">Spacegroup: P1 (1)               multiplicity: 8</span>
+<span class="go">Spacegroup: P2_1/c (14)          multiplicity: 2</span>
+<span class="go">Spacegroup: P1 (1)               multiplicity: 8</span>
+<span class="go">Spacegroup: P1 (1)               multiplicity: 8</span>
+<span class="go">Spacegroup: P1 (1)               multiplicity: 8</span>
+<span class="go">Spacegroup: Pca2_1 (29)          multiplicity: 2</span>
+<span class="go">Spacegroup: P1 (1)               multiplicity: 8</span>
+<span class="go">Spacegroup: P2_1 (4)             multiplicity: 4</span>
+<span class="go">Spacegroup: P2_1/c (14)          multiplicity: 2</span>
+<span class="go">Spacegroup: P1 (1)               multiplicity: 8</span>
+<span class="go">Spacegroup: P1 (1)               multiplicity: 8</span>
+<span class="go">Spacegroup: Pca2_1 (29)          multiplicity: 2</span>
+<span class="go">Spacegroup: P1 (1)               multiplicity: 8</span>
+<span class="go">Spacegroup: P2_1 (4)             multiplicity: 4</span>
+<span class="go">Spacegroup: P2_1/c (14)          multiplicity: 2</span>
+<span class="go">Spacegroup: P1 (1)               multiplicity: 8</span>
+<span class="go">Spacegroup: Pca2_1 (29)          multiplicity: 2</span>
+<span class="go">Spacegroup: P1 (1)               multiplicity: 8</span>
+<span class="go">Spacegroup: P2_1 (4)             multiplicity: 4</span>
+<span class="go">Spacegroup: P-1 (2)              multiplicity: 4</span>
+<span class="go">Spacegroup: Pc (7)               multiplicity: 4</span>
+<span class="go">Spacegroup: Pc (7)               multiplicity: 4</span>
+<span class="go">Spacegroup: Pc (7)               multiplicity: 4</span>
+<span class="go">Spacegroup: P1 (1)               multiplicity: 8</span>
+<span class="go">Spacegroup: Pbca (61)            multiplicity: 1</span>
+</pre></div>
+</div>
+<p>These timings don’t include the (in this case significant) time to ‘reload as molecular crystal’. On my machine it took about 1 minute!</p>
+</section>
+<section id="z-1-and-multiple-disorder-groups-erohea">
+<h2>Z’ &lt; 1 and multiple disorder groups (EROHEA)<a class="headerlink" href="#z-1-and-multiple-disorder-groups-erohea" title="Permalink to this headline">#</a></h2>
+<p>This system contains a caffeine molecule that is disordered at a special symmetry site.
+i.e. it is “disordered by symmetry” where the structure is described by a small unit cell in which the caffeine is disordered over a symmetry axis.
+Unpicking this into two separate orientations is a difficult challenge for the current version of sodorg_renewal.
+It currently requires some manual intervention on the CIF file as described below.</p>
+<p>This system has one disorder assembly (A) with two groups (“-1” and “-2”).
+The “-” sign in the group label indicates that these sites are at special symmetry positions.
+Indeed, although there are 8 symmetry operations, Z = 4.
+To generate all of the ordered structures, the code must therefore apply a subset of symmetry operations to
+each group, with the configuration (e.g. (0,0,1,0)) indicating which subgroup of symmetry operations to apply.</p>
+<p>Note that the original EROHEA CIF file had to be modified by manually moving the O10 site to another symmetry equivalent position in the CIF file.</p>
+<div class="highlight-diff notranslate"><div class="highlight"><pre><span></span><span class="gd">-O10 O 0.3754(5) 0.4007(5) 0.6805(5) 0.0223(11)</span><span class="w"></span>
+<span class="gi">+O10 O 0.62460(5) 0.4007(5) 0.81950(5) 0.0223(11)</span><span class="w"></span>
+</pre></div>
+</div>
+<p>In addition, the C12, H12A, H12B and H12C sites were manually moved to disorder group -2.</p>
+<p>In the future, we might be able to deal with original CIF file without these manual interventions.</p>
+<ul class="simple">
+<li><p><a class="reference download internal" download="" href="_downloads/8ea5726d23061f4eafc7b9c247ebfccb/EROHEA_modified.cif"><code class="xref download docutils literal notranslate"><span class="pre">(modified)</span> <span class="pre">EROHEA</span> <span class="pre">CIF</span> <span class="pre">file</span></code></a></p></li>
+</ul>
+<p>When we run the code with (mostly) default options:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sodorg_renewal</span> <span class="nb">enumerate</span> <span class="n">EROHEA_modified</span><span class="o">.</span><span class="n">cif</span> <span class="o">--</span><span class="n">prefix</span> <span class="n">erohea</span>
+</pre></div>
+</div>
+<p>We get the following output:</p>
+<section id="id1">
+<h3>Parsing the CIF file<a class="headerlink" href="#id1" title="Permalink to this headline">#</a></h3>
+<div class="literal-block-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">parse_cif output for EROHEA</span><a class="headerlink" href="#id7" title="Permalink to this code">#</a></div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">Parsing disorder in cif file: EROHEA_modified.cif</span>
+<span class="go">Warning: Site 21 (C9) in assembly A has no disorder group. This site will be considered *ordered*.</span>
+<span class="go">Double check the CIF file.</span>
+<span class="go">Disordered structure:</span>
+<span class="go">Disorder assembly: A</span>
+<span class="go">Contains the following groups:</span>
+<span class="go">Disorder group: -2 has special disorder symmetry and contains [4, 4] symm. ops. and 5 sites:</span>
+<span class="go">        label:      O10, species:    O, occupancy:  0.50</span>
+<span class="go">        label:      C12, species:    C, occupancy:  0.50</span>
+<span class="go">        label:     H12A, species:    H, occupancy:  0.50</span>
+<span class="go">        label:     H12B, species:    H, occupancy:  0.50</span>
+<span class="go">        label:     H12C, species:    H, occupancy:  0.50</span>
+
+<span class="go">Disorder group: -1 has special disorder symmetry and contains [4, 4] symm. ops. and 4 sites:</span>
+<span class="go">        label:       N2, species:    N, occupancy:  0.50</span>
+<span class="go">        label:       N3, species:    N, occupancy:  0.50</span>
+<span class="go">        label:      C11, species:    C, occupancy:  0.50</span>
+<span class="go">        label:      H11, species:    H, occupancy:  0.50</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="id2">
+<h3>Enumerating ordered structures<a class="headerlink" href="#id2" title="Permalink to this headline">#</a></h3>
+<p>The code correctly generates a total of 16 (2<sup>4</sup> ) ordered structures and outputs the following table:</p>
+<table class="table" id="id8">
+<caption><span class="caption-text">EROHEA enumerated configurations</span><a class="headerlink" href="#id8" title="Permalink to this table">#</a></caption>
+<colgroup>
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Unique index</p></th>
+<th class="head"><p>Multiplicity</p></th>
+<th class="head"><p>Configuration</p></th>
+<th class="head"><p>Ratio</p></th>
+<th class="head"><p>Supercell</p></th>
+<th class="head"><p>Free Energy / kJ/mol</p></th>
+<th class="head"><p>Enthalpy per atom / kJ/mol</p></th>
+<th class="head"><p>Entropy per atom / kJ/mol</p></th>
+<th class="head"><p>Volume/A^3</p></th>
+<th class="head"><p>N atoms</p></th>
+<th class="head"><p>Density/g/mol^3</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>1e+00</p></td>
+<td><p>[0 0 0 0]</p></td>
+<td><p>[4 0]</p></td>
+<td><p>1x1x1</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>2654.1751062921485</p></td>
+<td><p>288</p></td>
+<td><p>1.5377303803202584</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>1.0</p></td>
+<td><p>[0 0 0 1]</p></td>
+<td><p>[3 1]</p></td>
+<td><p>1x1x1</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>2654.1751062921485</p></td>
+<td><p>288</p></td>
+<td><p>1.5377303803202584</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>1.0</p></td>
+<td><p>[0 0 1 0]</p></td>
+<td><p>[3 1]</p></td>
+<td><p>1x1x1</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>2654.1751062921485</p></td>
+<td><p>288</p></td>
+<td><p>1.5377303803202589</p></td>
+</tr>
+<tr class="row-odd"><td><p>3</p></td>
+<td><p>1.0</p></td>
+<td><p>[0 0 1 1]</p></td>
+<td><p>[2 2]</p></td>
+<td><p>1x1x1</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>2654.1751062921485</p></td>
+<td><p>288</p></td>
+<td><p>1.5377303803202589</p></td>
+</tr>
+<tr class="row-even"><td><p>4</p></td>
+<td><p>1.0</p></td>
+<td><p>[0 1 0 0]</p></td>
+<td><p>[3 1]</p></td>
+<td><p>1x1x1</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>2654.1751062921485</p></td>
+<td><p>288</p></td>
+<td><p>1.5377303803202584</p></td>
+</tr>
+<tr class="row-odd"><td><p>5</p></td>
+<td><p>1.0</p></td>
+<td><p>[0 1 0 1]</p></td>
+<td><p>[2 2]</p></td>
+<td><p>1x1x1</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>2654.1751062921485</p></td>
+<td><p>288</p></td>
+<td><p>1.5377303803202584</p></td>
+</tr>
+<tr class="row-even"><td><p>6</p></td>
+<td><p>1.0</p></td>
+<td><p>[0 1 1 0]</p></td>
+<td><p>[2 2]</p></td>
+<td><p>1x1x1</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>2654.1751062921485</p></td>
+<td><p>288</p></td>
+<td><p>1.5377303803202589</p></td>
+</tr>
+<tr class="row-odd"><td><p>7</p></td>
+<td><p>1.0</p></td>
+<td><p>[0 1 1 1]</p></td>
+<td><p>[1 3]</p></td>
+<td><p>1x1x1</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>2654.1751062921485</p></td>
+<td><p>288</p></td>
+<td><p>1.5377303803202589</p></td>
+</tr>
+<tr class="row-even"><td><p>8</p></td>
+<td><p>1.0</p></td>
+<td><p>[1 0 0 0]</p></td>
+<td><p>[3 1]</p></td>
+<td><p>1x1x1</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>2654.1751062921485</p></td>
+<td><p>288</p></td>
+<td><p>1.5377303803202584</p></td>
+</tr>
+<tr class="row-odd"><td><p>9</p></td>
+<td><p>1.0</p></td>
+<td><p>[1 0 0 1]</p></td>
+<td><p>[2 2]</p></td>
+<td><p>1x1x1</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>2654.1751062921485</p></td>
+<td><p>288</p></td>
+<td><p>1.5377303803202584</p></td>
+</tr>
+<tr class="row-even"><td><p>10</p></td>
+<td><p>1.0</p></td>
+<td><p>[1 0 1 0]</p></td>
+<td><p>[2 2]</p></td>
+<td><p>1x1x1</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>2654.1751062921485</p></td>
+<td><p>288</p></td>
+<td><p>1.5377303803202589</p></td>
+</tr>
+<tr class="row-odd"><td><p>11</p></td>
+<td><p>1.0</p></td>
+<td><p>[1 0 1 1]</p></td>
+<td><p>[1 3]</p></td>
+<td><p>1x1x1</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>2654.1751062921485</p></td>
+<td><p>288</p></td>
+<td><p>1.5377303803202589</p></td>
+</tr>
+<tr class="row-even"><td><p>12</p></td>
+<td><p>1.0</p></td>
+<td><p>[1 1 0 0]</p></td>
+<td><p>[2 2]</p></td>
+<td><p>1x1x1</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>2654.1751062921485</p></td>
+<td><p>288</p></td>
+<td><p>1.5377303803202584</p></td>
+</tr>
+<tr class="row-odd"><td><p>13</p></td>
+<td><p>1.0</p></td>
+<td><p>[1 1 0 1]</p></td>
+<td><p>[1 3]</p></td>
+<td><p>1x1x1</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>2654.1751062921485</p></td>
+<td><p>288</p></td>
+<td><p>1.5377303803202584</p></td>
+</tr>
+<tr class="row-even"><td><p>14</p></td>
+<td><p>1.0</p></td>
+<td><p>[1 1 1 0]</p></td>
+<td><p>[1 3]</p></td>
+<td><p>1x1x1</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>2654.1751062921485</p></td>
+<td><p>288</p></td>
+<td><p>1.5377303803202589</p></td>
+</tr>
+<tr class="row-odd"><td><p>15</p></td>
+<td><p>1.0</p></td>
+<td><p>[1 1 1 1]</p></td>
+<td><p>[0 4]</p></td>
+<td><p>1x1x1</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>2654.1751062921485</p></td>
+<td><p>288</p></td>
+<td><p>1.5377303803202589</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id3">
+<h3>Merging equivalent structures<a class="headerlink" href="#id3" title="Permalink to this headline">#</a></h3>
+<p>If we instead re-run the code with the <code class="docutils literal notranslate"><span class="pre">-m</span></code> flag, the code will merge symmetry-equivalent structures:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">Enumerating ordered configurations.</span>
+<span class="go">Generating 16 out of the 16 possible configurations in the (1, 1, 1) supercell:</span>
+<span class="go">100%|██████████████████████████████| 16/16 [00:00&lt;00:00, 3958.99it/s]</span>
+<span class="go">Merging structures...</span>
+<span class="go">Checking symmetry-equivalence: 100%|█| 16/16 [00:00&lt;00:00, 2059.06it/</span>
+<span class="go">Merging took     0.01 s and found 5 groups</span>
+<span class="go">Spacegroup: P-1 (2)              multiplicity: 2</span>
+<span class="go">Spacegroup: P1 (1)               multiplicity: 8</span>
+<span class="go">Spacegroup: Cc (9)               multiplicity: 2</span>
+<span class="go">Spacegroup: P2_1/c (14)          multiplicity: 2</span>
+<span class="go">Spacegroup: P2_1/c (14)          multiplicity: 2</span>
+</pre></div>
+</div>
+<p>and the corresponding table is:</p>
+<table class="table" id="id9">
+<caption><span class="caption-text">EROHEA enumerated configurations (merged)</span><a class="headerlink" href="#id9" title="Permalink to this table">#</a></caption>
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+<col style="width: 10%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Unique index</p></th>
+<th class="head"><p>Multiplicity</p></th>
+<th class="head"><p>Free Energy / kJ/mol</p></th>
+<th class="head"><p>Enthalpy per atom / kJ/mol</p></th>
+<th class="head"><p>Entropy per atom / kJ/mol</p></th>
+<th class="head"><p>Volume/A^3</p></th>
+<th class="head"><p>N atoms</p></th>
+<th class="head"><p>Density/g/mol^3</p></th>
+<th class="head"><p>Spacegroup</p></th>
+<th class="head"><p>Group indices</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>2</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>2.6541751062921485e+03</p></td>
+<td><p>288.0</p></td>
+<td><p>1.5377303803202587</p></td>
+<td><p>P-1 (2)</p></td>
+<td><p>[0, 15]</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>8</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>2654.1751062921485</p></td>
+<td><p>288.0</p></td>
+<td><p>1.5377303803202587</p></td>
+<td><p>P1 (1)</p></td>
+<td><p>[1, 2, 4, 7, 8, 11, 13, 14]</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>2</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>2654.1751062921485</p></td>
+<td><p>288.0</p></td>
+<td><p>1.5377303803202587</p></td>
+<td><p>Cc (9)</p></td>
+<td><p>[3, 12]</p></td>
+</tr>
+<tr class="row-odd"><td><p>3</p></td>
+<td><p>2</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>2654.1751062921485</p></td>
+<td><p>288.0</p></td>
+<td><p>1.5377303803202587</p></td>
+<td><p>P2_1/c (14)</p></td>
+<td><p>[5, 10]</p></td>
+</tr>
+<tr class="row-even"><td><p>4</p></td>
+<td><p>2</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td><p>2654.1751062921485</p></td>
+<td><p>288.0</p></td>
+<td><p>1.5377303803202587</p></td>
+<td><p>P2_1/c (14)</p></td>
+<td><p>[6, 9]</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>For systems with special symmetry groups (i.e. with disorder group labels starting with “-“),
+The code may not correctly partition the symmetry operations into subgroups. So please check your output carefully!</p>
+<p>Another serious limitation in these cases is that generated supercells may have overlapping sites.</p>
+<p>We’re working to make the code more robust for these cases.</p>
+</div>
+</section>
+</section>
+<section id="z-1-and-only-one-disorder-group-dasrau">
+<h2>Z’&lt; 1 and only one disorder group (DASRAU)<a class="headerlink" href="#z-1-and-only-one-disorder-group-dasrau" title="Permalink to this headline">#</a></h2>
+<p>This is a Ruddlesden-Popper phase with a disordered butylammonium cation.
+The cation is disordered at a special symmetry position such that each of the 32 symmetry operations generates another configuration.
+Assuming only one cation per unit cell, the code will generate, by default, 32 ordered structures.</p>
+<ul class="simple">
+<li><p><a class="reference download internal" download="" href="_downloads/05b09613094198d27c0626e6a3729924/DASRAU.cif"><code class="xref download docutils literal notranslate"><span class="pre">DASRAU</span> <span class="pre">CIF</span> <span class="pre">file</span></code></a></p></li>
+</ul>
+<p>When we run the code with (mostly) default options:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sodorg_renewal</span> <span class="nb">enumerate</span> <span class="n">DASRAU</span><span class="o">.</span><span class="n">cif</span> <span class="o">--</span><span class="n">prefix</span> <span class="n">dasrau</span>
+</pre></div>
+</div>
+<p>We get the following output:</p>
+<div class="literal-block-wrapper docutils container" id="id10">
+<div class="code-block-caption"><span class="caption-text">parse_cif output for DASRAU</span><a class="headerlink" href="#id10" title="Permalink to this code">#</a></div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">Parsing disorder in cif file: DASRAU.cif</span>
+<span class="go">Disordered structure:</span>
+<span class="go">Disorder assembly: A</span>
+<span class="go">Contains the following groups:</span>
+<span class="go">Disorder group: -1 has special disorder symmetry and contains [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1] symm. ops. and 17 sites:</span>
+<span class="go">        label:       N1, species:    N, occupancy:  0.12</span>
+<span class="go">        label:      H1A, species:    H, occupancy:  0.12</span>
+<span class="go">        label:      H1B, species:    H, occupancy:  0.12</span>
+<span class="go">        label:      H1C, species:    H, occupancy:  0.12</span>
+<span class="go">        label:       C1, species:    C, occupancy:  0.12</span>
+<span class="go">        label:      H1D, species:    H, occupancy:  0.12</span>
+<span class="go">        label:      H1E, species:    H, occupancy:  0.12</span>
+<span class="go">        label:       C2, species:    C, occupancy:  0.12</span>
+<span class="go">        label:      H2A, species:    H, occupancy:  0.12</span>
+<span class="go">        label:      H2B, species:    H, occupancy:  0.12</span>
+<span class="go">        label:       C3, species:    C, occupancy:  0.12</span>
+<span class="go">        label:      H3A, species:    H, occupancy:  0.12</span>
+<span class="go">        label:      H3B, species:    H, occupancy:  0.12</span>
+<span class="go">        label:       C4, species:    C, occupancy:  0.12</span>
+<span class="go">        label:      H4A, species:    H, occupancy:  0.12</span>
+<span class="go">        label:      H4B, species:    H, occupancy:  0.12</span>
+<span class="go">        label:      H4C, species:    H, occupancy:  0.12</span>
+</pre></div>
+</div>
+</div>
+<p>The code correctly generates a total of 32 (32<sup>1</sup> ) ordered structures and outputs the following table: <a class="reference download internal" download="" href="_downloads/2ef02ef3eab3cd97caae6f50ab333d86/dasrau.csv"><code class="xref download docutils literal notranslate"><span class="pre">DASRAU</span> <span class="pre">results</span> <span class="pre">table</span></code></a></p>
+</section>
+<section id="multiple-assemblies-each-with-same-number-of-groups-haxpih">
+<h2>Multiple assemblies, each with same number of groups (HAXPIH)<a class="headerlink" href="#multiple-assemblies-each-with-same-number-of-groups-haxpih" title="Permalink to this headline">#</a></h2>
+<section id="correlated-assemblies">
+<h3>Correlated assemblies<a class="headerlink" href="#correlated-assemblies" title="Permalink to this headline">#</a></h3>
+<p>This structure (Z=6) has three disorder assemblies, each with two disorder groups.
+If we consider these assemblies to be independent, we can generate 2<sup>6</sup> x 2<sup>6</sup> x 2<sup>6</sup> = 264 144 ordered structures.
+This would crash the code and is outside our scope anyway.
+However, there may be cases in which we might want to consider the assemblies as correlated, i.e. we pick from the same disorder group index in each assembly.</p>
+<ul class="simple">
+<li><p><a class="reference download internal" download="" href="_downloads/0b826141146cfd6da60ec01a1c44ffb2/HAXPIH.cif"><code class="xref download docutils literal notranslate"><span class="pre">HAXPIH</span> <span class="pre">CIF</span> <span class="pre">file</span></code></a></p></li>
+</ul>
+<p>You can do this by specifying the <code class="docutils literal notranslate"><span class="pre">-c</span></code> flag.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sodorg_renewal</span> <span class="nb">enumerate</span> <span class="n">HAXPIH</span><span class="o">.</span><span class="n">cif</span> <span class="o">--</span><span class="n">prefix</span> <span class="n">haxpih</span> <span class="o">-</span><span class="n">c</span>
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h3>Parsing the CIF file<a class="headerlink" href="#id4" title="Permalink to this headline">#</a></h3>
+<p>The code correctly parses the disorder groups and outputs the following:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">Parsing disorder in cif file: HAXPIH.cif</span>
+<span class="go">Disordered structure:</span>
+<span class="go">Disorder assembly: 2</span>
+<span class="go">Contains the following groups:</span>
+<span class="go">Disorder group: 1 contains 6 symm. ops. and 15 sites:</span>
+<span class="go">        label:     C230, species:    C, occupancy:  0.26</span>
+<span class="go">        label:     C240, species:    C, occupancy:  0.26</span>
+<span class="go">        label:     C250, species:    C, occupancy:  0.26</span>
+<span class="go">        label:     C260, species:    C, occupancy:  0.26</span>
+<span class="go">        label:     H221, species:    H, occupancy:  0.26</span>
+<span class="go">        label:     H222, species:    H, occupancy:  0.26</span>
+<span class="go">        label:    H2301, species:    H, occupancy:  0.26</span>
+<span class="go">        label:    H2302, species:    H, occupancy:  0.26</span>
+<span class="go">        label:    H2401, species:    H, occupancy:  0.26</span>
+<span class="go">        label:    H2501, species:    H, occupancy:  0.26</span>
+<span class="go">        label:    H2502, species:    H, occupancy:  0.26</span>
+<span class="go">        label:    H2503, species:    H, occupancy:  0.26</span>
+<span class="go">        label:    H2601, species:    H, occupancy:  0.26</span>
+<span class="go">        label:    H2602, species:    H, occupancy:  0.26</span>
+<span class="go">        label:    H2603, species:    H, occupancy:  0.26</span>
+
+<span class="go">Disorder group: 2 contains 6 symm. ops. and 15 sites:</span>
+<span class="go">        label:     C231, species:    C, occupancy:  0.74</span>
+<span class="go">        label:     C241, species:    C, occupancy:  0.74</span>
+<span class="go">        label:     C251, species:    C, occupancy:  0.74</span>
+<span class="go">        label:     C261, species:    C, occupancy:  0.74</span>
+<span class="go">        label:     H223, species:    H, occupancy:  0.74</span>
+<span class="go">        label:     H224, species:    H, occupancy:  0.74</span>
+<span class="go">        label:    H2311, species:    H, occupancy:  0.74</span>
+<span class="go">        label:    H2312, species:    H, occupancy:  0.74</span>
+<span class="go">        label:    H2411, species:    H, occupancy:  0.74</span>
+<span class="go">        label:    H2511, species:    H, occupancy:  0.74</span>
+<span class="go">        label:    H2512, species:    H, occupancy:  0.74</span>
+<span class="go">        label:    H2513, species:    H, occupancy:  0.74</span>
+<span class="go">        label:    H2611, species:    H, occupancy:  0.74</span>
+<span class="go">        label:    H2612, species:    H, occupancy:  0.74</span>
+<span class="go">        label:    H2613, species:    H, occupancy:  0.74</span>
+
+
+<span class="go">Disorder assembly: 3</span>
+<span class="go">Contains the following groups:</span>
+<span class="go">Disorder group: 1 contains 6 symm. ops. and 12 sites:</span>
+<span class="go">        label:     C340, species:    C, occupancy:  0.24</span>
+<span class="go">        label:     C350, species:    C, occupancy:  0.24</span>
+<span class="go">        label:     C360, species:    C, occupancy:  0.24</span>
+<span class="go">        label:     H331, species:    H, occupancy:  0.24</span>
+<span class="go">        label:     H332, species:    H, occupancy:  0.24</span>
+<span class="go">        label:    H3401, species:    H, occupancy:  0.24</span>
+<span class="go">        label:    H3501, species:    H, occupancy:  0.24</span>
+<span class="go">        label:    H3502, species:    H, occupancy:  0.24</span>
+<span class="go">        label:    H3503, species:    H, occupancy:  0.24</span>
+<span class="go">        label:    H3601, species:    H, occupancy:  0.24</span>
+<span class="go">        label:    H3602, species:    H, occupancy:  0.24</span>
+<span class="go">        label:    H3603, species:    H, occupancy:  0.24</span>
+
+<span class="go">Disorder group: 2 contains 6 symm. ops. and 12 sites:</span>
+<span class="go">        label:     C341, species:    C, occupancy:  0.76</span>
+<span class="go">        label:     C351, species:    C, occupancy:  0.76</span>
+<span class="go">        label:     C361, species:    C, occupancy:  0.76</span>
+<span class="go">        label:     H333, species:    H, occupancy:  0.76</span>
+<span class="go">        label:     H334, species:    H, occupancy:  0.76</span>
+<span class="go">        label:    H3411, species:    H, occupancy:  0.76</span>
+<span class="go">        label:    H3511, species:    H, occupancy:  0.76</span>
+<span class="go">        label:    H3512, species:    H, occupancy:  0.76</span>
+<span class="go">        label:    H3513, species:    H, occupancy:  0.76</span>
+<span class="go">        label:    H3611, species:    H, occupancy:  0.76</span>
+<span class="go">        label:    H3612, species:    H, occupancy:  0.76</span>
+<span class="go">        label:    H3613, species:    H, occupancy:  0.76</span>
+
+
+<span class="go">Disorder assembly: 4</span>
+<span class="go">Contains the following groups:</span>
+<span class="go">Disorder group: 1 contains 6 symm. ops. and 18 sites:</span>
+<span class="go">        label:     C421, species:    C, occupancy:  0.46</span>
+<span class="go">        label:     C431, species:    C, occupancy:  0.46</span>
+<span class="go">        label:     C441, species:    C, occupancy:  0.46</span>
+<span class="go">        label:     C451, species:    C, occupancy:  0.46</span>
+<span class="go">        label:     C461, species:    C, occupancy:  0.46</span>
+<span class="go">        label:     H411, species:    H, occupancy:  0.46</span>
+<span class="go">        label:     H412, species:    H, occupancy:  0.46</span>
+<span class="go">        label:    H4211, species:    H, occupancy:  0.46</span>
+<span class="go">        label:    H4212, species:    H, occupancy:  0.46</span>
+<span class="go">        label:    H4311, species:    H, occupancy:  0.46</span>
+<span class="go">        label:    H4312, species:    H, occupancy:  0.46</span>
+<span class="go">        label:    H4411, species:    H, occupancy:  0.46</span>
+<span class="go">        label:    H4511, species:    H, occupancy:  0.46</span>
+<span class="go">        label:    H4512, species:    H, occupancy:  0.46</span>
+<span class="go">        label:    H4513, species:    H, occupancy:  0.46</span>
+<span class="go">        label:    H4611, species:    H, occupancy:  0.46</span>
+<span class="go">        label:    H4612, species:    H, occupancy:  0.46</span>
+<span class="go">        label:    H4613, species:    H, occupancy:  0.46</span>
+
+<span class="go">Disorder group: 2 contains 6 symm. ops. and 18 sites:</span>
+<span class="go">        label:     C420, species:    C, occupancy:  0.54</span>
+<span class="go">        label:     C430, species:    C, occupancy:  0.54</span>
+<span class="go">        label:     C440, species:    C, occupancy:  0.54</span>
+<span class="go">        label:     C450, species:    C, occupancy:  0.54</span>
+<span class="go">        label:     C460, species:    C, occupancy:  0.54</span>
+<span class="go">        label:     H413, species:    H, occupancy:  0.54</span>
+<span class="go">        label:     H414, species:    H, occupancy:  0.54</span>
+<span class="go">        label:    H4201, species:    H, occupancy:  0.54</span>
+<span class="go">        label:    H4202, species:    H, occupancy:  0.54</span>
+<span class="go">        label:    H4301, species:    H, occupancy:  0.54</span>
+<span class="go">        label:    H4302, species:    H, occupancy:  0.54</span>
+<span class="go">        label:    H4401, species:    H, occupancy:  0.54</span>
+<span class="go">        label:    H4501, species:    H, occupancy:  0.54</span>
+<span class="go">        label:    H4502, species:    H, occupancy:  0.54</span>
+<span class="go">        label:    H4503, species:    H, occupancy:  0.54</span>
+<span class="go">        label:    H4601, species:    H, occupancy:  0.54</span>
+<span class="go">        label:    H4602, species:    H, occupancy:  0.54</span>
+<span class="go">        label:    H4603, species:    H, occupancy:  0.54</span>
+</pre></div>
+</div>
+<p>The code will generate 2<sup>6</sup> = 64 ordered structures and outputs the following table: <a class="reference download internal" download="" href="_downloads/d9bd5dfe8dca5446fe931a8a064bc07f/haxpih.csv"><code class="xref download docutils literal notranslate"><span class="pre">HAXPIH</span> <span class="pre">results</span> <span class="pre">table</span></code></a></p>
+</section>
+<section id="merging-the-equivalent-structures">
+<h3>Merging the equivalent structures<a class="headerlink" href="#merging-the-equivalent-structures" title="Permalink to this headline">#</a></h3>
+<p>Running the code again with the <code class="docutils literal notranslate"><span class="pre">-m</span></code> flag:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sodorg_renewal</span> <span class="nb">enumerate</span> <span class="n">HAXPIH</span><span class="o">.</span><span class="n">cif</span> <span class="o">--</span><span class="n">prefix</span> <span class="n">haxpih_merged</span> <span class="o">-</span><span class="n">c</span> <span class="o">-</span><span class="n">m</span>
+</pre></div>
+</div>
+<p>We get the following table: <a class="reference download internal" download="" href="_downloads/b4463c741eee37c4f09f5176152ba9f2/haxpih_merged.csv"><code class="xref download docutils literal notranslate"><span class="pre">HAXPIH</span> <span class="pre">results</span> <span class="pre">table</span></code></a> and this information printed to the terminal:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">Generating 64 out of the 64 possible configurations in the (1, 1, 1) supercell:</span>
+<span class="go">100%|██████████████████████████████| 64/64 [00:00&lt;00:00, 3721.86it/s]</span>
+<span class="go">Merging structures...</span>
+<span class="go">Checking symmetry-equivalence: 100%|█| 64/64 [00:03&lt;00:00, 18.17it/s]</span>
+<span class="go">Merging took     3.53 s and found 16 groups</span>
+<span class="go">Spacegroup: P3_221 (154)         multiplicity: 1</span>
+<span class="go">Spacegroup: P1 (1)               multiplicity: 6</span>
+<span class="go">Spacegroup: P1 (1)               multiplicity: 6</span>
+<span class="go">Spacegroup: P3_2 (145)           multiplicity: 2</span>
+<span class="go">Spacegroup: C2 (5)               multiplicity: 3</span>
+<span class="go">Spacegroup: C2 (5)               multiplicity: 3</span>
+<span class="go">Spacegroup: P1 (1)               multiplicity: 6</span>
+<span class="go">Spacegroup: C2 (5)               multiplicity: 3</span>
+<span class="go">Spacegroup: P1 (1)               multiplicity: 6</span>
+<span class="go">Spacegroup: P1 (1)               multiplicity: 6</span>
+<span class="go">Spacegroup: P1 (1)               multiplicity: 6</span>
+<span class="go">Spacegroup: C2 (5)               multiplicity: 3</span>
+<span class="go">Spacegroup: C2 (5)               multiplicity: 3</span>
+<span class="go">Spacegroup: C2 (5)               multiplicity: 3</span>
+<span class="go">Spacegroup: P1 (1)               multiplicity: 6</span>
+<span class="go">Spacegroup: P3_221 (154)         multiplicity: 1</span>
+</pre></div>
+</div>
+<p>We can see that the 64 ordered configurations have been merged into 16 groups of equivalent structures.
+The first group has a spacegroup of P3_221 (154) and a multiplicity of 1,
+the second group has a spacegroup of P1 (1) and a multiplicity of 6, and so on.</p>
+</section>
+</section>
+</section>
+
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="cli.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">Command line interface</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="usage.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Usage as library</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Kane Shenton<br/>
+  
+      &copy; Copyright 2022, Kane Shenton.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

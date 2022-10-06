@@ -1,0 +1,31 @@
+sodorg\_renewal.parse\_cif\_file
+================================
+
+.. automodule:: sodorg_renewal.parse_cif_file
+  
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template: class.rst
+   
+      CifParser
+   
+   
+
+   
+   
+   
+
+
+

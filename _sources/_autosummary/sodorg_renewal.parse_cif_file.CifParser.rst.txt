@@ -1,0 +1,6 @@
+sodorg\_renewal.parse\_cif\_file.CifParser
+==========================================
+
+.. currentmodule:: sodorg_renewal.parse_cif_file
+
+.. autoclass:: CifParser

@@ -1,0 +1,6 @@
+sodorg\_renewal.utils.wrap\_molecule
+====================================
+
+.. currentmodule:: sodorg_renewal.utils
+
+.. autofunction:: wrap_molecule
