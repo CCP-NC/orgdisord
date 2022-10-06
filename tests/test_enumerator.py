@@ -7,8 +7,8 @@ from sodorg_renewal.parse_cif_file import CifParser
 import numpy as np
 
 cif = CifParser('tests/EROHEA_modified.cif')
-od = OrderedfromDisordered(cif)
-
+disordered_structure = cif.get_disordered_structure()
+od = OrderedfromDisordered(disordered_structure)
 
 
 
@@ -97,7 +97,8 @@ assert len(np.where(images[0].get_tags() == tag)[0]) == nordered
 
 
 cif = CifParser('tests/VIFQIL01.cif')
-od = OrderedfromDisordered(cif)
+disordered_structure = cif.get_disordered_structure()
+od = OrderedfromDisordered(disordered_structure)
 
 
 

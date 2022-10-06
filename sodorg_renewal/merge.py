@@ -42,7 +42,9 @@ def merge_structures(images,
     Returns:
         Tuple of one structure per group and the group multiplicity. If return_group_indices is True,
         the indices of the merged structures in the original list are also returned.
+
     '''
+
     logger.debug("\n\n")
     logger.debug("-----------------------------")
     logger.debug("---  MERGING STRUCTURES  ---")
@@ -109,6 +111,7 @@ def coords_match_symmops(coords_ref, coords, symops, symprec=1e-4):
             symops (list): A list of tuples: (rotation, translation).
                            Note: we skip the first one assuming it's the identity.
             symprec (float): The tolerance for the similarity.
+
         Returns:
             bool: True if the coordinates match, else False
 
@@ -132,7 +135,9 @@ def compare_ref_unmatched(ref, unmatched, symops, symprec=1e-4, parallel = True)
         '''
         compare lists of fractional coordinates with reference
         return the indices of the unmatched atoms
+
         '''
+
         if parallel:
             
             # we can only run efficiently on about 100 structures per core
@@ -196,10 +201,12 @@ def rematcher(re, features1, features2, eps):
             features1 (list): A list of SOAP features.
             features2 (list): A list of SOAP features.
             eps (float): The tolerance for the similarity.
+
         Returns:
             bool: True if the features match, else False
 
        '''
+
     re_kernel = re.create([features1, features2])
     val = re_kernel[0][1]
 
@@ -217,7 +224,9 @@ def merge_rematch(supercell_images, eps=1e-3, quiet=False):
         it overzealous at merging larger systems...
 
         More work is necessary! 
+
         '''
+
         from dscribe.descriptors import SOAP
         from dscribe.kernels import REMatchKernel
 
@@ -263,6 +272,7 @@ def coords_match(a1, a2, symprec = 1e-4):
     rows. 
     
     """
+
     cmp = np.abs(a1[:, None] - a2) < symprec
     eq = np.all(cmp, axis=-1)
     number_of_matches = np.argwhere(eq).shape[0]
@@ -344,6 +354,7 @@ def ewald_energy(ewald):
                 converged to.
                 (defaults to 12.0 in pymatgen. Here we just need a quick and dirty answer)
         '''
+        
         acc_factor=3.0
         # print(structure)
         # ewald = EwaldSummation(structure, acc_factor=acc_factor)

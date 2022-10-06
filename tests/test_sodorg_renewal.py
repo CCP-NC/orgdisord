@@ -6,7 +6,7 @@ import pytest
 
 from click.testing import CliRunner
 
-from sodorg_renewal import sodorg_renewal
+#from sodorg_renewal import sodorg_renewal
 from sodorg_renewal import cli
 import numpy as np
 

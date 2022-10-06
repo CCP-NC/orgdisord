@@ -127,20 +127,22 @@ def main(ctx,
 
     logger.info(f'Parsing disorder in cif file: {cif_file}')
     # parse cif file containing disordered structure
-    cif = CifParser(cif_file)
+    cif = CifParser(cif_file,
+                    correlated_assemblies=correlated_assemblies,
+                    molecular_crystal = not not_molecular_crystal)
     symops = cif.symops
+
+    disordered_structure = cif.get_disordered_structure()
 
     logger.info('Enumerating ordered configurations.')
     # enumerate ordered configurations
-    od = OrderedfromDisordered(cif, quiet=quiet)
+    od = OrderedfromDisordered(disordered_structure, quiet=quiet)
     images, configs = od.get_supercell_configs(
                         supercell = supercell,
                         maxiters = maxiters,
                         exclude_ordered = exclude_ordered,
                         random_configs=random,
                         return_configs=True,
-                        molecular_crystal=not not_molecular_crystal,
-                        correlated_assemblies=correlated_assemblies,
                         )
 
     # -- DATA FRAME -- #
@@ -240,11 +242,16 @@ def main(ctx,
         nleading_zeros = len(str(len(images)))
         for i, image in enumerate(images):
             filename = f"{prefix}-{str(i).zfill(nleading_zeros)}.{format}"
+            kwargs = {}
             # cif can save labels if we manually specify them
             if format == 'cif':
-                kwargs = {'labels': [image.get_array('labels')]}
-            else:
-                kwargs = {}
+                kwargs['labels'] = [image.get_array('labels')]
+
+            elif format == 'cell':
+                # castep cell writer looks for the castep_labels array
+                # so let's copy across the labels array
+                image.set_array('castep_labels', image.get_array('labels'))
+                
                 
             image.write(f"{directory}/{filename}", **kwargs)
             
