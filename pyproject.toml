@@ -1,0 +1,75 @@
+[build-system]
+requires = ["setuptools>=61.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sodorg_renewal"
+authors = [{name = "Kane Shenton", email = "jkshenton@gmail.com"}]
+license = {text = "MIT license"}
+description = "Python code to handle disordered molecular crystals."
+keywords = ["sodorg_renewal"]
+dynamic = ["version", "readme"]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+]
+requires-python = ">=3.6"
+dependencies = [
+    "Click>=7.0",
+    "ASE>=3.22",
+    "dscribe>=1.2",
+    "Soprano>=0.8",
+    "pymatgen>=2022.3.7",
+    "tqdm>=4.63.0",
+    "pandas>=1.3",
+    "scipy",
+]
+
+[tool.setuptools.dynamic]
+version = {attr = "sodorg_renewal.__version__"}
+readme = {file = "README.rst"}
+
+[project.urls]
+Homepage = "https://github.com/jkshenton/sodorg_renewal"
+
+[project.scripts]
+sodorg_renewal = "sodorg_renewal.cli:cli"
+
+[project.optional-dependencies]
+testing = ["pytest>=3"]
+
+[tool.bumpversion]
+current_version = "0.1.0"
+commit = "True"
+tag = "True"
+
+[tool.bumpversion.file.setup.py]
+search = "version='{current_version}'"
+replace = "version='{new_version}'"
+
+[tool.bumpversion.file."sodorg_renewal/__init__".py]
+search = "__version__ = '{current_version}'"
+replace = "__version__ = '{new_version}'"
+
+[tool.setuptools]
+zip-safe = false
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["sodorg_renewal"] # sodorg_renewal.*
+namespaces = false
+
+[tool.distutils.bdist_wheel]
+universal = 1
+
+[tool.flake8]
+exclude = "docs"
+
+[tool.pytest.ini_options]
+collect_ignore = "['setup.py']"

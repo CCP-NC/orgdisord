@@ -1,5 +1,5 @@
 Welcome to SODORG Renewal's documentation!
-======================================
+============================================
 
 .. toctree::
    :maxdepth: 2
@@ -7,6 +7,8 @@ Welcome to SODORG Renewal's documentation!
 
    readme
    installation
+   cli
+   case_studies
    usage
    modules
    contributing

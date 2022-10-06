@@ -34,7 +34,9 @@ wheels/
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
-
+scrap/
+examples/*-results/
+examples/sodorg*.log
 # Unit test / coverage reports
 htmlcov/
 .tox/
@@ -64,6 +66,7 @@ instance/
 
 # Sphinx documentation
 docs/_build/
+docs/_autosummary/
 
 # PyBuilder
 target/

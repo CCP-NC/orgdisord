@@ -1,7 +1,6 @@
-=====
-Usage
-=====
+================
+Usage as library
+================
 
-To use SODORG Renewal in a project::
 
-    import sodorg_renewal
+TODO
