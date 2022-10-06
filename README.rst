@@ -50,51 +50,46 @@ Limitations
 -----------
 
 * Disorder in the CIF file must be marked up using the ``_atom_site_disorder_group`` and ``_atom_site_disorder_assembly`` tags.
-* The handling of Z' < 1 is not currently robust and will not work in many cases. 
-In addition, the generation of supercells in Z' < 1 cases currently generates structures with overlapping atoms. 
+* The handling of Z' < 1 is not currently robust and will not work in many cases. In addition, the generation of supercells in Z' < 1 cases currently generates structures with overlapping atoms. 
 
 
 
-Example use cases
------------------
+Quick start examples
+---------------------
 
-Note you have to first install the package using ``pip install``. See the :doc:`installation` instructions for full details.
+The examples below assume you have installed the package as per the :doc:`installation` instructions and have the example CIF file in the current directory. You can download the example CIF file here: 
+:download:`ABABUB.cif <../examples/ABABUB.cif>`
 
-See the :doc:`command line interface documentation <cli>` for full details of the available commands and options. Alternatively you can run ``sodorg_renewal --help`` to see the available commands and e.g. ``sodorg_renewal enumerate --help`` to see the available options for the ``enumerate`` command.
+#. Generate all possible ordered configurations in the primitive cell: ::
 
-To run the specific examples below, you can download the example files (you may have to right-click and save-as):
+        $ sodorg_renewal enumerate ABABUB.cif --no_write --view
 
-* :download:`EROHEA <../examples/EROHEA_modified.cif>`
-* :download:`VAGKUM <../examples/VAGKUM.cif>`
+#. Generate all possible ordered configurations in a 2x1x1 supercell: ::
 
-The examples below assume you have the example CIF files in the current directory.
+        $ sodorg_renewal enumerate ABABUB.cif --supercell 2 1 1 --no_write --view
 
+#. Merge fully enumerated configurations: ::
 
-* Generate all possible ordered configurations in the primitive cell: ::
+        $ sodorg_renewal enumerate ABABUB.cif -m --no_write --view
 
-        $ sodorg_renewal EROHEA_modified.cif --no_write --view
+#. Merge randomly generated configurations in the primitive cell. If you have enough of them, you will end up with the same groups as the fully enumerated case (though this is much less efficient): ::
 
-* Generate all possible ordered configurations in a 2x1x1 supercell: ::
+        $ sodorg_renewal enumerate ABABUB.cif -m --no_write --view --random -N 1000
 
-        $ sodorg_renewal EROHEA_modified.cif --supercell 2 1 1 --no_write --view
+#. Generate 5000 randomly ordered structures in a specified supercell: ::
 
-* Merge fully enumerated configurations using *structure comparison*: ::
+        $ sodorg_renewal enumerate ABABUB.cif --supercell 2 1 2 --random -N 5000 --no_write --view
 
-        $ sodorg_renewal enumerate EROHEA_modified.cif -m --algo symm --no_write --view
+#. Generate 3 randomly ordered structures in a very large supercell: ::
+                
+        $ sodorg_renewal enumerate ABABUB.cif --supercell 4 6 4 --random -N 3 --no_write --view
 
-* Merge fully enumerated configurations using *local descriptors*: ::
-
-        $ sodorg_renewal enumerate EROHEA_modified.cif -m --algo rematch --symprec 1e-2 --no_write --view
-
-* Merge fully enumerated configurations using *electrostatic energies*: ::
-        
-        $ sodorg_renewal enumerate EROHEA_modified.cif -m --algo ewald --ox C 1 --ox H 1 --ox N -3 --ox O -2 --no_write --view
-
-* Generate 10 000 randomly ordered structures in a specified supercell: ::
-
-        $ sodorg_renewal enumerate EROHEA_modified.cif --supercell 2 1 2 --random --maxiters 10000 --no_write --view
 
 Notice that a `sodorg.log` file is generated in the current directory. This file contains the full command line options used to generate the output, as well as information about how the CIF file was parsed, the enumeration was done and, if applicable, how the merging was done. This can be useful for debugging and reproducing results.
+
+
+The :doc:`command line interface documentation <cli>` has full details of the available commands and options. Alternatively you can run ``sodorg_renewal --help`` to see the available commands and e.g. ``sodorg_renewal enumerate --help`` to see the available options for the ``enumerate`` command.
+
 
 .. note::
 
@@ -102,12 +97,3 @@ Notice that a `sodorg.log` file is generated in the current directory. This file
         
         We also included the ``--view`` option to visualise the merged configurations using ASE. In the ASE GUI, you can click View→Colors and select color By Tag to easily see the different disorder assemblies and groups. You can also click View→Show Tags to see the tags associated with each atom.
 
-
-
-Credits
--------
-
-This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypackage`_ project template.
-
-.. _Cookiecutter: https://github.com/audreyr/cookiecutter
-.. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
