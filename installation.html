@@ -517,13 +517,13 @@ title="Print to PDF"
     <nav id="bd-toc-nav" aria-label="Page">
         <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#stable-release">
-   Stable release
+  <a class="reference internal nav-link" href="#from-sources">
+   From sources
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#from-sources">
-   From sources
+  <a class="reference internal nav-link" href="#stable-release">
+   Stable release
   </a>
  </li>
 </ul>
@@ -546,13 +546,13 @@ title="Print to PDF"
                         <nav aria-label="Page">
                             <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#stable-release">
-   Stable release
+  <a class="reference internal nav-link" href="#from-sources">
+   From sources
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#from-sources">
-   From sources
+  <a class="reference internal nav-link" href="#stable-release">
+   Stable release
   </a>
  </li>
 </ul>
@@ -567,14 +567,6 @@ title="Print to PDF"
                 
   <section id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">#</a></h1>
-<section id="stable-release">
-<h2>Stable release<a class="headerlink" href="#stable-release" title="Permalink to this headline">#</a></h2>
-<p>We will eventually publish a PyPi package such that you can install it with:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip install sodorg_renewal
-</pre></div>
-</div>
-<p>but this is not yet available. See below for how to build it from source.</p>
-</section>
 <section id="from-sources">
 <h2>From sources<a class="headerlink" href="#from-sources" title="Permalink to this headline">#</a></h2>
 <p>The sources for SODORG Renewal can be downloaded from the <a class="reference external" href="https://github.com/jkshenton/sodorg_renewal">Github repo</a>.</p>
@@ -582,25 +574,32 @@ title="Print to PDF"
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git clone git://github.com/jkshenton/sodorg_renewal
 </pre></div>
 </div>
-<p>Or download the <a class="reference external" href="https://github.com/jkshenton/sodorg_renewal/tarball/master">tarball</a>:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>curl -OJL https://github.com/jkshenton/sodorg_renewal/tarball/master
+<p>Or download the <a class="reference external" href="https://github.com/jkshenton/sodorg_renewal/tarball/main">tarball</a>:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>curl -OJL https://github.com/jkshenton/sodorg_renewal/tarball/main
 </pre></div>
 </div>
 <p>Once you have a copy of the source, you can install it with:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python setup.py install
 </pre></div>
 </div>
-<p>or
-.. code-block:: console</p>
-<blockquote>
-<div><p>$ pip install .</p>
-</div></blockquote>
+<p>or</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pip install .
+</pre></div>
+</div>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>It is recommended to use a new <a class="reference external" href="http://docs.python-guide.org/en/latest/dev/virtualenvs/">virtual environment</a> or new <a class="reference external" href="https://conda.io/docs/user-guide/tasks/manage-environments.html">conda environment</a> rather than installing SODORG Renewal system wide.</p>
 <p>The package has not been tested on the Windows operating system. It’s recommended to use the WSL (Windows Subsystem for Linux) if you are using Windows.
 Though in that case you may need to <a class="reference external" href="https://stackoverflow.com/a/61110604">set up an X11 server</a> to view the generated structures in the ASE GUI.</p>
 </div>
+</section>
+<section id="stable-release">
+<h2>Stable release<a class="headerlink" href="#stable-release" title="Permalink to this headline">#</a></h2>
+<p>We will eventually publish a PyPi package such that you can install it with:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pip install sodorg_renewal
+</pre></div>
+</div>
+<p><strong>but this is not yet available</strong>. See below for how to build it from source.</p>
 </section>
 </section>
 

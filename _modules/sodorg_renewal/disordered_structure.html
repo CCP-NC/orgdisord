@@ -535,61 +535,9 @@ title="Source repository"
 <span class="sd">            For Zprime &lt; 1, we chunk the returned list into 1/Zprime groups of</span>
 <span class="sd">            symmetry operations.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="c1"># alias</span>
-        <span class="c1"># cell = self.atoms.cell</span>
 
-        <span class="c1"># get the symmetry-equivalent sites of a non-special position:</span>
-        <span class="c1"># scaled_pos = [0,0,0]#np.random.rand(3)</span>
-        <span class="c1"># ref_positions, _ = sg.equivalent_sites(scaled_pos, symprec=symprec)</span>
-        <span class="c1"># cart_ref_positions = cell.cartesian_positions(ref_positions)</span>
-
-            
         <span class="c1"># list of all symmetry operations</span>
         <span class="n">all_symmetry_operations</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">get_symop</span><span class="p">()</span>
-        <span class="c1"># nsymops = len(all_symmetry_operations)</span>
-
-        <span class="c1"># # find out which subset should be applied to this group</span>
-        <span class="c1"># # start with the identity operation</span>
-        <span class="c1"># group_symmetry_operations = []</span>
-        <span class="c1"># scaled_pos = self.atoms.get_scaled_positions()[0]</span>
-        <span class="c1"># cart_pos_original = self.atoms.positions[0]</span>
-        <span class="c1"># atom = self.atoms[0]</span>
-
-        <span class="c1"># dpos = cart_pos_original - cart_ref_positions</span>
-        <span class="c1"># _, dist_ref = find_mic(dpos, cell, pbc=True)</span>
-        <span class="c1"># dist_ref = np.min(dist_ref)</span>
-        <span class="c1"># print(f&#39;dist_ref: {dist_ref}&#39;)</span>
-
-        <span class="c1"># # loop over all other symmetry operations</span>
-        <span class="c1"># print(&#39;new group: &#39;, self.label)</span>
-        <span class="c1"># for cart_ref in cart_ref_positions:</span>
-        <span class="c1">#     for symmetry_operation in all_symmetry_operations:</span>
-        <span class="c1">#         rot, trans = symmetry_operation</span>
-        <span class="c1">#         scaled_pos_new = np.mod(np.dot(rot, scaled_pos) + trans, 1.)</span>
-        <span class="c1">#         cart_pos_new = cell.cartesian_positions(scaled_pos_new)</span>
-
-        <span class="c1">#         # subtract cart_pos_new from each of the reference positions</span>
-        <span class="c1">#         # to get the vector from the reference position to the new position</span>
-        <span class="c1">#         # then find the minimum image of this vector</span>
-        <span class="c1">#         # (this is the vector from the original position to the new position)</span>
-        <span class="c1">#         dpos = cart_pos_new - cart_ref</span>
-        <span class="c1">#         dpos, dist = find_mic(dpos, cell, pbc=True)</span>
-
-        <span class="c1">#         # if the distance is less than the reference distance, then</span>
-        <span class="c1">#         # this is a symmetry operation that should be applied to this group</span>
-        <span class="c1">#         print(dist, dist_ref)</span>
-        <span class="c1">#         if np.min(dist) &lt;= (dist_ref + symprec):</span>
-        <span class="c1">#             print(f&#39;found symmetry operation: {symmetry_operation}&#39;)</span>
-        <span class="c1">#             group_symmetry_operations.append(symmetry_operation)</span>
-        <span class="c1">#             break</span>
-
-        <span class="c1">#     # # what&#39;s the smallest of these? </span>
-        <span class="c1">#     # dpos = dpos[np.argmin(dist)]</span>
-            
-        <span class="c1">#     # v_mic, d_mic = find_mic(dpos - cart_pos_original, cell)</span>
-        <span class="c1">#     # print(&#39;d_mic = &#39;, d_mic, &#39;dist = &#39;, dist)</span>
-        <span class="c1">#     # if d_mic &gt; symprec:</span>
-        <span class="c1">#     #     group_symmetry_operations.append(symmetry_operation)</span>
 
 
         <span class="c1"># HACK for now:</span>

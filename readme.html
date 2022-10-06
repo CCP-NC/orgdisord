@@ -527,13 +527,8 @@ title="Print to PDF"
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#example-use-cases">
-   Example use cases
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#credits">
-   Credits
+  <a class="reference internal nav-link" href="#quick-start-examples">
+   Quick start examples
   </a>
  </li>
 </ul>
@@ -566,13 +561,8 @@ title="Print to PDF"
   </a>
  </li>
  <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#example-use-cases">
-   Example use cases
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#credits">
-   Credits
+  <a class="reference internal nav-link" href="#quick-start-examples">
+   Quick start examples
   </a>
  </li>
 </ul>
@@ -621,62 +611,52 @@ title="Print to PDF"
 <h2>Limitations<a class="headerlink" href="#limitations" title="Permalink to this headline">#</a></h2>
 <ul class="simple">
 <li><p>Disorder in the CIF file must be marked up using the <code class="docutils literal notranslate"><span class="pre">_atom_site_disorder_group</span></code> and <code class="docutils literal notranslate"><span class="pre">_atom_site_disorder_assembly</span></code> tags.</p></li>
-<li><p>The handling of Z’ &lt; 1 is not currently robust and will not work in many cases.</p></li>
+<li><p>The handling of Z’ &lt; 1 is not currently robust and will not work in many cases. In addition, the generation of supercells in Z’ &lt; 1 cases currently generates structures with overlapping atoms.</p></li>
 </ul>
-<p>In addition, the generation of supercells in Z’ &lt; 1 cases currently generates structures with overlapping atoms.</p>
 </section>
-<section id="example-use-cases">
-<h2>Example use cases<a class="headerlink" href="#example-use-cases" title="Permalink to this headline">#</a></h2>
-<p>Note you have to first install the package using <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span></code>. See the <a class="reference internal" href="installation.html"><span class="doc">Installation</span></a> instructions for full details.</p>
-<p>See the <a class="reference internal" href="cli.html"><span class="doc">command line interface documentation</span></a> for full details of the available commands and options. Alternatively you can run <code class="docutils literal notranslate"><span class="pre">sodorg_renewal</span> <span class="pre">--help</span></code> to see the available commands and e.g. <code class="docutils literal notranslate"><span class="pre">sodorg_renewal</span> <span class="pre">enumerate</span> <span class="pre">--help</span></code> to see the available options for the <code class="docutils literal notranslate"><span class="pre">enumerate</span></code> command.</p>
-<p>To run the specific examples below, you can download the example files (you may have to right-click and save-as):</p>
-<ul class="simple">
-<li><p><a class="reference download internal" download="" href="_downloads/8ea5726d23061f4eafc7b9c247ebfccb/EROHEA_modified.cif"><code class="xref download docutils literal notranslate"><span class="pre">EROHEA</span></code></a></p></li>
-<li><p><a class="reference download internal" download="" href="_downloads/18da8be8ca64520e01af844352e4d0e4/VAGKUM.cif"><code class="xref download docutils literal notranslate"><span class="pre">VAGKUM</span></code></a></p></li>
-</ul>
-<p>The examples below assume you have the example CIF files in the current directory.</p>
-<ul>
+<section id="quick-start-examples">
+<h2>Quick start examples<a class="headerlink" href="#quick-start-examples" title="Permalink to this headline">#</a></h2>
+<p>The examples below assume you have installed the package as per the <a class="reference internal" href="installation.html"><span class="doc">Installation</span></a> instructions and have the example CIF file in the current directory. You can download the example CIF file here:
+<a class="reference download internal" download="" href="_downloads/581c9ae798db8311e0e869a25f82eb04/ABABUB.cif"><code class="xref download docutils literal notranslate"><span class="pre">ABABUB.cif</span></code></a></p>
+<ol class="arabic">
 <li><p>Generate all possible ordered configurations in the primitive cell:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ sodorg_renewal EROHEA_modified.cif --no_write --view
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ sodorg_renewal enumerate ABABUB.cif --no_write --view
 </pre></div>
 </div>
 </li>
 <li><p>Generate all possible ordered configurations in a 2x1x1 supercell:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ sodorg_renewal EROHEA_modified.cif --supercell <span class="m">2</span> <span class="m">1</span> <span class="m">1</span> --no_write --view
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ sodorg_renewal enumerate ABABUB.cif --supercell <span class="m">2</span> <span class="m">1</span> <span class="m">1</span> --no_write --view
 </pre></div>
 </div>
 </li>
-<li><p>Merge fully enumerated configurations using <em>structure comparison</em>:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ sodorg_renewal enumerate EROHEA_modified.cif -m --algo symm --no_write --view
+<li><p>Merge fully enumerated configurations:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ sodorg_renewal enumerate ABABUB.cif -m --no_write --view
 </pre></div>
 </div>
 </li>
-<li><p>Merge fully enumerated configurations using <em>local descriptors</em>:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ sodorg_renewal enumerate EROHEA_modified.cif -m --algo rematch --symprec 1e-2 --no_write --view
+<li><p>Merge randomly generated configurations in the primitive cell. If you have enough of them, you will end up with the same groups as the fully enumerated case (though this is much less efficient):</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ sodorg_renewal enumerate ABABUB.cif -m --no_write --view --random -N <span class="m">1000</span>
 </pre></div>
 </div>
 </li>
-<li><p>Merge fully enumerated configurations using <em>electrostatic energies</em>:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ sodorg_renewal enumerate EROHEA_modified.cif -m --algo ewald --ox C <span class="m">1</span> --ox H <span class="m">1</span> --ox N -3 --ox O -2 --no_write --view
+<li><p>Generate 5000 randomly ordered structures in a specified supercell:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ sodorg_renewal enumerate ABABUB.cif --supercell <span class="m">2</span> <span class="m">1</span> <span class="m">2</span> --random -N <span class="m">5000</span> --no_write --view
 </pre></div>
 </div>
 </li>
-<li><p>Generate 10 000 randomly ordered structures in a specified supercell:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ sodorg_renewal enumerate EROHEA_modified.cif --supercell <span class="m">2</span> <span class="m">1</span> <span class="m">2</span> --random --maxiters <span class="m">10000</span> --no_write --view
+<li><p>Generate 3 randomly ordered structures in a very large supercell:</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ sodorg_renewal enumerate ABABUB.cif --supercell <span class="m">4</span> <span class="m">6</span> <span class="m">4</span> --random -N <span class="m">3</span> --no_write --view
 </pre></div>
 </div>
 </li>
-</ul>
+</ol>
 <p>Notice that a <cite>sodorg.log</cite> file is generated in the current directory. This file contains the full command line options used to generate the output, as well as information about how the CIF file was parsed, the enumeration was done and, if applicable, how the merging was done. This can be useful for debugging and reproducing results.</p>
+<p>The <a class="reference internal" href="cli.html"><span class="doc">command line interface documentation</span></a> has full details of the available commands and options. Alternatively you can run <code class="docutils literal notranslate"><span class="pre">sodorg_renewal</span> <span class="pre">--help</span></code> to see the available commands and e.g. <code class="docutils literal notranslate"><span class="pre">sodorg_renewal</span> <span class="pre">enumerate</span> <span class="pre">--help</span></code> to see the available options for the <code class="docutils literal notranslate"><span class="pre">enumerate</span></code> command.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>For each of these examples we included the <code class="docutils literal notranslate"><span class="pre">--no_write</span></code> option to prevent the configurations from being written to file. Without this flag, the code will write the configurations, in extended xyz format, into a directory named <cite>sodorg-results</cite>, and it will also generate a .csv file containing a summary of the generated structures.</p>
 <p>We also included the <code class="docutils literal notranslate"><span class="pre">--view</span></code> option to visualise the merged configurations using ASE. In the ASE GUI, you can click View→Colors and select color By Tag to easily see the different disorder assemblies and groups. You can also click View→Show Tags to see the tags associated with each atom.</p>
 </div>
-</section>
-<section id="credits">
-<h2>Credits<a class="headerlink" href="#credits" title="Permalink to this headline">#</a></h2>
-<p>This package was created with <a class="reference external" href="https://github.com/audreyr/cookiecutter">Cookiecutter</a> and the <a class="reference external" href="https://github.com/audreyr/cookiecutter-pypackage">audreyr/cookiecutter-pypackage</a> project template.</p>
 </section>
 </section>
 

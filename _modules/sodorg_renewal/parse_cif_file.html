@@ -813,158 +813,6 @@ title="Source repository"
 
 
 
-    <span class="k">def</span> <span class="nf">get_group_symmetry_operations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">asslabel</span><span class="p">,</span> <span class="n">grouplabel</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Returns the symmetry operations for the given assembly and group.</span>
-
-<span class="sd">        For now let&#39;s just return all of the symmetry operations! </span>
-<span class="sd">        &#39;&#39;&#39;</span>
-        <span class="c1"># make sure we&#39;ve already got the disorder groups</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;disorder_groups&#39;</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">disorder_groups</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">split_disorder_groups</span><span class="p">(</span><span class="n">assemblies_present</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        
-        <span class="c1"># get the indices of the disorder group</span>
-        <span class="n">disorder_group_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">disorder_groups</span><span class="p">[</span><span class="n">asslabel</span><span class="p">][</span><span class="n">grouplabel</span><span class="p">]</span>
-
-        <span class="c1"># all initial positions</span>
-        <span class="n">initial_positions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">asymmetric_scaled_coords</span><span class="p">[</span><span class="n">disorder_group_indices</span><span class="p">]</span>
-
-        <span class="n">symmops</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">symops</span>
-        <span class="c1"># keep_ops = []</span>
-        <span class="c1"># self.logger.debug(f&#39;Checking symmetry operations for group {grouplabel} in assembly {asslabel}&#39;)</span>
-        <span class="c1"># for iop, op in enumerate(symmops):</span>
-        <span class="c1">#     rot, trans = op</span>
-        <span class="c1">#     site = np.mod(np.dot(rot, scaled_pos) + trans, 1.)</span>
-        <span class="c1">#     atom = Atom()</span>
-        <span class="c1">#     if not molecule_collide(site, group_atoms, vdw_scale=1.8):</span>
-        <span class="c1">#         keep_ops.append(op) ## TODO: or is it the opposite ?!</span>
-
-
-        <span class="c1"># # if the group label is not negative,</span>
-        <span class="c1"># # then we can just return the full list of symmetry operations</span>
-        <span class="c1"># if grouplabel &gt;= 0:</span>
-        <span class="c1">#     self.logger.debug(f&#39;Disorder group {grouplabel} is not asymmetric, so returning all symmetry operations.&#39;)</span>
-        <span class="c1">#     return symmops</span>
-
-        <span class="c1"># # if self.Zprime &lt; 1:</span>
-        <span class="c1"># #     nchunks = int(1 / self.Zprime)</span>
-        <span class="c1"># #     ordered_atoms = self.ordered_atoms.copy()</span>
-        <span class="c1"># #     symbols = self.asymmetric_symbols[disorder_group_indices]</span>
-        <span class="c1"># #     labels = self.asymmetric_labels[disorder_group_indices]</span>
-        <span class="c1"># #     scaled_coords = self.asymmetric_scaled_coords[disorder_group_indices]</span>
-            
-            
-        <span class="c1"># #     fully_expanded_disordered = crystal(</span>
-        <span class="c1"># #                             symbols=symbols,</span>
-        <span class="c1"># #                             basis=scaled_coords,</span>
-        <span class="c1"># #                             occupancies=None,</span>
-        <span class="c1"># #                             spacegroup=self.atoms.info[&#39;spacegroup&#39;],</span>
-        <span class="c1"># #                             cell=self.atoms.cell,</span>
-        <span class="c1"># #                             onduplicates=&#39;warn&#39;,</span>
-        <span class="c1"># #                             symprec=self.symprec,</span>
-        <span class="c1"># #                             pbc=True,</span>
-        <span class="c1"># #                             primitive_cell=False)</span>
-        <span class="c1"># #     # now map the labels onto the corresponding atoms</span>
-        <span class="c1"># #     kinds = fully_expanded_disordered.get_array(&#39;spacegroup_kinds&#39;)</span>
-        <span class="c1"># #     assert all(np.bincount(kinds) == self.nops)</span>
-        <span class="c1"># #     all_labels = np.array([labels[kind] for kind in kinds])</span>
-        <span class="c1"># #     fully_expanded_disordered.set_array(&#39;labels&#39;, all_labels)</span>
-        <span class="c1"># #     fully_expanded_disordered.set_tags(kinds)</span>
-            
-        <span class="c1"># #     # make sure we have nops copies of each site</span>
-        <span class="c1"># #     # combine with ordered atoms</span>
-        <span class="c1"># #     fully_expanded_disordered.extend(ordered_atoms)</span>
-
-        <span class="c1"># #     # now make molecules</span>
-        <span class="c1"># #     mols = Molecules.get(fully_expanded_disordered)</span>
-        <span class="c1"># #     self.logger.info(f&#39;Found {len(mols)} molecules in disorder group {grouplabel}&#39;)</span>
-            
-        <span class="c1"># #     self.logger.debug(f&#39;For group {grouplabel}, we have {len(symmops)} symmetry operations.&#39;)</span>
-
-        <span class="c1"># #     return symmops</span>
-
-        <span class="c1"># # figure out what symops leave the group in a different place.</span>
-        <span class="c1"># # let&#39;s assume that all in the group are the same so we just use one test case</span>
-        <span class="c1"># scaled_pos = self.asymmetric_scaled_coords[disorder_group_indices[0]]</span>
-        <span class="c1"># keep_ops = []</span>
-        <span class="c1"># self.logger.debug(f&#39;Checking symmetry operations for group {grouplabel} in assembly {asslabel}&#39;)</span>
-        <span class="c1"># for iop, op in enumerate(symmops):</span>
-        <span class="c1">#     rot, trans = op</span>
-        <span class="c1">#     site = np.mod(np.dot(rot, scaled_pos) + trans, 1.)</span>
-        <span class="c1">#     if not molecule_collide(site, group_atoms, vdw_scale=1.8):</span>
-        <span class="c1">#         keep_ops.append(op) ## TODO: or is it the opposite ?!</span>
-            
-        <span class="c1">#     # from ase.geometry import find_mic</span>
-        <span class="c1">#     # t = site - scaled_pos</span>
-        <span class="c1">#     # # abs distance</span>
-        <span class="c1">#     # v,d = find_mic(self.atoms.cell.T.dot(t), cell=self.atoms.cell, pbc=True)</span>
-        <span class="c1">#     # # d = np.linalg.norm(self.atoms.cell.T.dot(t))</span>
-        <span class="c1">#     # self.logger.debug(f&#39;  op {iop} {d}&#39;)</span>
-        <span class="c1">#     # if d &gt; 1: # 1 Angstrom</span>
-        <span class="c1">#     #     keep_ops.append(op)</span>
-        <span class="c1"># self.logger.debug(f&#39;For group {grouplabel}, we have {len(keep_ops)} symmetry operations.&#39;)</span>
-        <span class="c1"># return keep_ops</span>
-
-        <span class="k">return</span> <span class="n">symmops</span>
-
-
-    <span class="c1"># def expand_to_integer_Z(self):</span>
-    <span class="c1">#     &#39;&#39;&#39;</span>
-    <span class="c1">#     Apply subset of symmetry operations such that </span>
-    <span class="c1">#     Z become an integer. This only needs to be done to the </span>
-
-    <span class="c1">#     TODO remove this ?</span>
-    <span class="c1">#     Maybe better to have it at the get group symmops level?</span>
-    <span class="c1">#     &#39;&#39;&#39;</span>
-    <span class="c1">#     if self.Zprime &gt;= 1:</span>
-    <span class="c1">#         raise ValueError(f&#39;Z is already {self.Z} - cannot expand&#39;)</span>
-
-    <span class="c1">#     nchunks = int(1 / self.Zprime)</span>
-
-    <span class="c1">#     mols = Molecules.get(self.atoms)</span>
-    <span class="c1">#     spacegroup_kinds = self.atoms.get_array(&#39;spacegroup_kinds&#39;)</span>
-    <span class="c1">#     images = []</span>
-    <span class="c1">#     drop_all = []</span>
-    <span class="c1">#     for mol in mols:</span>
-    <span class="c1">#         molkinds = spacegroup_kinds[mol.indices]</span>
-    <span class="c1">#         if len(set(molkinds)) != len(molkinds):</span>
-                
-    <span class="c1">#             # TODO this section is a bodge - need to fix this properly!</span>
-    <span class="c1">#             u,indices ,c = np.unique(molkinds, return_inverse=True, return_counts=True)</span>
-    <span class="c1">#             duplicate_values = u[c&gt;1]</span>
-    <span class="c1">#             pairs = [np.where(molkinds==dupl)[0] for dupl in duplicate_values]</span>
-    <span class="c1">#             drop_indices = []</span>
-    <span class="c1">#             iass = 0</span>
-    <span class="c1">#             for asslabel, groups in self.disorder_groups.items():</span>
-    <span class="c1">#                 iass += 1e3</span>
-    <span class="c1">#                 for igroup, grouplabel in enumerate(groups.keys()):</span>
-    <span class="c1">#                     grouptag = iass + grouplabel</span>
-    <span class="c1">#                     for pair in pairs:</span>
-    <span class="c1">#                         mol_idx = mol.indices[pair]</span>
-    <span class="c1">#                         mol_idx.sort()</span>
-    <span class="c1">#                         tags = self.atoms.get_tags()[mol_idx]</span>
-    <span class="c1">#                         tag = tags[0]</span>
-    <span class="c1">#                         # for itag, tag in enumerate(tags):</span>
-    <span class="c1">#                         if tag == grouptag:</span>
-    <span class="c1">#                             drop_indices.append(mol_idx[0])</span>
-    <span class="c1">#                             drop_all.append(mol_idx[0])</span>
-
-    <span class="c1">#             dup_sel = AtomSelection(self.atoms, drop_indices)</span>
-    <span class="c1">#             mol = mol - dup_sel</span>
-    <span class="c1">#             temp = mol.subset(self.atoms, use_cell_indices=True)</span>
-    <span class="c1">#             images.append(temp)</span>
-    <span class="c1">#     self.logger.info(f&#39;Drop {drop_all} sites for get the right structure&#39;)</span>
-    <span class="c1">#     temp = self.atoms.copy()</span>
-    <span class="c1">#     # delete the sites that we want to drop</span>
-    <span class="c1">#     temp = temp[list(set(range(len(temp))) - set(drop_all))]</span>
-    <span class="c1">#     temp.write(&#39;hmm.cif&#39;)</span>
-    <span class="c1">#     from ase.io import write</span>
-    <span class="c1">#     write(&#39;hmm_mol.cif&#39;, images)</span>
-        
-
-
-
-
     <span class="k">def</span> <span class="nf">get_disordered_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Retruns a DisorderedStructure object.</span>
@@ -994,16 +842,12 @@ title="Source repository"
                               <span class="n">cell</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cell</span><span class="p">,</span> <span class="n">pbc</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
                 <span class="n">atoms</span><span class="o">.</span><span class="n">set_array</span><span class="p">(</span><span class="s1">&#39;labels&#39;</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
                 <span class="n">atoms</span><span class="o">.</span><span class="n">set_array</span><span class="p">(</span><span class="s1">&#39;occupancies&#39;</span><span class="p">,</span> <span class="n">occupancies</span><span class="p">)</span>
-
-                <span class="c1"># get the group symmetry operations</span>
-                <span class="c1"># TODO: streamline this!</span>
-                <span class="c1"># usually this will be all of the symmetry operations... </span>
-                <span class="n">symmops</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_group_symmetry_operations</span><span class="p">(</span><span class="n">asslabel</span><span class="p">,</span> <span class="n">grouplabel</span><span class="p">)</span>
+                
                 <span class="c1"># create DisorderedGroup object</span>
                 <span class="n">disorder_group</span> <span class="o">=</span> <span class="n">DisorderGroup</span><span class="p">(</span>
                             <span class="n">label</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">grouplabel</span><span class="p">),</span>
                             <span class="n">atoms</span> <span class="o">=</span>  <span class="n">atoms</span><span class="p">,</span>
-                            <span class="n">symmetry_operations</span><span class="o">=</span><span class="n">symmops</span><span class="p">,</span>
+                            <span class="n">symmetry_operations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">symops</span><span class="p">,</span>
                             <span class="n">tag</span><span class="o">=</span><span class="n">grouptag</span><span class="p">)</span>
 
                 <span class="n">group_symops</span> <span class="o">=</span> <span class="n">disorder_group</span><span class="o">.</span><span class="n">get_group_symmetry_operations</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sg</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Z</span><span class="p">)</span>
@@ -1029,70 +873,6 @@ title="Source repository"
                             <span class="n">correlated_assemblies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">correlated_assemblies</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">disordered_structure</span></div>
-        
-
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-    <span class="c1"># class DisorderedAtom():</span>
-    <span class="c1">#     &#39;&#39;&#39;</span>
-    <span class="c1">#     Disordered atom -- cf ASE Atom</span>
-
-    <span class="c1">#     TODO: is this the right design structure? </span>
-
-    <span class="c1">#     &#39;&#39;&#39;</span>
-    <span class="c1">#     def __init__(self, assembly_label, group_label, occupancy, symbol, position, cell=None, tag=None):</span>
-    <span class="c1">#         self.logger = logging.getLogger(__name__)</span>
-    <span class="c1">#         self.logger.debug(&#39;Initialising AssemblyGroup&#39;)</span>
-    <span class="c1">#         self.group_label = group_label</span>
-    <span class="c1">#         self.assembly_label = assembly_label</span>
-    <span class="c1">#         self.occupancy = occupancy</span>
-    <span class="c1">#         self.symbol = symbol</span>
-    <span class="c1">#         self.position = position</span>
-    <span class="c1">#         self.tag = tag</span>
-    <span class="c1">#         self.cell = cell</span>
-
-
-
-
-
-    <span class="c1">#     # def __repr__(self):</span>
-    <span class="c1">#     #     return f&#39;{self.symbol} {self.position}&#39;</span>
-
-            
-
-
-    <span class="c1"># class DisorderGroup:</span>
-    <span class="c1">#     &#39;&#39;&#39;</span>
-    <span class="c1">#     Disorder group given a labels and an ASE atoms object containing</span>
-    <span class="c1">#     extra info dict from the parsed CIF file.</span>
-    <span class="c1">#     &#39;&#39;&#39;</span>
-    <span class="c1">#     def __init__(self, label, atoms):</span>
-    <span class="c1">#         self.logger = logging.getLogger(__name__)</span>
-    <span class="c1">#         self.logger.debug(&#39;Initialising DisorderGroup&#39;)</span>
-    <span class="c1">#         self.label = label</span>
-    <span class="c1">#         self.indices = indices</span>
-        
-            
 </pre></div>
 
               </div>
