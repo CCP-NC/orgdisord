@@ -12,9 +12,6 @@ SODORG Renewal
 .. image:: https://img.shields.io/travis/jkshenton/sodorg_renewal.svg
         :target: https://travis-ci.com/jkshenton/sodorg_renewal
 
-.. image:: https://readthedocs.org/projects/sodorg-renewal/badge/?version=latest
-        :target: https://sodorg-renewal.readthedocs.io/en/latest/?version=latest
-        :alt: Documentation Status
 
 
 
@@ -28,7 +25,7 @@ Python code to handle disordered molecular crystals.
 
 
 * Free software: MIT license
-* Documentation: https://sodorg-renewal.readthedocs.io.
+* Documentation: https://jkshenton.github.io/sodorg_renewal
 
 
 Features
