@@ -1,6 +1,0 @@
-sodorg\_renewal.enumerate.chunks
-================================
-
-.. currentmodule:: sodorg_renewal.enumerate
-
-.. autofunction:: chunks

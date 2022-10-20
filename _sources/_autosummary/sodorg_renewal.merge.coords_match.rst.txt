@@ -1,6 +1,0 @@
-sodorg\_renewal.merge.coords\_match
-===================================
-
-.. currentmodule:: sodorg_renewal.merge
-
-.. autofunction:: coords_match

@@ -1,6 +1,0 @@
-sodorg\_renewal.disordered\_structure.DisorderGroup
-===================================================
-
-.. currentmodule:: sodorg_renewal.disordered_structure
-
-.. autoclass:: DisorderGroup

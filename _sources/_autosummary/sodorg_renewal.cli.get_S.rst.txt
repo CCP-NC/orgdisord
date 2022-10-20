@@ -1,6 +1,0 @@
-sodorg\_renewal.cli.get\_S
-==========================
-
-.. currentmodule:: sodorg_renewal.cli
-
-.. autofunction:: get_S

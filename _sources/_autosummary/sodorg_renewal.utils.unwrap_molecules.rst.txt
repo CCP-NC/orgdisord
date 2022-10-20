@@ -1,6 +1,0 @@
-sodorg\_renewal.utils.unwrap\_molecules
-=======================================
-
-.. currentmodule:: sodorg_renewal.utils
-
-.. autofunction:: unwrap_molecules

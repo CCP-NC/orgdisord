@@ -1,6 +1,0 @@
-sodorg\_renewal.disordered\_structure.DisorderAssembly
-======================================================
-
-.. currentmodule:: sodorg_renewal.disordered_structure
-
-.. autoclass:: DisorderAssembly

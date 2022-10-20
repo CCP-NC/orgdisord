@@ -1,6 +1,0 @@
-sodorg\_renewal.utils.reload\_as\_molecular\_crystal
-====================================================
-
-.. currentmodule:: sodorg_renewal.utils
-
-.. autofunction:: reload_as_molecular_crystal

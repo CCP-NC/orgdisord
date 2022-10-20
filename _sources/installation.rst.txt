@@ -40,8 +40,27 @@ or
     
     It is recommended to use a new `virtual environment`_ or new `conda environment`_ rather than installing SODORG Renewal system wide.
 
+    From the root of the source directory, you can create a new virtual environment with:
+
+    With ``venv`` the procedure is something like: 
+
+    .. code-block:: console
+
+        $ python -m venv sodorg_env
+        $ source sodorg_env/bin/activate
+        $ pip install .
+
+    With ``conda`` the procedure is something like:
+
+    .. code-block:: console
+
+        $ conda create -n sodorg_env
+        $ conda activate sodorg_env
+        $ conda install pip
+        $ pip install .
+
     The package has not been tested on the Windows operating system. It's recommended to use the WSL (Windows Subsystem for Linux) if you are using Windows.
-    Though in that case you may need to `set up an X11 server`_ to view the generated structures in the ASE GUI.
+    Though in that case you may need to `set up an X11 server`_ to (optionally) view the generated structures in the ASE GUI.
 
 
 .. _Github repo: https://github.com/jkshenton/sodorg_renewal

@@ -1,6 +1,0 @@
-sodorg\_renewal.cli.get\_boltzmann\_weight
-==========================================
-
-.. currentmodule:: sodorg_renewal.cli
-
-.. autofunction:: get_boltzmann_weight
