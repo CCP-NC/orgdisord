@@ -145,7 +145,7 @@ This can be done with the ``-r`` flag:
 
 .. code-block:: console
 
-    sodorg_renewal enumerate ABABUB.cif --prefix ababub -r 1024 --supercell 2 2 1
+    sodorg_renewal enumerate ABABUB.cif --prefix ababub -r -N 1024 --supercell 2 2 1
 
 .. tip:: 
     To visualise the generated structures, you can add the ``--view`` flag. 
