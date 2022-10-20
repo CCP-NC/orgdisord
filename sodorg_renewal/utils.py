@@ -63,6 +63,7 @@ def reload_as_molecular_crystal(
         mols = Molecules.get(images[0])
         images_new = []
         for atoms in images:
+            atoms.wrap()
             temp = mols[0].subset(atoms, use_cell_indices=True)
             for mol in mols[1:]:
                 temp.extend(mol.subset(atoms, use_cell_indices=True))
@@ -88,6 +89,7 @@ def reload_as_molecular_crystal(
     return images_new
 
 def unwrap_molecules(atoms: Atoms, wrap_each_molecule: bool=False):
+    atoms.wrap()
     mols = Molecules.get(atoms)
     temp = mols[0].subset(atoms, use_cell_indices=True)
     for mol in mols[1:]:
