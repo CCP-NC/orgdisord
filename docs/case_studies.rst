@@ -156,6 +156,31 @@ This can be done with the ``-r`` flag:
     You can do this by clicking on ``View->Colors`` button and selecting ``By tag``.
     You can then choose the range of tags you're interested in and also change the color map (cmap).
     
+Constrained ratios of disorder components
+-----------------------------------------
+
+.. note::
+    This feature is currently limited to simple cases where only 1 disorder assembly and 2 disorder groups are present.
+
+The code can also be used to generate structures with a specified ratio of disorder components.
+If the ``--fix_ratio`` flag is present, the code will only generate structures with a fixed ratio of disorder components.
+By default this ratio comes from the occupancies specified in the CIF file, but they can be overridden using the ``--ratios`` flag.
+For example, to generate only structures with 0.75 disorder group 1 and 0.25 disorder group 2:
+
+
+.. code-block:: console
+
+    sodorg_renewal enumerate ABABUB.cif --prefix ababub --fix_ratio --ratios 0.75 0.25
+
+
+.. tip::
+    The ``--ratio-tol`` flag is useful when the occupancies in the CIF file are not exact.
+    For example, if the occupancies are 0.75 and 0.25, the code will generate structures with a ratio of 0.75 and 0.25, but also structures with a ratio of 0.76 and 0.24.
+    This is because the code will generate structures with occupancies that are within the tolerance of the specified ratio.
+    The default tolerance is 0.01, but this can be changed using the ``--ratio-tol`` flag.
+
+
+
 
 
 Another straightforward case (AXURIX)
@@ -428,6 +453,32 @@ We get the following output:
 
 
 The code correctly generates a total of 32 (32\ :sup:`1` ) ordered structures and outputs the following table: :download:`DASRAU results table <../examples/dasrau.csv>`
+
+
+
+Specifying the disorder components using two ordered structures
+----------------------------------------------------------------
+
+Rather than working with CIF files tagged with disorder information, 
+it's sometimes easier to work with two ordered structures, one for the major disorder component and one for the minor.
+The code can use the difference between the two structures to determine the disorder structure and enumerate based on that.
+
+This functionality is currently limited to the case of one disorder assembly and two disorder groups.
+
+Taking the previous EROHEA example, I manually split the structure into two P1 ordered structures,
+ one for the major disorder component and one for the minor. You can download these here:
+
+* :download:`EROHEA major <../examples/EROHEA_maj_P1.cif>`
+* :download:`EROHEA minor <../examples/EROHEA_min_P1.cif>`
+
+
+If you pass two files to the command-line-interface, it will assume these are the two disorder components ::
+    
+        sodorg_renewal enumerate EROHEA_maj_P1.cif EROHEA_min_P1.cif --no_write
+
+
+
+
 
 
 

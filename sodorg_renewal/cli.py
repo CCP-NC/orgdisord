@@ -2,12 +2,14 @@
 import sys
 import os
 import click
+from sodorg_renewal.disordered_structure import from_disorder_components
 from sodorg_renewal.parse_cif_file import CifParser
 from sodorg_renewal.enumerate import OrderedfromDisordered
 from sodorg_renewal.merge import merge_structures
+from sodorg_renewal.utils import get_new_labels
 import spglib
 import time
-from ase.io import write
+from ase.io import read
 from ase.units import _amu
 from ase.units import kB # kB is the Boltzmann constant in eV/K
 from ase.units import kJ, mol
@@ -38,7 +40,7 @@ def cli():
 
 @cli.command("enumerate", context_settings={'show_default': True})
 @click.pass_context
-@click.argument('cif_file', type=click.Path(exists=True))
+@click.argument('files', nargs=-1, type=click.Path(exists=True))
 # add option to specify supercell
 @click.option('--supercell', '-s', nargs=3, type=click.INT, default=[1,1,1], help='Supercell size e.g. 2 1 1')
 # add option to specify max number of iterations
@@ -77,26 +79,41 @@ def cli():
 @click.option('--correlated_assemblies', '-c', is_flag=True, default=False, help='Are the disorder assemblies correlated?'
               'i.e. are the disorder groups within each assembly to be selected with the same index? '
               '(The number of disorder groups in each assembly must be the same in such cases.)')
+# fix ratio flag
+@click.option('--fix-ratio', is_flag=True, default=False, help='Fix the ratio of the disorder groups.')
+# manually specify ratios
+@click.option('--ratio', nargs=1, type=click.FLOAT, default=None, help='Manually specify the ratio of the disorder groups. '
+                                                                         'Must be used with --fix-ratio.'
+                                                                         'e.g. --ratio 0.75 would constrain the ratios of disorder group 1 and 2 to be 3:1'
+                                                                        'NOTE: This is only implemented for 1-assembly, 2-group structures.')
+# ratio tolerance
+@click.option('--ratio-tol', type=click.FLOAT, default=0.01, help='Tolerance for how close the ratio of disorder groups needs to be. '
+                                                                  'See atol in numpy.isclose.'
+                                                                  'Only used if --fix-ratio is specified.')
 
-def main(ctx,
-         cif_file, 
-         supercell, 
-         maxiters, 
-         exclude_ordered, 
-         random,
-         merge,
-         symprec, 
-         quiet,
-         algo,
-         use_disordered_only,
-         no_write,
-         prefix,
-         format,
-         ox,
-         log,
-         view,
-         not_molecular_crystal,
-         correlated_assemblies,
+def main(
+        ctx,
+        files, 
+        supercell, 
+        maxiters, 
+        exclude_ordered, 
+        random,
+        merge,
+        symprec, 
+        quiet,
+        algo,
+        use_disordered_only,
+        no_write,
+        prefix,
+        format,
+        ox,
+        log,
+        view,
+        not_molecular_crystal,
+        correlated_assemblies,
+        fix_ratio,
+        ratio,
+        ratio_tol,
          ):
 
     """Command line interface for sodorg_renewal.
@@ -124,15 +141,54 @@ def main(ctx,
         logger.debug(f"          {param}: {value}")
 
     df = pd.DataFrame()
+    nfiles = len(files)
+    if nfiles == 1:
+        logger.info(f'Parsing disorder in cif file: {files[0]}')
+        # parse cif file containing disordered structure
+        cif = CifParser(files[0],
+                        correlated_assemblies=correlated_assemblies,
+                        molecular_crystal = not not_molecular_crystal)
+        symops = cif.symops
 
-    logger.info(f'Parsing disorder in cif file: {cif_file}')
-    # parse cif file containing disordered structure
-    cif = CifParser(cif_file,
-                    correlated_assemblies=correlated_assemblies,
-                    molecular_crystal = not not_molecular_crystal)
-    symops = cif.symops
+        # get the disordered structure
+        disordered_structure = cif.get_disordered_structure()
 
-    disordered_structure = cif.get_disordered_structure()
+    elif nfiles == 2:
+        logger.info(f'Parsing disorder in files: {files[0]} and {files[1]}')
+        logger.info('Assuming the two files contain two fully ordered structures, one for each disorder group.')
+
+        disorder_components = []
+        for f in files:
+            labels = None
+            if f.endswith('.cif'):
+                # if they are CIF files, assume they have CIF labels present
+                atoms = read(f, store_tags = True)
+                # get the CIF labels if present
+                if 'atom_site_label' in atoms.info:
+                    labels = atoms.info['atom_site_label']
+                if '_atom_site_occupancy' in atoms.info:
+                    occupancies = atoms.info['_atom_site_occupancy']
+                    atoms.set_array('occupancies', np.array(occupancies))
+            else:
+                atoms = read(f) ## hope ASE can read it
+                
+                
+            if not labels:
+                labels = get_new_labels(atoms)
+            
+            atoms.set_array('labels', np.array(labels))
+
+            disorder_components.append(atoms)
+        disordered_structure = from_disorder_components(
+                                    disorder_components[0],
+                                    disorder_components[1],
+                                    tolerance=1e-2,
+                                    symprec=1e-3,
+                                    ratio=ratio, # TODO make this more general
+                                    group_occupancies=None)
+    else:
+        raise ValueError(f"Expected 1 or 2 files, got {nfiles}.")
+        
 
     logger.info('Enumerating ordered configurations.')
     # enumerate ordered configurations
@@ -143,7 +199,13 @@ def main(ctx,
                         exclude_ordered = exclude_ordered,
                         random_configs=random,
                         return_configs=True,
+                        fix_ratio=fix_ratio,
+                        ratio = ratio,
+                        ratio_tolerance = ratio_tol,
                         )
+    if len(images) == 0:
+        logger.warning('No ordered configurations found.')
+        return
 
     # -- DATA FRAME -- #
     # store information to dataframe

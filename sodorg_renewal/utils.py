@@ -2,7 +2,8 @@ import numpy as np
 from ase import Atoms, Atom
 from soprano.properties.linkage import Molecules
 from typing import List
-
+import warnings
+import random
 
 def get_molecules(atoms: Atoms, use_cell_indices: bool=True):
     """
@@ -171,3 +172,51 @@ def molecule_collide(
     #                 return True
     # return False
     
+def get_unique_atoms(atoms, sg):
+    """
+    Return the unique atoms in an atoms object and the count of duplicates
+    """
+    tags = sg.tag_sites(atoms.get_scaled_positions())
+    _, idx, counts = np.unique(tags, return_index=True, return_counts=True)
+    
+    if len(set(counts)) != 1:
+        warnings.warn('We have some groups of atoms that are of different lengths -- check!')
+
+    return atoms.copy()[idx], counts[0]
+
+# def first_true(iterable, default=False, pred=None):
+#     """Returns the first true value in the iterable.
+
+#     If no true value is found, returns *default*
+
+#     If *pred* is not None, returns the first item
+#     for which pred(item) is true.
+
+#     From https://docs.python.org/3/library/itertools.html#itertools-recipes
+
+#     """
+#     # first_true([a,b,c], x) --> a or b or c or x
+#     # first_true([a,b], x, f) --> a if f(a) else b if f(b) else x
+#     return next(filter(pred, iterable), default)
+
+def random_product(*args, repeat=1):
+    """
+    Random selection from itertools.product(*args, **kwds)
+    From https://docs.python.org/3/library/itertools.html#itertools-recipes
+    """
+    while True:
+        pools = [tuple(pool) for pool in args] * repeat
+        yield tuple(map(random.choice, pools))
+def get_new_labels(atoms):
+    """
+    Get the labels for a given atoms object in the style of JMOL/ MagresView
+    """
+    # make up some labels
+    symbs = np.array(atoms.get_chemical_symbols())
+    elems = set(symbs)
+    labels = [""] * len(atoms)
+    for e in elems:
+        e_i = np.where(symbs == e)[0]
+        for i, j in enumerate(e_i):
+            labels[j] = "{0}_{1}".format(e, i + 1)
+    return labels

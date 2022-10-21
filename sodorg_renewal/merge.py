@@ -213,7 +213,7 @@ def rematcher(re, features1, features2, eps):
     return abs(val - 1) < eps 
 
 
-def merge_rematch(supercell_images, eps=1e-3, quiet=False):
+def merge_rematch(supercell_images, eps=1e-3, quiet=False, parallel=True):
         '''
         This merging algorithm creates a fingerprint for each structure 
         bases on the SOAP representation and then used the 
@@ -229,11 +229,16 @@ def merge_rematch(supercell_images, eps=1e-3, quiet=False):
 
         from dscribe.descriptors import SOAP
         from dscribe.kernels import REMatchKernel
-
+        ncores = 1
+        if parallel:
+            # we can only run efficiently on about 100 structures per core
+            # fewer than that and we'll just use serial
+            ncores = min([cpu_count(), len(supercell_images)//100 + 1])
+        logger.info(f'Running ReMatch algo using {ncores} cores')
         nimages = len(supercell_images)
-        # assumes all supercells have the same atoms set... is this always the case? 
-        disordered_species_set = set([atom.symbol for atom in supercell_images[0] if atom.tag != 0 ] )
-
+        # assumes supercells [0] and [-1] will cover all unique species
+        disordered_species_set = set([[atom.symbol for atom in atoms if atom.tag != 0] for atoms in [supercell_images[0], supercell_images[-1]]])
+        
 
         desc = SOAP(species=disordered_species_set,
                     rcut=7.5,
@@ -244,12 +249,11 @@ def merge_rematch(supercell_images, eps=1e-3, quiet=False):
                     crossover=True, 
                     sparse=False)
         logger.info(f'generating descriptors for {nimages} atoms objects')
-        features = [desc.create(sub, n_jobs=4, verbose = not quiet) 
-                        for sub in supercell_images]
+        features = desc.create(supercell_images, n_jobs=ncores, verbose = not quiet) 
 
         logger.info('performing structure matching')
-        # Any metric supported by scikit-learn will work: e.g. a Gaussian.
-        re = REMatchKernel(metric="rbf", gamma=1, alpha=1, threshold=1e-6)
+        # Any metric supported by scikit-learn will work: e.g. sigmoid.
+        re = REMatchKernel(metric="rbf", gamma=1, alpha=1, threshold=1e-3, kernel_params = {'n_jobs':ncores})
         
         unmatched = list(range(nimages))
         all_groups = []

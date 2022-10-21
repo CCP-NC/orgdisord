@@ -7,8 +7,6 @@ from ase.io import read
 from ase import Atoms, Atom
 import warnings
 from ase.spacegroup import get_spacegroup, crystal
-from soprano.properties.linkage import Molecules
-from soprano.selection import AtomSelection
 from sodorg_renewal.utils import molecule_collide
 from sodorg_renewal.disordered_structure import DisorderedStructure, DisorderGroup, DisorderAssembly
 
@@ -36,10 +34,7 @@ class CifParser:
         self.logger.debug("---    PARSING CIF FILE    ---")
         self.logger.debug("------------------------------")
         self.logger.debug(f"{self.cif_file}")
-        
 
-        self.logger.debug(self.atoms.get_array('spacegroup_kinds'))
-        self.logger.debug(np.bincount(self.atoms.get_array('spacegroup_kinds')))
         # Disorder assemblies and groups
         # Make sure the info dictionary contains the disorder tags
         if not '_atom_site_disorder_group' in self.info:
@@ -107,7 +102,7 @@ class CifParser:
         # spacegroup info:
         sg = self.atoms.info['spacegroup']
         if sg.centrosymmetric:
-            warnings.warn('Warning: crystal read as centrosymmetric, but we will proceed as if it is not!'
+            self.logger.debug('The crystal read as centrosymmetric, but we will proceed as if it is not.'
                         'This is usually fine in my experience... ')
             sg._centrosymmetric = 0
         self.sg = sg
@@ -118,15 +113,22 @@ class CifParser:
         self.logger.debug(f'Found {self.nops} symmetry operations. Spacegroup {sg}')
 
 
-        # TODO: better way to get Z?
-        try:
+        # TODO: is there a better way to get Z?
+        ## warn if _cell_formula_units_Z is not present in info dict
+        if not '_cell_formula_units_z' in self.info:
+            self.logger.warn(
+                f'Cif file {self.cif_file} does not contain _cell_formula_units_z tag. '
+                'Assuming Z = number of symmetry operations. '
+                'This is not correct in many cases - please edit the cif file appropriately.'
+                )
+            Z = self.nops
+        else:
             Z = self.info['_cell_formula_units_z']
-        except:
-            Z = 4
-            self.logger.warn(f"WARNING: Couldn't parse Z -- taking Z = {Z} for now and proceeding")
+        
         self.Z = Z
         self.Zprime = Z / self.nops
-        # self.expand_to_integer_Z()
+
+        self.logger.debug(f'Z = {Z}, Zprime = {self.Zprime}')
 
 
 
@@ -265,7 +267,7 @@ class CifParser:
             'These will *not* be included in the generated structures. '
             'Please check your CIF file carefully!')
         
-        if '.' in np.array(site_disorder_groups)[self.occupancies != 1]:
+        if '.' in np.array(site_disorder_groups, dtype = 'U')[self.occupancies != 1]:
             self.logger.warn(f'Warning: Some sites are not in a disorder group but have occupancy != 1.' )
         
         
@@ -309,35 +311,36 @@ class CifParser:
         return disorder_groups
 
 
-    def is_assembly_asymmetric(self, assembly_label):
-        '''
-        Assembly is considered asymmetric if any of the disorder groups 
-        have a negative label.
+    # def is_assembly_asymmetric(self, assembly_label):
+    #     '''
+    #     Assembly is considered asymmetric if any of the disorder groups 
+    #     have a negative label.
+    #     This isn't used anywhere -- I'm not sure if it's the correct approach...
         
-        '''
-        # make sure we've already got the disorder groups
-        if not hasattr(self, 'disorder_groups'):
-            self.disorder_groups = self.split_disorder_groups(assemblies_present=True)
+    #     '''
+    #     # make sure we've already got the disorder groups
+    #     if not hasattr(self, 'disorder_groups'):
+    #         self.disorder_groups = self.split_disorder_groups(assemblies_present=True)
         
-        disorder_group_labels = sorted(self.disorder_groups[assembly_label].keys())
-        asymmetric_disorder_groups = [l for l in disorder_group_labels if l < 0]
+    #     disorder_group_labels = sorted(self.disorder_groups[assembly_label].keys())
+    #     asymmetric_disorder_groups = [l for l in disorder_group_labels if l < 0]
         
-        # check any of the disorder group labels is negative
-        asymmetric_assembly = False
-        if len(disorder_group_labels) == 1:
-            if disorder_group_labels[0] < 0:
-                # we have a single asymmetric disorder group
-                asymmetric_assembly = True
-            else:
-                self.logger.warn(f'Warning: assembly {assembly_label} has just a single non-asymmetric disorder group.')
-        else:
-            if len(asymmetric_disorder_groups) > 0:
-                # check if all the disorder group labels are negative
-                if len(asymmetric_disorder_groups) == len(disorder_group_labels):
-                    asymmetric_assembly = True
-                else:
-                    self.logger.warn(f'Warning: assembly {assembly_label} has a mix of positive and negative disorder group labels -- not sure what to do here!' )
-        return asymmetric_assembly
+    #     # check any of the disorder group labels is negative
+    #     asymmetric_assembly = False
+    #     if len(disorder_group_labels) == 1:
+    #         if disorder_group_labels[0] < 0:
+    #             # we have a single asymmetric disorder group
+    #             asymmetric_assembly = True
+    #         else:
+    #             self.logger.warn(f'Warning: assembly {assembly_label} has just a single non-asymmetric disorder group.')
+    #     else:
+    #         if len(asymmetric_disorder_groups) > 0:
+    #             # check if all the disorder group labels are negative
+    #             if len(asymmetric_disorder_groups) == len(disorder_group_labels):
+    #                 asymmetric_assembly = True
+    #             else:
+    #                 self.logger.warn(f'Warning: assembly {assembly_label} has a mix of positive and negative disorder group labels -- not sure what to do here!' )
+    #     return asymmetric_assembly
 
 
 
@@ -346,7 +349,7 @@ class CifParser:
         Retruns a DisorderedStructure object.
         '''
         # get ordered part
-        ordered_atoms = self.gen_ordered_atoms()
+        ordered_atoms = self.ordered_atoms
 
         # get disordered part
         disorder_assemblies = []
@@ -370,12 +373,15 @@ class CifParser:
                               cell=self.cell, pbc=True)
                 atoms.set_array('labels', labels)
                 atoms.set_array('occupancies', occupancies)
+
+                group_occupancy = np.mean(occupancies)
                 
                 # create DisorderedGroup object
                 disorder_group = DisorderGroup(
                             label=str(grouplabel),
                             atoms =  atoms,
                             symmetry_operations=self.symops,
+                            occupancy=group_occupancy,
                             tag=grouptag)
 
                 group_symops = disorder_group.get_group_symmetry_operations(self.sg, self.Z)
@@ -393,7 +399,6 @@ class CifParser:
         # create DisorderedStructure object to be returned
         disordered_structure = DisorderedStructure(
                             ordered_atoms = ordered_atoms,
-                            cell = self.cell,
                             Z = self.Z,
                             spacegroup = self.sg,
                             disorder_assemblies = disorder_assemblies,
