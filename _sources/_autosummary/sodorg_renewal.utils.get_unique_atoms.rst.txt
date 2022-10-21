@@ -1,0 +1,6 @@
+sodorg\_renewal.utils.get\_unique\_atoms
+========================================
+
+.. currentmodule:: sodorg_renewal.utils
+
+.. autofunction:: get_unique_atoms

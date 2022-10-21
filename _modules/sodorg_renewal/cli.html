@@ -1,0 +1,1050 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>sodorg_renewal.cli &#8212; SODORG Renewal 0.1.0 documentation</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../../index.html">
+      
+      
+      
+      <h1 class="site-logo" id="site-title">SODORG Renewal 0.1.0 documentation</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        <p aria-level="2" class="caption" role="heading">
+ <span class="caption-text">
+  Contents:
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../readme.html">
+   SODORG Renewal
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../installation.html">
+   Installation
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../case_studies.html">
+   Case Studies
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../cli.html">
+   Command line interface
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../usage.html">
+   Usage as library
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="../../modules.html">
+   API reference
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2 has-children">
+    <a class="reference internal" href="../../_autosummary/sodorg_renewal.html">
+     sodorg_renewal
+    </a>
+    <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+    <label for="toctree-checkbox-2">
+     <i class="fas fa-chevron-down">
+     </i>
+    </label>
+    <ul>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../_autosummary/sodorg_renewal.cli.html">
+       sodorg_renewal.cli
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+      <label for="toctree-checkbox-3">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/sodorg_renewal.cli.get_Elatt.html">
+         sodorg_renewal.cli.get_Elatt
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/sodorg_renewal.cli.get_S.html">
+         sodorg_renewal.cli.get_S
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/sodorg_renewal.cli.get_boltzmann_weight.html">
+         sodorg_renewal.cli.get_boltzmann_weight
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/sodorg_renewal.cli.get_deltaA.html">
+         sodorg_renewal.cli.get_deltaA
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/sodorg_renewal.cli.get_partition_function.html">
+         sodorg_renewal.cli.get_partition_function
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/sodorg_renewal.cli.get_probability.html">
+         sodorg_renewal.cli.get_probability
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/sodorg_renewal.cli.get_tau.html">
+         sodorg_renewal.cli.get_tau
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../_autosummary/sodorg_renewal.disordered_structure.html">
+       sodorg_renewal.disordered_structure
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+      <label for="toctree-checkbox-4">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/sodorg_renewal.disordered_structure.from_disorder_components.html">
+         sodorg_renewal.disordered_structure.from_disorder_components
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/sodorg_renewal.disordered_structure.DisorderAssembly.html">
+         sodorg_renewal.disordered_structure.DisorderAssembly
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/sodorg_renewal.disordered_structure.DisorderGroup.html">
+         sodorg_renewal.disordered_structure.DisorderGroup
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/sodorg_renewal.disordered_structure.DisorderedStructure.html">
+         sodorg_renewal.disordered_structure.DisorderedStructure
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../_autosummary/sodorg_renewal.enumerate.html">
+       sodorg_renewal.enumerate
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+      <label for="toctree-checkbox-5">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/sodorg_renewal.enumerate.binary_to_idx.html">
+         sodorg_renewal.enumerate.binary_to_idx
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/sodorg_renewal.enumerate.chunks.html">
+         sodorg_renewal.enumerate.chunks
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/sodorg_renewal.enumerate.select_configs.html">
+         sodorg_renewal.enumerate.select_configs
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/sodorg_renewal.enumerate.OrderedfromDisordered.html">
+         sodorg_renewal.enumerate.OrderedfromDisordered
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../_autosummary/sodorg_renewal.merge.html">
+       sodorg_renewal.merge
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+      <label for="toctree-checkbox-6">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/sodorg_renewal.merge.compare_ref_unmatched.html">
+         sodorg_renewal.merge.compare_ref_unmatched
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/sodorg_renewal.merge.coords_match.html">
+         sodorg_renewal.merge.coords_match
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/sodorg_renewal.merge.coords_match_symmops.html">
+         sodorg_renewal.merge.coords_match_symmops
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/sodorg_renewal.merge.ewald_energy.html">
+         sodorg_renewal.merge.ewald_energy
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/sodorg_renewal.merge.merge_ewald.html">
+         sodorg_renewal.merge.merge_ewald
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/sodorg_renewal.merge.merge_rematch.html">
+         sodorg_renewal.merge.merge_rematch
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/sodorg_renewal.merge.merge_structures.html">
+         sodorg_renewal.merge.merge_structures
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/sodorg_renewal.merge.merge_symm.html">
+         sodorg_renewal.merge.merge_symm
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/sodorg_renewal.merge.rematcher.html">
+         sodorg_renewal.merge.rematcher
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../_autosummary/sodorg_renewal.parse_cif_file.html">
+       sodorg_renewal.parse_cif_file
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+      <label for="toctree-checkbox-7">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/sodorg_renewal.parse_cif_file.CifParser.html">
+         sodorg_renewal.parse_cif_file.CifParser
+        </a>
+       </li>
+      </ul>
+     </li>
+     <li class="toctree-l3 has-children">
+      <a class="reference internal" href="../../_autosummary/sodorg_renewal.utils.html">
+       sodorg_renewal.utils
+      </a>
+      <input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/>
+      <label for="toctree-checkbox-8">
+       <i class="fas fa-chevron-down">
+       </i>
+      </label>
+      <ul>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/sodorg_renewal.utils.get_molecules.html">
+         sodorg_renewal.utils.get_molecules
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/sodorg_renewal.utils.get_new_labels.html">
+         sodorg_renewal.utils.get_new_labels
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/sodorg_renewal.utils.get_unique_atoms.html">
+         sodorg_renewal.utils.get_unique_atoms
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/sodorg_renewal.utils.molecule_collide.html">
+         sodorg_renewal.utils.molecule_collide
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/sodorg_renewal.utils.random_product.html">
+         sodorg_renewal.utils.random_product
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/sodorg_renewal.utils.reload_as_molecular_crystal.html">
+         sodorg_renewal.utils.reload_as_molecular_crystal
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/sodorg_renewal.utils.unwrap_molecules.html">
+         sodorg_renewal.utils.unwrap_molecules
+        </a>
+       </li>
+       <li class="toctree-l4">
+        <a class="reference internal" href="../../_autosummary/sodorg_renewal.utils.wrap_molecule.html">
+         sodorg_renewal.utils.wrap_molecule
+        </a>
+       </li>
+      </ul>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../contributing.html">
+   Contributing
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../authors.html">
+   Credits
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../history.html">
+   History
+  </a>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+<a href="https://github.com/jkshenton/sodorg_renewal"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="bottom"
+title="Source repository"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+
+</a>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1></h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <h1>Source code for sodorg_renewal.cli</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Console script for sodorg_renewal.&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">click</span>
+<span class="kn">from</span> <span class="nn">sodorg_renewal.disordered_structure</span> <span class="kn">import</span> <span class="n">from_disorder_components</span>
+<span class="kn">from</span> <span class="nn">sodorg_renewal.parse_cif_file</span> <span class="kn">import</span> <span class="n">CifParser</span>
+<span class="kn">from</span> <span class="nn">sodorg_renewal.enumerate</span> <span class="kn">import</span> <span class="n">OrderedfromDisordered</span>
+<span class="kn">from</span> <span class="nn">sodorg_renewal.merge</span> <span class="kn">import</span> <span class="n">merge_structures</span>
+<span class="kn">from</span> <span class="nn">sodorg_renewal.utils</span> <span class="kn">import</span> <span class="n">get_new_labels</span>
+<span class="kn">import</span> <span class="nn">spglib</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">ase.io</span> <span class="kn">import</span> <span class="n">read</span>
+<span class="kn">from</span> <span class="nn">ase.units</span> <span class="kn">import</span> <span class="n">_amu</span>
+<span class="kn">from</span> <span class="nn">ase.units</span> <span class="kn">import</span> <span class="n">kB</span> <span class="c1"># kB is the Boltzmann constant in eV/K</span>
+<span class="kn">from</span> <span class="nn">ase.units</span> <span class="kn">import</span> <span class="n">kJ</span><span class="p">,</span> <span class="n">mol</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">captureWarnings</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># TODO: sort out DF order/ what info to include</span>
+<span class="c1"># TODO sort out DF printing/saving to file</span>
+
+<span class="c1"># new log header</span>
+<span class="n">LOGHEADER</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
+
+
+<span class="s1">###############################################################################</span>
+<span class="s1">#                          -----  SODORG-PY  -----                            #</span>
+<span class="s1">#                                                          J. Kane Shenton    #</span>
+<span class="s1">#                                                                   CCP-NC    #</span>
+<span class="s1">###############################################################################</span>
+<span class="s1">&#39;&#39;&#39;</span>
+
+<span class="nd">@click</span><span class="o">.</span><span class="n">group</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">cli</span><span class="p">():</span>
+    <span class="k">pass</span>
+
+
+<span class="nd">@cli</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;enumerate&quot;</span><span class="p">,</span> <span class="n">context_settings</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;show_default&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">pass_context</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s1">&#39;files&#39;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">exists</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+<span class="c1"># add option to specify supercell</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--supercell&#39;</span><span class="p">,</span> <span class="s1">&#39;-s&#39;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">INT</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Supercell size e.g. 2 1 1&#39;</span><span class="p">)</span>
+<span class="c1"># add option to specify max number of iterations</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--maxiters&#39;</span><span class="p">,</span> <span class="s1">&#39;-N&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">INT</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">512</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Maximum number of configurations generated&#39;</span><span class="p">)</span>
+<span class="c1"># add option to include ordered configurations</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--exclude_ordered&#39;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Exclude ordered part of structure in output structures?&#39;</span><span class="p">)</span>
+<span class="c1"># add option to generate random configurations</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--random&#39;</span><span class="p">,</span> <span class="s1">&#39;-r&#39;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Generate random configurations?&#39;</span><span class="p">)</span>
+<span class="c1"># add option to merge structures</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--merge&#39;</span><span class="p">,</span> <span class="s1">&#39;-m&#39;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Merge equivalent structures?&#39;</span><span class="p">)</span>
+<span class="c1">#add option to specify algorithm</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--algo&#39;</span><span class="p">,</span> <span class="s1">&#39;-a&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Choice</span><span class="p">([</span><span class="s1">&#39;symm&#39;</span><span class="p">,</span> <span class="s1">&#39;rematch&#39;</span><span class="p">,</span> <span class="s1">&#39;ewald&#39;</span><span class="p">]),</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;symm&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Algorithm used for merging equivalent structures.&#39;</span><span class="p">)</span>
+<span class="c1"># add option to specify use of disordered only in merging</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--use_disordered_only&#39;</span><span class="p">,</span> <span class="s1">&#39;-d&#39;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Use only the disordered part of structure in merging?&#39;</span><span class="p">)</span>
+<span class="c1"># add option to specify symmetry precision</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--symprec&#39;</span><span class="p">,</span> <span class="s1">&#39;-p&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">FLOAT</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Symmetry precision used for merging equivalent structures.&#39;</span><span class="p">)</span>
+<span class="c1"># option to suppress writing out structures</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--no_write&#39;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Suppress writing out structures?&#39;</span><span class="p">)</span>
+<span class="c1"># add option to output to specified file</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--prefix&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;sodorg&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Prefix for output file names.&#39;</span><span class="p">)</span>
+<span class="c1"># option format options</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--format&#39;</span><span class="p">,</span> <span class="s1">&#39;-f&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Choice</span><span class="p">([</span><span class="s1">&#39;cif&#39;</span><span class="p">,</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="s1">&#39;poscar&#39;</span><span class="p">,</span> <span class="s1">&#39;cell&#39;</span><span class="p">]),</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Format of output strucuture files.&#39;</span><span class="p">)</span>
+
+<span class="c1"># add option to specify verbosity</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--quiet&#39;</span><span class="p">,</span> <span class="s1">&#39;-q&#39;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Suppress output?&#39;</span><span class="p">)</span>
+<span class="c1"># add option to specify log file</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--log&#39;</span><span class="p">,</span> <span class="s1">&#39;-l&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">exists</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;sodorg.log&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Log file name.&#39;</span><span class="p">)</span>
+
+<span class="c1"># add option to view structures using ASE gui</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--view&#39;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;View structures using ASE gui?&#39;</span><span class="p">)</span>
+<span class="c1"># Add option to specify oxidation states</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--ox&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Tuple</span><span class="p">([</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]),</span> <span class="n">multiple</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Specify oxidation states for each species e.g. --ox H 1 --ox O -2&#39;</span><span class="p">)</span>
+<span class="c1"># option to not reload as molecular crystal</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--not_molecular_crystal&#39;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Do not reload as molecular crystal?&#39;</span><span class="p">)</span>
+<span class="c1"># correlated assemblies?</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--correlated_assemblies&#39;</span><span class="p">,</span> <span class="s1">&#39;-c&#39;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Are the disorder assemblies correlated?&#39;</span>
+              <span class="s1">&#39;i.e. are the disorder groups within each assembly to be selected with the same index? &#39;</span>
+              <span class="s1">&#39;(The number of disorder groups in each assembly must be the same in such cases.)&#39;</span><span class="p">)</span>
+<span class="c1"># fix ratio flag</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--fix-ratio&#39;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Fix the ratio of the disorder groups.&#39;</span><span class="p">)</span>
+<span class="c1"># manually specify ratios</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--ratio&#39;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">FLOAT</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Manually specify the ratio of the disorder groups. &#39;</span>
+                                                                         <span class="s1">&#39;Must be used with --fix-ratio.&#39;</span>
+                                                                         <span class="s1">&#39;e.g. --ratio 0.75 would constrain the ratios of disorder group 1 and 2 to be 3:1&#39;</span>
+                                                                        <span class="s1">&#39;NOTE: This is only implemented for 1-assembly, 2-group structures.&#39;</span><span class="p">)</span>
+<span class="c1"># ratio tolerance</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--ratio-tol&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">FLOAT</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Tolerance for how close the ratio of disorder groups needs to be. &#39;</span>
+                                                                  <span class="s1">&#39;See atol in numpy.isclose.&#39;</span>
+                                                                  <span class="s1">&#39;Only used if --fix-ratio is specified.&#39;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span>
+        <span class="n">ctx</span><span class="p">,</span>
+        <span class="n">files</span><span class="p">,</span> 
+        <span class="n">supercell</span><span class="p">,</span> 
+        <span class="n">maxiters</span><span class="p">,</span> 
+        <span class="n">exclude_ordered</span><span class="p">,</span> 
+        <span class="n">random</span><span class="p">,</span>
+        <span class="n">merge</span><span class="p">,</span>
+        <span class="n">symprec</span><span class="p">,</span> 
+        <span class="n">quiet</span><span class="p">,</span>
+        <span class="n">algo</span><span class="p">,</span>
+        <span class="n">use_disordered_only</span><span class="p">,</span>
+        <span class="n">no_write</span><span class="p">,</span>
+        <span class="n">prefix</span><span class="p">,</span>
+        <span class="nb">format</span><span class="p">,</span>
+        <span class="n">ox</span><span class="p">,</span>
+        <span class="n">log</span><span class="p">,</span>
+        <span class="n">view</span><span class="p">,</span>
+        <span class="n">not_molecular_crystal</span><span class="p">,</span>
+        <span class="n">correlated_assemblies</span><span class="p">,</span>
+        <span class="n">fix_ratio</span><span class="p">,</span>
+        <span class="n">ratio</span><span class="p">,</span>
+        <span class="n">ratio_tol</span><span class="p">,</span>
+         <span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;Command line interface for sodorg_renewal.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># set up logging</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">log</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%(asctime)s</span><span class="s1"> </span><span class="se">\t</span><span class="s1"> </span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="c1"># add console handler</span>
+    <span class="n">console</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">quiet</span><span class="p">:</span>
+        <span class="n">console</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">console</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+
+    <span class="c1"># set a format which is simpler for console use</span>
+    <span class="n">consolefmt</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">consolefmt</span><span class="p">)</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;sodorg&quot;</span><span class="p">)</span>
+    <span class="c1"># add the handler to the main logger</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">console</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">LOGHEADER</span><span class="p">)</span>
+    
+    <span class="c1"># log the Click command line arguments and options used</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Run with these command line arguments: &quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">ctx</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;          </span><span class="si">{</span><span class="n">param</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+    <span class="n">nfiles</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">files</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">nfiles</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Parsing disorder in cif file: </span><span class="si">{</span><span class="n">files</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="c1"># parse cif file containing disordered structure</span>
+        <span class="n">cif</span> <span class="o">=</span> <span class="n">CifParser</span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                        <span class="n">correlated_assemblies</span><span class="o">=</span><span class="n">correlated_assemblies</span><span class="p">,</span>
+                        <span class="n">molecular_crystal</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">not_molecular_crystal</span><span class="p">)</span>
+        <span class="n">symops</span> <span class="o">=</span> <span class="n">cif</span><span class="o">.</span><span class="n">symops</span>
+
+        <span class="c1"># get the disordered structure</span>
+        <span class="n">disordered_structure</span> <span class="o">=</span> <span class="n">cif</span><span class="o">.</span><span class="n">get_disordered_structure</span><span class="p">()</span>
+
+    <span class="k">elif</span> <span class="n">nfiles</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Parsing disorder in files: </span><span class="si">{</span><span class="n">files</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1"> and </span><span class="si">{</span><span class="n">files</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Assuming the two files contain two fully ordered structures, one for each disorder group.&#39;</span><span class="p">)</span>
+
+        <span class="n">disorder_components</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="n">labels</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.cif&#39;</span><span class="p">):</span>
+                <span class="c1"># if they are CIF files, assume they have CIF labels present</span>
+                <span class="n">atoms</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">store_tags</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+                <span class="c1"># get the CIF labels if present</span>
+                <span class="k">if</span> <span class="s1">&#39;atom_site_label&#39;</span> <span class="ow">in</span> <span class="n">atoms</span><span class="o">.</span><span class="n">info</span><span class="p">:</span>
+                    <span class="n">labels</span> <span class="o">=</span> <span class="n">atoms</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;atom_site_label&#39;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="s1">&#39;_atom_site_occupancy&#39;</span> <span class="ow">in</span> <span class="n">atoms</span><span class="o">.</span><span class="n">info</span><span class="p">:</span>
+                    <span class="n">occupancies</span> <span class="o">=</span> <span class="n">atoms</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;_atom_site_occupancy&#39;</span><span class="p">]</span>
+                    <span class="n">atoms</span><span class="o">.</span><span class="n">set_array</span><span class="p">(</span><span class="s1">&#39;occupancies&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">occupancies</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">atoms</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="c1">## hope ASE can read it</span>
+                
+                
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">labels</span><span class="p">:</span>
+                <span class="n">labels</span> <span class="o">=</span> <span class="n">get_new_labels</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
+            
+            <span class="n">atoms</span><span class="o">.</span><span class="n">set_array</span><span class="p">(</span><span class="s1">&#39;labels&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">labels</span><span class="p">))</span>
+
+            <span class="n">disorder_components</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
+        <span class="n">disordered_structure</span> <span class="o">=</span> <span class="n">from_disorder_components</span><span class="p">(</span>
+                                    <span class="n">disorder_components</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                    <span class="n">disorder_components</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                                    <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span>
+                                    <span class="n">symprec</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span>
+                                    <span class="n">ratio</span><span class="o">=</span><span class="n">ratio</span><span class="p">,</span> <span class="c1"># TODO make this more general</span>
+                                    <span class="n">group_occupancies</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected 1 or 2 files, got </span><span class="si">{</span><span class="n">nfiles</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Enumerating ordered configurations.&#39;</span><span class="p">)</span>
+    <span class="c1"># enumerate ordered configurations</span>
+    <span class="n">od</span> <span class="o">=</span> <span class="n">OrderedfromDisordered</span><span class="p">(</span><span class="n">disordered_structure</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="n">quiet</span><span class="p">)</span>
+    <span class="n">images</span><span class="p">,</span> <span class="n">configs</span> <span class="o">=</span> <span class="n">od</span><span class="o">.</span><span class="n">get_supercell_configs</span><span class="p">(</span>
+                        <span class="n">supercell</span> <span class="o">=</span> <span class="n">supercell</span><span class="p">,</span>
+                        <span class="n">maxiters</span> <span class="o">=</span> <span class="n">maxiters</span><span class="p">,</span>
+                        <span class="n">exclude_ordered</span> <span class="o">=</span> <span class="n">exclude_ordered</span><span class="p">,</span>
+                        <span class="n">random_configs</span><span class="o">=</span><span class="n">random</span><span class="p">,</span>
+                        <span class="n">return_configs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                        <span class="n">fix_ratio</span><span class="o">=</span><span class="n">fix_ratio</span><span class="p">,</span>
+                        <span class="n">ratio</span> <span class="o">=</span> <span class="n">ratio</span><span class="p">,</span>
+                        <span class="n">ratio_tolerance</span> <span class="o">=</span> <span class="n">ratio_tol</span><span class="p">,</span>
+                        <span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;No ordered configurations found.&#39;</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="c1"># -- DATA FRAME -- #</span>
+    <span class="c1"># store information to dataframe</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Unique index&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">))</span>
+    <span class="c1"># start out with equal weights</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Multiplicity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">))</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Configuration&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">configs</span>
+    
+    <span class="c1"># count the number of each group</span>
+    <span class="n">ratios</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">minlength</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">configs</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">config</span> <span class="ow">in</span> <span class="n">configs</span><span class="p">]</span>
+    <span class="c1"># ratios = [1-sum(config) / len(config) for config in configs]</span>
+    <span class="c1"># TODO should we define this as the reverse? </span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Ratio&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ratios</span>
+    
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Supercell&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;x&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">supercell</span><span class="p">))</span>
+    <span class="c1"># TODO: units</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Free Energy / kJ/mol&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Enthalpy per atom / kJ/mol&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Entropy per atom / kJ/mol&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">NaN</span>
+    <span class="c1"># volume of simulation cell</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Volume/A^3&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">image</span><span class="o">.</span><span class="n">get_volume</span><span class="p">()</span> <span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="n">images</span><span class="p">]</span>
+    <span class="c1"># number of atoms</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;N atoms&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">image</span><span class="p">)</span> <span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="n">images</span><span class="p">]</span>
+    <span class="c1"># density</span>
+    <span class="n">masses</span> <span class="o">=</span> <span class="p">[</span><span class="nb">sum</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">get_masses</span><span class="p">())</span> <span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="n">images</span><span class="p">]</span>
+    <span class="n">density_units</span> <span class="o">=</span> <span class="p">(</span><span class="n">_amu</span> <span class="o">/</span> <span class="mf">1e-30</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1e-3</span> <span class="c1"># &gt; g/cm^3</span>
+    <span class="n">density</span> <span class="o">=</span> <span class="p">[(</span><span class="n">mass</span> <span class="o">/</span> <span class="n">volume</span><span class="p">)</span> <span class="o">*</span> <span class="n">density_units</span> <span class="k">for</span> <span class="n">mass</span><span class="p">,</span> <span class="n">volume</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">masses</span><span class="p">,</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Volume/A^3&#39;</span><span class="p">])]</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Density/g/mol^3&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">density</span>
+    <span class="c1">#/-- DATA FRAME -- #</span>
+    
+    
+    <span class="c1"># merge symmetrically equivalent configurations?</span>
+    <span class="k">if</span> <span class="n">merge</span><span class="p">:</span>
+        <span class="n">oxidation_states</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">algo</span> <span class="o">==</span> <span class="s1">&#39;ewald&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">ox</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">ox_name</span><span class="p">,</span> <span class="n">ox_val</span> <span class="ow">in</span> <span class="n">ox</span><span class="p">:</span>
+                    <span class="n">oxidation_states</span><span class="p">[</span><span class="n">ox_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">ox_val</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Oxidation states used: </span><span class="si">{</span><span class="n">oxidation_states</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Merging structures...&#39;</span><span class="p">)</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">groups</span><span class="p">,</span> <span class="n">group_indices</span> <span class="o">=</span> <span class="n">merge_structures</span><span class="p">(</span>
+                                <span class="n">images</span><span class="p">,</span>
+                                <span class="n">algo</span><span class="o">=</span><span class="n">algo</span><span class="p">,</span>
+                                <span class="n">symops</span><span class="o">=</span><span class="n">symops</span><span class="p">,</span>
+                                <span class="n">use_disordered_only</span> <span class="o">=</span> <span class="n">use_disordered_only</span><span class="p">,</span>
+                                <span class="n">symprec</span><span class="o">=</span><span class="n">symprec</span><span class="p">,</span>
+                                <span class="n">oxidation_states</span><span class="o">=</span><span class="n">oxidation_states</span><span class="p">,</span>
+                                <span class="n">return_group_indices</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                <span class="n">quiet</span> <span class="o">=</span> <span class="n">quiet</span><span class="p">)</span>
+        
+        <span class="n">stop</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">duration</span> <span class="o">=</span> <span class="n">stop</span><span class="o">-</span><span class="n">start</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Merging took </span><span class="si">{</span><span class="n">duration</span><span class="si">:</span><span class="s1">8.2f</span><span class="si">}</span><span class="s1"> s and found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">groups</span><span class="p">)</span><span class="si">}</span><span class="s1"> groups&#39;</span><span class="p">)</span>
+        <span class="n">unique_spacegroups</span> <span class="o">=</span> <span class="p">[</span><span class="n">spglib</span><span class="o">.</span><span class="n">get_spacegroup</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">sg</span><span class="p">,</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">unique_spacegroups</span><span class="p">,</span> <span class="n">groups</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Spacegroup: </span><span class="si">{</span><span class="n">sg</span><span class="si">:</span><span class="s2">&lt;20</span><span class="si">}</span><span class="s2"> multiplicity: </span><span class="si">{</span><span class="n">g</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># overwrite images with merged images</span>
+        <span class="n">images</span> <span class="o">=</span> <span class="p">[</span><span class="n">g</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">]</span>
+
+        <span class="c1"># tag images with group indices in df</span>
+        <span class="k">for</span> <span class="n">ig</span><span class="p">,</span> <span class="n">group_inds</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">group_indices</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">group_inds</span><span class="p">:</span>
+                <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">g</span><span class="p">,</span> <span class="s1">&#39;Unique index&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ig</span>
+        
+        <span class="c1"># Update dataframe with merged information</span>
+        <span class="c1"># merge df by Unique index</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;Unique index&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+        <span class="c1"># add multiplicity to df</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Multiplicity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">g</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">]</span>
+        <span class="c1"># add spacegroup to df</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Spacegroup&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">unique_spacegroups</span>
+        <span class="c1"># add groups to df</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Group indices&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">group_indices</span>
+    
+    <span class="c1"># log the df</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\t</span><span class="s1">&#39;</span><span class="o">+</span> <span class="n">df</span><span class="o">.</span><span class="n">to_string</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\n\t</span><span class="s1">&#39;</span><span class="p">))</span> 
+    <span class="c1"># save the df to csv</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">prefix</span><span class="o">+</span><span class="s1">&#39;.csv&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">no_write</span><span class="p">:</span>
+        <span class="c1"># write structures to file(s)</span>
+        <span class="n">directory</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">-results&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Writing structures to file(s) in directory: </span><span class="si">{</span><span class="n">directory</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="c1"># check if directory already exists -- if so rename it (backup)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Directory </span><span class="si">{</span><span class="n">directory</span><span class="si">}</span><span class="s1"> already exists. Backing up existing directory.&#39;</span><span class="p">)</span>
+            <span class="c1"># backup existing directory</span>
+            <span class="n">backup_dir</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">directory</span><span class="si">}</span><span class="s2">-backup-</span><span class="si">{</span><span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">-%H%M%S&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">backup_dir</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Backup directory </span><span class="si">{</span><span class="n">backup_dir</span><span class="si">}</span><span class="s1"> already exists. Please remove it.&#39;</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">backup_dir</span><span class="p">)</span>
+
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
+        <span class="n">nleading_zeros</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">)))</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">image</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">images</span><span class="p">):</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="n">nleading_zeros</span><span class="p">)</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="c1"># cif can save labels if we manually specify them</span>
+            <span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="s1">&#39;cif&#39;</span><span class="p">:</span>
+                <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;labels&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">image</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span><span class="s1">&#39;labels&#39;</span><span class="p">)]</span>
+
+            <span class="k">elif</span> <span class="nb">format</span> <span class="o">==</span> <span class="s1">&#39;cell&#39;</span><span class="p">:</span>
+                <span class="c1"># castep cell writer looks for the castep_labels array</span>
+                <span class="c1"># so let&#39;s copy across the labels array</span>
+                <span class="n">image</span><span class="o">.</span><span class="n">set_array</span><span class="p">(</span><span class="s1">&#39;castep_labels&#39;</span><span class="p">,</span> <span class="n">image</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span><span class="s1">&#39;labels&#39;</span><span class="p">))</span>
+                
+                
+            <span class="n">image</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">directory</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Wrote structure to file: </span><span class="si">{</span><span class="n">directory</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="c1"># write out pandas dataframe containing the groups and multiplicities</span>
+
+
+    <span class="k">if</span> <span class="n">view</span><span class="p">:</span>
+        <span class="c1"># view images using ASE gui</span>
+        <span class="kn">from</span> <span class="nn">ase.visualize</span> <span class="kn">import</span> <span class="n">view</span>
+        <span class="n">view</span><span class="p">(</span><span class="n">images</span><span class="p">)</span>
+
+
+    <span class="k">return</span> <span class="mi">0</span>
+
+
+
+<span class="nd">@cli</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">context_settings</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;show_default&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">pass_context</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s1">&#39;csv_file&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">exists</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--prefix&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">STRING</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;sodorg&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Prefix for output file names.&#39;</span><span class="p">)</span>
+<span class="c1"># add option to specify verbosity</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--quiet&#39;</span><span class="p">,</span> <span class="s1">&#39;-q&#39;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Suppress output?&#39;</span><span class="p">)</span>
+<span class="c1"># add option to specify log file</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--log&#39;</span><span class="p">,</span> <span class="s1">&#39;-l&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">exists</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;sodorg.analyse.log&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Log file name.&#39;</span><span class="p">)</span>
+<span class="c1"># specify temperature range and number of steps</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--temperatures&#39;</span><span class="p">,</span> <span class="s1">&#39;-t&#39;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">FLOAT</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">300</span><span class="p">],</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Temperature range in K (inclusive of end points).&#39;</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--steps&#39;</span><span class="p">,</span> <span class="s1">&#39;-s&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">INT</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Number of temperature steps.&#39;</span><span class="p">)</span>
+<span class="c1"># or set dT</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s1">&#39;--dt&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">FLOAT</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Temperature step size in K.&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">analyse</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span>
+         <span class="n">csv_file</span><span class="p">,</span> 
+         <span class="n">quiet</span><span class="p">,</span>
+         <span class="n">prefix</span><span class="p">,</span>
+         <span class="n">temperatures</span><span class="p">,</span>
+         <span class="n">steps</span><span class="p">,</span>
+         <span class="n">dt</span><span class="p">,</span>
+         <span class="n">log</span><span class="p">,</span>
+         <span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;Command line interface for sodorg_renewal thermodynamics.</span>
+
+<span class="sd">    TODO energy units!</span>
+<span class="sd">    TODO: slight numerical inconsistencies wrt to Jonas&#39; code</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># set up logging</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">log</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%(asctime)s</span><span class="s1"> </span><span class="se">\t</span><span class="s1"> </span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="c1"># add console handler</span>
+    <span class="n">console</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">quiet</span><span class="p">:</span>
+        <span class="n">console</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">console</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+
+    <span class="c1"># set a format which is simpler for console use</span>
+    <span class="n">consolefmt</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">consolefmt</span><span class="p">)</span>
+    <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;sodorg.analyse&quot;</span><span class="p">)</span>
+    <span class="c1"># add the handler to the main logger</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">console</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">LOGHEADER</span><span class="p">)</span>
+    
+    <span class="c1"># log the Click command line arguments and options used</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Run sodorg analyse with these command line arguments: &quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">ctx</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;          </span><span class="si">{</span><span class="n">param</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># read in csv file</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">csv_file</span><span class="p">)</span>
+    
+    <span class="c1"># log the number of rows and columns</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Read in </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="si">}</span><span class="s1"> rows and </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span><span class="si">}</span><span class="s1"> columns from </span><span class="si">{</span><span class="n">csv_file</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    
+    <span class="c1"># check that the df contains the required columns</span>
+    <span class="n">required_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Multiplicity&#39;</span><span class="p">,</span> <span class="s1">&#39;Free Energy / kJ/mol&#39;</span><span class="p">,</span> <span class="s1">&#39;formula units per cell&#39;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">required_columns</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Column </span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s1"> not found in </span><span class="si">{</span><span class="n">csv_file</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="c1"># check that if df doens&#39;t contain the ratios it at least contains the configuration</span>
+    <span class="k">if</span> <span class="s1">&#39;Ratio of maj:min&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="s1">&#39;Configuration&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Neither Ratio nor Configuration found in </span><span class="si">{</span><span class="n">csv_file</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Computing the ratios from the configuration specification in the csv file.&quot;</span><span class="p">)</span>
+            <span class="c1"># compute the ratio from the configuration</span>
+            <span class="c1"># convert to list of ints</span>
+            <span class="n">configs</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;(&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;)&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Configuration&#39;</span><span class="p">]]</span>
+            <span class="n">configs</span> <span class="o">=</span> <span class="p">[[</span><span class="nb">int</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">c</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">configs</span><span class="p">]</span>
+            <span class="n">ratios</span> <span class="o">=</span> <span class="p">[</span><span class="nb">sum</span><span class="p">(</span><span class="n">config</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">config</span><span class="p">)</span> <span class="k">for</span> <span class="n">config</span> <span class="ow">in</span> <span class="n">configs</span><span class="p">]</span>
+            <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Ratio of maj:min&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ratios</span>
+
+    <span class="c1"># check that there are no missing values</span>
+    <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Missing values found in </span><span class="si">{</span><span class="n">csv_file</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Make new df for the thermodynamic properties</span>
+    <span class="n">df_thermo</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+    <span class="n">ratios</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Ratio of maj:min&#39;</span><span class="p">]</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">ratios</span><span class="p">)</span>
+    <span class="n">multiplicities</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Multiplicity&#39;</span><span class="p">]</span>
+    <span class="n">n_formula_units</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;formula units per cell&#39;</span><span class="p">]</span>
+    <span class="n">energies</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Free Energy / kJ/mol&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">kJ</span> <span class="o">/</span> <span class="n">mol</span> <span class="c1"># convert to eV</span>
+    <span class="n">energies</span> <span class="o">=</span> <span class="n">energies</span> <span class="o">/</span> <span class="n">n_formula_units</span> <span class="c1"># convert to eV/f.u.</span>
+    <span class="n">minE</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">energies</span><span class="p">)</span>
+    <span class="n">rel_energies</span> <span class="o">=</span> <span class="n">energies</span> <span class="o">-</span> <span class="n">minE</span>
+
+    <span class="c1"># array of temperatures</span>
+    <span class="k">if</span> <span class="n">dt</span><span class="p">:</span>
+        <span class="c1"># (include end points)</span>
+        <span class="n">temperatures</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">temperatures</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">temperatures</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">dt</span><span class="p">,</span> <span class="n">dt</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">temperatures</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">temperatures</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">temperatures</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">steps</span><span class="p">)</span>
+    <span class="c1"># loop over temperatures</span>
+    <span class="n">Zs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">taus</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">Ss</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">Elatts</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">Us</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">delta_As</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">T</span> <span class="ow">in</span> <span class="n">temperatures</span><span class="p">:</span>
+        <span class="c1"># partition functions</span>
+        <span class="n">Z</span> <span class="o">=</span> <span class="n">get_partition_function</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">multiplicities</span><span class="p">,</span> <span class="n">rel_energies</span><span class="p">)</span>
+        <span class="n">probabilities</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">get_probability</span><span class="p">(</span><span class="n">multiplicity</span><span class="p">,</span> <span class="n">energy</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">Z</span> <span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">multiplicity</span><span class="p">,</span> <span class="n">energy</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">multiplicities</span><span class="p">,</span> <span class="n">rel_energies</span><span class="p">)])</span>
+        <span class="n">tau</span> <span class="o">=</span> <span class="n">get_tau</span><span class="p">(</span><span class="n">ratios</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">)</span>
+        <span class="n">S</span> <span class="o">=</span> <span class="n">get_S</span><span class="p">(</span><span class="n">probabilities</span><span class="p">)</span>
+        <span class="n">Elatt</span> <span class="o">=</span> <span class="n">get_Elatt</span><span class="p">(</span><span class="n">probabilities</span><span class="p">,</span> <span class="n">rel_energies</span><span class="p">,</span> <span class="n">n_formula_units</span><span class="p">)</span>
+        <span class="n">U</span> <span class="o">=</span> <span class="n">Elatt</span>  <span class="c1"># TODO streamline this!</span>
+        <span class="n">deltaA</span> <span class="o">=</span> <span class="n">get_deltaA</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">S</span><span class="p">)</span>
+
+        <span class="n">Zs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
+        <span class="n">taus</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tau</span><span class="p">)</span>
+        <span class="c1"># convert back to kJ/mol</span>
+        <span class="n">Ss</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">S</span><span class="o">*</span><span class="mf">1e3</span> <span class="o">*</span> <span class="p">(</span><span class="n">mol</span> <span class="o">/</span> <span class="n">kJ</span><span class="p">))</span>
+        <span class="n">Elatts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Elatt</span> <span class="o">*</span> <span class="p">(</span><span class="n">mol</span><span class="o">/</span><span class="n">kJ</span><span class="p">))</span>
+        <span class="n">Us</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">U</span> <span class="o">*</span> <span class="p">(</span><span class="n">mol</span><span class="o">/</span><span class="n">kJ</span><span class="p">))</span>
+        <span class="n">delta_As</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">deltaA</span> <span class="o">*</span> <span class="p">(</span><span class="n">mol</span><span class="o">/</span><span class="n">kJ</span><span class="p">))</span>
+
+    <span class="c1"># add to df_thermo</span>
+    <span class="n">df_thermo</span><span class="p">[</span><span class="s1">&#39;Temperature&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">temperatures</span>
+    <span class="n">df_thermo</span><span class="p">[</span><span class="s1">&#39;Z&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Zs</span>
+    <span class="n">df_thermo</span><span class="p">[</span><span class="s1">&#39;tau&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">taus</span>
+    <span class="n">df_thermo</span><span class="p">[</span><span class="s1">&#39;S_config (J/mol /K)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Ss</span>
+    <span class="c1"># df_thermo[&#39;E_latt (kJ/mol per f.u.)&#39;] = Elatts # TODO do we need both?</span>
+    <span class="n">df_thermo</span><span class="p">[</span><span class="s1">&#39;Delta U (kJ/mol per f.u.)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Us</span>
+    <span class="n">df_thermo</span><span class="p">[</span><span class="s1">&#39;Delta A (kJ/mol per f.u.)&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">delta_As</span>
+
+    <span class="c1"># set df print options number of decimal places</span>
+    <span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s2">&quot;display.precision&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">df_thermo</span><span class="p">)</span>
+    <span class="n">df_thermo</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="s1">&#39;_thermo.csv&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    
+    
+
+
+<div class="viewcode-block" id="get_boltzmann_weight"><a class="viewcode-back" href="../../_autosummary/sodorg_renewal.cli.get_boltzmann_weight.html#sodorg_renewal.cli.get_boltzmann_weight">[docs]</a><span class="k">def</span> <span class="nf">get_boltzmann_weight</span><span class="p">(</span><span class="n">multiplicity</span><span class="p">,</span> <span class="n">energy</span><span class="p">,</span> <span class="n">temperature</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculate the Boltzmann weight for a given temperature.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">multiplicity</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">energy</span> <span class="o">/</span> <span class="p">(</span><span class="n">kB</span> <span class="o">*</span> <span class="n">temperature</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="get_partition_function"><a class="viewcode-back" href="../../_autosummary/sodorg_renewal.cli.get_partition_function.html#sodorg_renewal.cli.get_partition_function">[docs]</a><span class="k">def</span> <span class="nf">get_partition_function</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">multiplicities</span><span class="p">,</span> <span class="n">energies</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculate the partition function for a given temperature.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        temperature: temperature in K</span>
+<span class="sd">        multiplicities: array/list of multiplicities (e.g. [2,2,8,2])</span>
+<span class="sd">        energies: array/list of energies in kJ/mol</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">get_boltzmann_weight</span><span class="p">(</span><span class="n">multiplicities</span><span class="p">,</span> <span class="n">energies</span><span class="p">,</span> <span class="n">temperature</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="get_probability"><a class="viewcode-back" href="../../_autosummary/sodorg_renewal.cli.get_probability.html#sodorg_renewal.cli.get_probability">[docs]</a><span class="k">def</span> <span class="nf">get_probability</span><span class="p">(</span><span class="n">multiplicity</span><span class="p">,</span> <span class="n">energy</span><span class="p">,</span> <span class="n">temperature</span><span class="p">,</span> <span class="n">Z</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculate the probability of a configuration for a given temperature and partition function, Z.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">get_boltzmann_weight</span><span class="p">(</span><span class="n">multiplicity</span><span class="p">,</span> <span class="n">energy</span><span class="p">,</span> <span class="n">temperature</span><span class="p">)</span> <span class="o">/</span> <span class="n">Z</span></div>
+
+
+<div class="viewcode-block" id="get_tau"><a class="viewcode-back" href="../../_autosummary/sodorg_renewal.cli.get_tau.html#sodorg_renewal.cli.get_tau">[docs]</a><span class="k">def</span> <span class="nf">get_tau</span><span class="p">(</span><span class="n">ratios</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculate the tau factor for a given temperature.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ratios</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">probabilities</span><span class="p">))</span></div>
+<div class="viewcode-block" id="get_S"><a class="viewcode-back" href="../../_autosummary/sodorg_renewal.cli.get_S.html#sodorg_renewal.cli.get_S">[docs]</a><span class="k">def</span> <span class="nf">get_S</span><span class="p">(</span><span class="n">probabilities</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculate the entropy S factor for a given temperature (implicit in probabilities).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">kB</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">probabilities</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">probabilities</span><span class="p">))</span></div>
+<div class="viewcode-block" id="get_Elatt"><a class="viewcode-back" href="../../_autosummary/sodorg_renewal.cli.get_Elatt.html#sodorg_renewal.cli.get_Elatt">[docs]</a><span class="k">def</span> <span class="nf">get_Elatt</span><span class="p">(</span><span class="n">probabilities</span><span class="p">,</span> <span class="n">energies</span><span class="p">,</span> <span class="n">n_formula_units</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculate the lattice energy Elatt for a given temperature.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">probabilities</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">energies</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="get_deltaA"><a class="viewcode-back" href="../../_autosummary/sodorg_renewal.cli.get_deltaA.html#sodorg_renewal.cli.get_deltaA">[docs]</a><span class="k">def</span> <span class="nf">get_deltaA</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">S</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calculate the change in free energy deltaA for a given temperature.</span>
+<span class="sd">    Args:   </span>
+<span class="sd">        U: lattice energy in kJ/mol</span>
+<span class="sd">        T: temperature in K</span>
+<span class="sd">        S: entropy in kJ/mol/K</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">U</span> <span class="o">-</span> <span class="p">(</span><span class="n">T</span><span class="o">*</span><span class="n">S</span><span class="p">)</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>  <span class="c1"># pragma: no cover</span>
+</pre></div>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Kane Shenton<br/>
+  
+      &copy; Copyright 2022, Kane Shenton.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>
