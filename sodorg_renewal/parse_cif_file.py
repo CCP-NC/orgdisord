@@ -299,6 +299,9 @@ class CifParser:
             } 
             for ass_k, ass_v in disorder_groups.items() if ass_v
         }
+
+        # remove assemblies that just have an empty dictionary
+        disorder_groups = {k: v for k, v in disorder_groups.items() if v}
         
         # warning if any are in an assembly but not in a disorder group
         for asslabel, indices in assembly_groups.items():
