@@ -1,9 +1,11 @@
 import numpy as np
 from ase import Atoms, Atom
 from soprano.properties.linkage import Molecules
+from ase.spacegroup import Spacegroup
 from typing import List
 import warnings
 import random
+import spglib
 
 def get_molecules(atoms: Atoms, use_cell_indices: bool=True):
     """
@@ -172,17 +174,17 @@ def molecule_collide(
     #                 return True
     # return False
     
-def get_unique_atoms(atoms, sg):
+def get_unique_atoms(atoms: Atoms, sg: Spacegroup, symprec: float=1e-3):
     """
     Return the unique atoms in an atoms object and the count of duplicates
     """
-    tags = sg.tag_sites(atoms.get_scaled_positions())
+    tags = sg.tag_sites(atoms.get_scaled_positions(), symprec=symprec)
     _, idx, counts = np.unique(tags, return_index=True, return_counts=True)
     
     if len(set(counts)) != 1:
         warnings.warn('We have some groups of atoms that are of different lengths -- check!')
 
-    return atoms.copy()[idx], counts[0]
+    return atoms.copy()[idx], max(counts)
 
 # def first_true(iterable, default=False, pred=None):
 #     """Returns the first true value in the iterable.
@@ -220,3 +222,22 @@ def get_new_labels(atoms):
         for i, j in enumerate(e_i):
             labels[j] = "{0}_{1}".format(e, i + 1)
     return labels
+
+def standardise_cell(atoms: Atoms, symprec:float = 1e-3) -> Atoms:
+    """
+    Convert an ASE Atoms object to the standardised unit cell 
+    according to spglib
+    """
+    cell, scaled_pos, numbers = spglib.standardize_cell(atoms, to_primitive=False, no_idealize=True, symprec=symprec)
+    atoms_std = Atoms(numbers=numbers, scaled_positions=scaled_pos, cell=cell, pbc=True)
+
+    assert len(atoms) == len(atoms_std) ## other cases are not handled yet!
+
+    # TODO: check that the atoms are in the same order
+
+    # copy any arrays that are present 
+    # (apart from positions, velocities, forces and numbers)
+    for k in atoms.arrays.keys():
+        if k not in ['positions', 'velocities', 'forces', 'numbers']:
+            atoms_std.arrays[k] = atoms.arrays[k]
+    return atoms_std

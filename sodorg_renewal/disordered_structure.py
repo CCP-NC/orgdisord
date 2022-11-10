@@ -3,7 +3,7 @@ Contains the class DisorderedStructure, which is used to represent a
 disordered structure.
 '''
 from logging import warning
-from sodorg_renewal.utils import molecule_collide, get_unique_atoms
+from sodorg_renewal.utils import molecule_collide, get_unique_atoms, standardise_cell
 from dataclasses import dataclass
 from typing import List, Tuple, Union
 from ase import Atoms, Atom
@@ -259,8 +259,8 @@ def from_disorder_components(atoms_maj, atoms_min, tolerance=1e-2, symprec=1e-3,
     We also need to generalise the choice of symmetry operation subset! 
 
     Args:
-        atoms_maj (Atoms): The major component of the disordered structure.
-        atoms_min (Atoms): The minor component of the disordered structure.
+        atoms_maj (Atoms): The P1, ordered major component of the disordered structure.
+        atoms_min (Atoms): The P1, ordered minor component of the disordered structure.
         tolerance (float): The tolerance for determining if two atoms in the same position. (Å)
         symprec   (float): Tolerance used for finding the spacegroup using spglib).
         ratio     (float): The ratio of the occupancies of the two groups. 
@@ -277,6 +277,9 @@ def from_disorder_components(atoms_maj, atoms_min, tolerance=1e-2, symprec=1e-3,
     Returns:
         DisorderedStructure: The disordered structure.
     """
+    # convert the structures to the standardised cell for this spacegroup
+    atoms_maj = standardise_cell(atoms_maj, symprec = symprec)
+    atoms_min = standardise_cell(atoms_min, symprec = symprec)
     
     # set the group occupancies
     group_occupancies = group_occupancies or [0.5, 0.5]
@@ -313,8 +316,8 @@ def from_disorder_components(atoms_maj, atoms_min, tolerance=1e-2, symprec=1e-3,
 
 
     # get just the asymmetric cell atoms
-    maj_atoms, maj_Z = get_unique_atoms(maj_atoms, sg)
-    min_atoms, min_Z = get_unique_atoms(min_atoms, sg)
+    maj_atoms, maj_Z = get_unique_atoms(maj_atoms, sg, symprec = symprec)
+    min_atoms, min_Z = get_unique_atoms(min_atoms, sg, symprec = symprec)
 
     if maj_Z != min_Z:
         raise ValueError(f'''
@@ -331,7 +334,7 @@ def from_disorder_components(atoms_maj, atoms_min, tolerance=1e-2, symprec=1e-3,
 
 
     # symmetry operations of reference structure
-    sg = get_spacegroup(ordered_atoms)
+    sg = get_spacegroup(ordered_atoms, symprec=symprec)
     symops = sg.get_symop()
     nsymops = len(symops)
     ## even indexed symops#

@@ -6,7 +6,7 @@ from sodorg_renewal.disordered_structure import from_disorder_components
 from sodorg_renewal.parse_cif_file import CifParser
 from sodorg_renewal.enumerate import OrderedfromDisordered
 from sodorg_renewal.merge import merge_structures
-from sodorg_renewal.utils import get_new_labels
+from sodorg_renewal.utils import get_new_labels, standardise_cell
 import spglib
 import time
 from ase.io import read
@@ -161,31 +161,44 @@ def main(
         for f in files:
             labels = None
             if f.endswith('.cif'):
-                # if they are CIF files, assume they have CIF labels present
+                # if they are CIF files, parse the extra tags
                 atoms = read(f, store_tags = True)
-                # get the CIF labels if present
-                if 'atom_site_label' in atoms.info:
-                    labels = atoms.info['atom_site_label']
-                if '_atom_site_occupancy' in atoms.info:
-                    occupancies = atoms.info['_atom_site_occupancy']
-                    atoms.set_array('occupancies', np.array(occupancies))
             else:
                 atoms = read(f) ## hope ASE can read it
-                
-                
-            if not labels:
-                labels = get_new_labels(atoms)
             
-            atoms.set_array('labels', np.array(labels))
+            
+            # -- labels -- #
+            if not atoms.has('labels'):
+                if '_atom_site_label' in atoms.info:
+                    labels = atoms.info['_atom_site_label']
+                elif 'labels' in atoms.info:
+                    labels = atoms.info['labels']
+                else:
+                    labels = get_new_labels(atoms)
+                atoms.set_array('labels', np.array(labels))
+            
+            # -- occupanices -- #
+            if not atoms.has('occupancies'):
+                if '_atom_site_occupancy' in atoms.info:
+                    occupancies = atoms.info['_atom_site_occupancy']
+                elif 'occupancies' in atoms.info:
+                    occupancies = atoms.info['occupancies']
+                else:
+                    occupancies = None
+
+                if occupancies:
+                    occupancies = np.array(occupancies)
+                    atoms.set_array('occupancies', occupancies)
 
             disorder_components.append(atoms)
         disordered_structure = from_disorder_components(
                                     disorder_components[0],
                                     disorder_components[1],
-                                    tolerance=1e-2,
-                                    symprec=1e-3,
+                                    tolerance=symprec, # use the same tolerance as for symmetry finder
+                                    symprec=symprec,
                                     ratio=ratio, # TODO make this more general
                                     group_occupancies=None)
+        logger.info(disordered_structure)
     else:
         raise ValueError(f"Expected 1 or 2 files, got {nfiles}.")
         
