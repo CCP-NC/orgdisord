@@ -5,7 +5,7 @@ Case Studies
 
 Here are some case studies of specific systems that have been explored using sodorg_renewal.
 
-The names refer to the CSD code/CIF file in the ./examples/ directory.
+The names of the structures refer to the CSD code/CIF file in the ./examples/ directory.
 
 
 Straightforward case (ABABUB)
@@ -465,8 +465,7 @@ The code can use the difference between the two structures to determine the diso
 
 This functionality is currently limited to the case of one disorder assembly and two disorder groups.
 
-Taking the previous EROHEA example, I manually split the structure into two P1 ordered structures,
- one for the major disorder component and one for the minor. You can download these here:
+Taking the previous EROHEA example, I manually split the structure into two P1 ordered structures, one for the major disorder component and one for the minor. You can download these here:
 
 * :download:`EROHEA major <../examples/EROHEA_maj_P1.cif>`
 * :download:`EROHEA minor <../examples/EROHEA_min_P1.cif>`
@@ -664,3 +663,122 @@ the second group has a spacegroup of P1 (1) and a multiplicity of 6, and so on.
 
 
 
+
+Manually/programmatically specifying disorder
+----------------------------------------------
+
+You can manually create a DisorderedStructure object and pass that to the enumerator to generate the ordered configurations.
+
+As a basic example, let's put a thiophene (C4H4S) molecule in a cubic cell with no symmetry. 
+We can then generate several disorder groups that each contains a different configuration of the molecule -- in this case let's just rotate the molecule by 360/5 degrees to move the S atom around the ring. 
+
+Using ASE we can do this as follows:
+
+.. code-block:: python
+
+    # ASE already knows about some molecules :)
+    from ase.build import molecule
+    from sodorg_renewal.utils import get_new_labels
+
+    # Spacegroup 1 == P1
+    sg_number = 1
+    # Unit cell. If 3 numbers are given, 
+    # they are interpreted as the lengths of the unit cell vectors.
+    # If a 3x3 list or array is given, 
+    # they are interpreted as the three vectors.
+    cell = [6.5, 6.5, 6.5]
+    # Create the main atoms object
+    atoms = molecule('C4H4S', cell = cell, pbc = True)
+    # Good to always have useful labels to help keep track of things
+    atoms.set_array('labels', np.array(get_new_labels(atoms)))
+    
+    # where is the centre of ring:
+    ring_c = atoms.positions[:5].mean(axis=0)
+    
+    # place the ring in the centre of the cell
+    atoms.translate(np.array(cell)*0.5 - ring_c)
+
+    # Now we generate 5 structures that will comprise our 5 disorder groups
+    # in assembly A, by rotating the ring around.
+    images = [atoms]
+    for i in range(1,5):
+        atoms_temp = atoms.copy()
+        # rotate the ring by 360/5 degrees
+        atoms_temp.rotate(i*360/5.0, 'x', center='COU')
+        images.append(atoms_temp)
+    
+
+
+Now we can create a DisorderedStructure object to later be passed to the enumerator:
+
+
+.. code-block:: python
+
+    from sodorg_renewal.disordered_structure import DisorderAssembly,
+                                                    DisorderGroup,
+                                                    DisorderedStructure
+    from sodorg_renewal.enumerate import OrderedfromDisordered
+
+    # symmetry operations -- in this case just the identity
+    sg = Spacegroup(sg_number)
+    symops = sg.get_symop()
+
+    # For the ordered part, we just have an empty Atoms object.
+    ordered_atoms = Atoms(cell=cell)
+
+    # make list of DisorderGroup objects to pass into DisorderAssembly
+    disorder_groups = []
+    for i, rot in enumerate(images):
+        disorder_group = DisorderGroup(
+            label = str(i+1),
+            atoms = rot,
+            symmetry_operations=symops,
+            tag = i+1,
+            occupancy = 1/len(images),
+            )
+        disorder_groups.append(disorder_group)
+
+    # create disorder assembly
+    da = DisorderAssembly(
+        label = 'A',
+        disorder_groups = disorder_groups,
+        tag = 0,
+        )
+        
+    # create disordered structure
+    ds = DisorderedStructure(
+        ordered_atoms= ordered_atoms,
+        Z = 1,
+        spacegroup =  sg,
+        disorder_assemblies = [da],
+        molecular_crystal=True,
+        )
+
+    # now we can pass this to the enumerator
+    od = OrderedfromDisordered(ds)
+
+    # Let's generate 20 random configurations in a 1x5x5 supercell:
+    supercell = [1, 5, 5]
+    images = od.get_supercell_configs(
+                    supercell = supercell, 
+                    maxiters = 20,
+                    exclude_ordered = False, 
+                    random_configs=True)
+    
+    # Now we could write them to disk
+    # in lots of different formats. E.g.:
+    for i, image in enumerate(images):
+        image.write(f'C4H4S_example_{i+1:02d}.cif')
+        #image.write(f'C4H4S_example_{i+1:02d}.cell')
+        #image.write(f'C4H4S_example_{i+1:02d}.xyz')
+
+    # Or we could use the ASE GUI to view them:
+    from ase.visualize import view
+    view(images)
+
+
+I used the ASE POVRAY writer to create nice images of each configuration in a 1x6x3 supercell and stitched them into a gif using ImageMagick:
+
+.. image:: images/C4H4S_6x3.gif
+    :width: 800px
+    :align: center

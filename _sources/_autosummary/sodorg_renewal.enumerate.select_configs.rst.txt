@@ -1,6 +1,0 @@
-sodorg\_renewal.enumerate.select\_configs
-=========================================
-
-.. currentmodule:: sodorg_renewal.enumerate
-
-.. autofunction:: select_configs

@@ -1,6 +1,0 @@
-sodorg\_renewal.disordered\_structure.from\_disorder\_components
-================================================================
-
-.. currentmodule:: sodorg_renewal.disordered_structure
-
-.. autofunction:: from_disorder_components

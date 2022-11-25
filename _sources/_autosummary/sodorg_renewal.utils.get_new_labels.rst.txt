@@ -1,6 +1,0 @@
-sodorg\_renewal.utils.get\_new\_labels
-======================================
-
-.. currentmodule:: sodorg_renewal.utils
-
-.. autofunction:: get_new_labels

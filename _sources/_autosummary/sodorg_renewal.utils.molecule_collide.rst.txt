@@ -1,6 +1,0 @@
-sodorg\_renewal.utils.molecule\_collide
-=======================================
-
-.. currentmodule:: sodorg_renewal.utils
-
-.. autofunction:: molecule_collide

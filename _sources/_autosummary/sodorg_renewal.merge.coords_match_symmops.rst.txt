@@ -1,6 +1,0 @@
-sodorg\_renewal.merge.coords\_match\_symmops
-============================================
-
-.. currentmodule:: sodorg_renewal.merge
-
-.. autofunction:: coords_match_symmops

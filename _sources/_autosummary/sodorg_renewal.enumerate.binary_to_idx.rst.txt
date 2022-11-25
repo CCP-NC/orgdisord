@@ -1,6 +1,0 @@
-sodorg\_renewal.enumerate.binary\_to\_idx
-=========================================
-
-.. currentmodule:: sodorg_renewal.enumerate
-
-.. autofunction:: binary_to_idx

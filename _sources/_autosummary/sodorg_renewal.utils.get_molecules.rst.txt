@@ -1,6 +1,0 @@
-sodorg\_renewal.utils.get\_molecules
-====================================
-
-.. currentmodule:: sodorg_renewal.utils
-
-.. autofunction:: get_molecules

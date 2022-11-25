@@ -1,6 +1,0 @@
-sodorg\_renewal.merge.compare\_ref\_unmatched
-=============================================
-
-.. currentmodule:: sodorg_renewal.merge
-
-.. autofunction:: compare_ref_unmatched
