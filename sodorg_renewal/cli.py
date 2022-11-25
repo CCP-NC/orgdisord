@@ -326,6 +326,10 @@ def main(
                 # castep cell writer looks for the castep_labels array
                 # so let's copy across the labels array
                 image.set_array('castep_labels', image.get_array('labels'))
+            elif format =='xyz':
+                # I had some issues if there are occupancies in the xyz file
+                # so let's remove them
+                image.set_array('occupancies', None)
                 
                 
             image.write(f"{directory}/{filename}", **kwargs)

@@ -102,8 +102,11 @@ class CifParser:
         # spacegroup info:
         sg = self.atoms.info['spacegroup']
         if sg.centrosymmetric:
-            self.logger.debug('The crystal read as centrosymmetric, but we will proceed as if it is not.'
-                        'This is usually fine in my experience... ')
+            self.logger.debug('''
+            The crystal read as centrosymmetric, 
+            but since we read in the symmetry operations 
+            from the CIF file (which include the inversion operations explicitly),
+             we proceed as if it is non-centrosymmetric.''')
             sg._centrosymmetric = 0
         self.sg = sg
         self.nops = sg.nsymop
