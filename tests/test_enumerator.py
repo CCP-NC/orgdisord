@@ -4,7 +4,10 @@
 import pytest
 from sodorg_renewal.enumerate import OrderedfromDisordered
 from sodorg_renewal.parse_cif_file import CifParser
+from sodorg_renewal.disordered_structure import from_disorder_components 
 import numpy as np
+from ase.io import read
+from ase.spacegroup import Spacegroup
 
 cif = CifParser('tests/EROHEA_modified.cif')
 disordered_structure = cif.get_disordered_structure()
@@ -123,3 +126,50 @@ assert all([len(atoms) == natoms for atoms in images])
 # (ordered sites are tagged 0)
 tag = 0
 nordered = 100*supercell[0]*supercell[1]*supercell[2]
+
+
+########################################################################################
+# Test enumeration from two ordered structures
+atoms_maj = read('tests/ABABUB_maj.xyz')
+atoms_min = read('tests/ABABUB_min.xyz')
+disordered_structure = from_disorder_components(atoms_maj, atoms_min)
+
+# make sure the disordered structure is correct:
+# check number of assemblies and groups is correct:
+assert disordered_structure.get_number_of_disorder_groups_per_assembly() == [2]
+# check that the correct Z and number of symops are assigned
+assert disordered_structure.Z == 4
+assert disordered_structure.spacegroup == Spacegroup(14)
+# check that each group contains the correct number of sites
+assert len(disordered_structure.disorder_assemblies[0].disorder_groups[0].atoms) == 12
+assert len(disordered_structure.disorder_assemblies[0].disorder_groups[1].atoms) == 12
+
+od = OrderedfromDisordered(disordered_structure)
+# exhaustive enumeration in 111 supercell:
+supercell = [1,1,1]
+images = od.get_supercell_configs(
+                supercell = supercell, 
+                maxiters = 100, # should be more than enough 
+                exclude_ordered = False, 
+                random_configs=False)
+
+# there should be 16 configurations generated
+# (binary options and four possible sites, 2^4 = 16)
+assert len(images) == 16
+########################################################################################
+
+
+
+
+
+#  Explicitly create DisorderedAtoms object
+from ase.build import bulk
+from ase.build import molecule
+
+# create a disordered structure
+atoms = bulk('Cu', cubic=True)
+atoms *= (2,2,2)
+
+# add a disordered molecule
+atoms += molecule('H2O')
+

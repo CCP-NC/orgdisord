@@ -37,25 +37,25 @@ for g in groups:
     print(f"Spacegroup: {spglib.get_spacegroup(g[0])}\t multiplicity: {g[1]}")
 
 # Sanity check!
-# note that I have run single point energy calculations on the 16 exhaustive configs and 
+# note that I have run single point DFT energy calculations on the 16 exhaustive configs and 
 # verified that the energy grouping is exactly the same as the grouping by symmetry (phew!).
 assert len(groups) == 5
 
 
 
-print('REmatch approach')
-groups = merge_structures(
-                        images,
-                        algo='rematch',
-                        symops=symops,
-                        use_disordered_only = True,
-                        symprec=1e-2,
-                        quiet = True)
+# print('REmatch approach')
+# groups = merge_structures(
+#                         images,
+#                         algo='rematch',
+#                         symops=symops,
+#                         use_disordered_only = True,
+#                         symprec=1e-2,
+#                         quiet = True)
 
-print(f'Found {len(groups)} groups')
-for g in groups:
-    print(f"Spacegroup: {spglib.get_spacegroup(g[0])}\t multiplicity: {g[1]}")
-assert len(groups) == 5
+# print(f'Found {len(groups)} groups')
+# for g in groups:
+#     print(f"Spacegroup: {spglib.get_spacegroup(g[0])}\t multiplicity: {g[1]}")
+# assert len(groups) == 5
 
 
 
