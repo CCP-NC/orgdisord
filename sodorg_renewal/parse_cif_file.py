@@ -37,14 +37,24 @@ class CifParser:
 
         # Disorder assemblies and groups
         # Make sure the info dictionary contains the disorder tags
-        if not '_atom_site_disorder_group' in self.info:
-            raise ValueError(f'Cif file {self.cif_file} does not contain disorder group tags. Please edit the cif file appropriately.')
-            # TODO more helpful error message -- guidance on using these tags
-        if not '_atom_site_disorder_assembly' in self.info:
-            warnings.warn(f"Cif file {self.cif_file} does not contain disorder assembly tags. Best practice is to use these to disambiguate disorder assemblies/groups.")
-            assemblies_present = False
-        else:
-            assemblies_present = True
+        groups_present       = '_atom_site_disorder_group'    in self.info
+        assemblies_present   = '_atom_site_disorder_assembly' in self.info
+        occupancies_present  = '_atom_site_occupancy'         in self.info
+        self.logger.debug("Disorder tags present in cif file:")
+        self.logger.debug(f"    groups: {groups_present}")
+        self.logger.debug(f"    assemblies: {assemblies_present}")
+        self.logger.debug(f"    occupancies: {occupancies_present}")
+
+        if not groups_present:
+            self.logger.warn(f"Cif file {self.cif_file} does not "
+            "contain disorder group tags. Best practice is to use these to disambiguate disorder assemblies/groups.")
+            if not occupancies_present:
+                raise ValueError(f'Cif file {self.cif_file} neither contains '
+                 'disorder group tags nor occupancy information. Please edit the cif file appropriately.')
+
+        if not assemblies_present:
+            self.logger.warn(f"Cif file {self.cif_file} does not contain disorder assembly tags. "
+            "Best practice is to use these to disambiguate disorder assemblies/groups.")
 
         # scaled coordinates of the asymmetric sites:
         asymmetric_x = self.info['_atom_site_fract_x']
@@ -56,16 +66,39 @@ class CifParser:
         # labels of the asymmetric sites:
         self.asymmetric_labels = np.array(self.info['_atom_site_label'])
         # occupancies of the asymmetric sites:
-        if '_atom_site_occupancy' in self.info:
+        if occupancies_present:
             occupancies = np.array(self.info['_atom_site_occupancy'])
         else:
             occupancies = np.ones(len(self.asymmetric_symbols))
             self.logger.warn("Warning: No occupancies found in CIF file. Assuming all occupancies are 1.")
 
         self.occupancies = occupancies
+
+        # get the occupancies that are not 1
+        partial_occ_idx = np.where(occupancies != 1)[0]
+        partial_occupancies = occupancies[partial_occ_idx]
+        
+        # if there are no disorder tags, we assume the occupancies form n disorder groups
+        if not groups_present:
+            raw_disorder_assemblies, raw_disorder_groups = self._extract_groups_from_occupancies(partial_occ_idx, partial_occupancies)
+        else:
+            raw_disorder_groups = self.info['_atom_site_disorder_group']
+            if assemblies_present:
+                raw_disorder_assemblies = self.info['_atom_site_disorder_assembly']
+            else:
+                raw_disorder_assemblies = ['.' for i in range(len(self.asymmetric_labels))]
+        
+
+
+        # save to object
+        self._raw_disorder_groups = raw_disorder_groups
+        self._raw_disorder_assemblies = raw_disorder_assemblies
+
+
+
         # let's define the ordered sites as with disorder group '.'
         # make sure we're comparing strings
-        self.ordered_mask = np.array(self.info['_atom_site_disorder_group']).astype(str) == '.'
+        self.ordered_mask = np.array(self._raw_disorder_groups).astype(str) == '.'
         # self.ordered_mask = occupancies == 1
 
         # split into assembly and disorder groups
@@ -151,9 +184,67 @@ class CifParser:
         # build out the full crystal with the ordered sites
         self.ordered_atoms = self.gen_ordered_atoms()
 
-        # ds = self.get_disordered_structure()
-        # self.logger.debug(f'{ds}')
+    def _extract_groups_from_occupancies(self, partial_occ_idx, partial_occupancies):
 
+        raw_disorder_groups     = ['.' for i in range(len(self.asymmetric_symbols))]
+        raw_disorder_assemblies = ['.' for i in range(len(self.asymmetric_symbols))]
+
+
+        ndisordered_sites = len(partial_occ_idx)
+        if ndisordered_sites == 0:
+            raise ValueError('No partial occupancies found.')
+            
+        # get the unique occupancies -- these will be the disorder groups
+        unique_occupancies = np.unique(partial_occupancies)
+        
+        if len(unique_occupancies) == 1:
+            raise ValueError('\nOccupancy information incomplete - '
+                f'only one unique partial occupancy found: {unique_occupancies[0]}. \n'
+                'Cannot resolve the ambiguity. Please add _atom_site_disorder_group tags to the cif file.')
+
+        # if even number of unique occupancies, we can will assume that they come in pairs that each sum to 1
+        # if odd number of unique occupancies, we assume that there is one assembly with all the occupancies
+        if len(unique_occupancies) % 2 != 0:
+            self.logger.warn("Warning: Odd number of unique occupancies found. "
+                "Assuming that they are all part of one disorder assembly.")
+            #TODO!
+            raise NotImplementedError('Odd number of unique occupancies not yet implemented.')
+        else:
+            self.logger.debug("Even number of unique occupancies found. "
+                "Assuming that they come assemblies with pairs of groups whose occupancies sum to 1.")
+
+
+            # find pairs that sum to 1
+            occ_pairs = []
+            for i, occ in enumerate(unique_occupancies):
+                for j in range(i+1, len(unique_occupancies)):
+                    if np.isclose(occ + unique_occupancies[j], 1):
+                        occ_pairs.append((occ, unique_occupancies[j]))
+                
+            if len(occ_pairs) != len(unique_occupancies) // 2:
+                raise ValueError('Occupancy information incomplete - '
+                    'some pairs of partial occupancies do not sum to 1 \n'
+                    f'unique partial occupancies: {unique_occupancies} \n'
+                    f'pairs that sum to 1: {occ_pairs}.')
+
+            # if we get here, we can assign disorder groups based on the occupancies
+            # we assume sites with the same occupancy are in the same disorder group
+            
+            for i, pair in enumerate(occ_pairs):
+                # get the uppercase letter corresponding to the pair index
+                ass_label = chr(i + 65)
+                for j, occ in enumerate(pair):
+                    # j is the group_label
+                    group_label = j
+                    # get the indices of the sites with this occupancy
+                    occ_idx = np.where(partial_occupancies == occ)[0]
+                    for j in occ_idx:
+                        # set the disorder group for this site
+                        raw_disorder_groups[partial_occ_idx[j]] = group_label
+                        raw_disorder_assemblies[partial_occ_idx[j]] = ass_label
+
+            
+        return raw_disorder_assemblies, raw_disorder_groups
 
 
 
@@ -215,7 +306,7 @@ class CifParser:
                     
         '''
         
-        disorder_assemblies = atoms.info['_atom_site_disorder_assembly']
+        disorder_assemblies = self._raw_disorder_assemblies
         labels = list(set(disorder_assemblies))
         if '.' in labels:
             labels.remove('.')
@@ -253,7 +344,7 @@ class CifParser:
             *** This data item would not in general be used in a
             macromolecular data block. ***
         '''
-        site_disorder_groups = self.info['_atom_site_disorder_group']
+        site_disorder_groups = self._raw_disorder_groups
         labels = list(set(site_disorder_groups))
         if '.' in labels:
             labels.remove('.')
