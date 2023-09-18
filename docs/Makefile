@@ -4,7 +4,7 @@
 # You can set these variables from the command line.
 SPHINXOPTS    =
 SPHINXBUILD   = python -msphinx
-SPHINXPROJ    = sodorg_renewal
+SPHINXPROJ    = orgdisord
 SOURCEDIR     = .
 BUILDDIR      = _build
 

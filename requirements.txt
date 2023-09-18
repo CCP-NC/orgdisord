@@ -65,7 +65,7 @@ ruamel.yaml.clib==0.2.6
 scikit-learn @ file:///tmp/build/80754af9/scikit-learn_1642617106979/work
 scipy @ file:///tmp/build/80754af9/scipy_1641555004408/work
 six @ file:///tmp/build/80754af9/six_1644875935023/work
--e git+https://github.com/jkshenton/sodorg_renewal.git@f3b44b802d40e52597715a7f68ab8919d4cbc9ee#egg=sodorg_renewal
+-e git+https://github.com/jkshenton/orgdisord.git@f3b44b802d40e52597715a7f68ab8919d4cbc9ee#egg=orgdisord
 Soprano==0.8.13
 sparse==0.13.0
 spglib==1.16.3

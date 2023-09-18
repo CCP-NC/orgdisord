@@ -3,11 +3,11 @@ requires = ["setuptools>=61.2"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "sodorg_renewal"
+name = "orgdisord"
 authors = [{name = "Kane Shenton", email = "jkshenton@gmail.com"}]
 license = {text = "MIT license"}
 description = "Python code to handle disordered molecular crystals."
-keywords = ["sodorg_renewal"]
+keywords = ["orgdisord"]
 dynamic = ["version", "readme"]
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
@@ -32,14 +32,14 @@ dependencies = [
 ]
 
 [tool.setuptools.dynamic]
-version = {attr = "sodorg_renewal.__version__"}
+version = {attr = "orgdisord.__version__"}
 readme = {file = "README.rst"}
 
 [project.urls]
-Homepage = "https://github.com/jkshenton/sodorg_renewal"
+Homepage = "https://github.com/jkshenton/orgdisord"
 
 [project.scripts]
-sodorg_renewal = "sodorg_renewal.cli:cli"
+orgdisord = "orgdisord.cli:cli"
 
 [project.optional-dependencies]
 testing = ["pytest>=3"]
@@ -53,7 +53,7 @@ tag = "True"
 search = "version='{current_version}'"
 replace = "version='{new_version}'"
 
-[tool.bumpversion.file."sodorg_renewal/__init__".py]
+[tool.bumpversion.file."orgdisord/__init__".py]
 search = "__version__ = '{current_version}'"
 replace = "__version__ = '{new_version}'"
 
@@ -62,7 +62,7 @@ zip-safe = false
 include-package-data = true
 
 [tool.setuptools.packages.find]
-include = ["sodorg_renewal"] # sodorg_renewal.*
+include = ["orgdisord"] # orgdisord.*
 namespaces = false
 
 [tool.distutils.bdist_wheel]

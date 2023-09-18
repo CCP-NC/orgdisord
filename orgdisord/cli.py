@@ -1,12 +1,12 @@
-"""Console script for sodorg_renewal."""
+"""Console script for orgdisord."""
 import sys
 import os
 import click
-from sodorg_renewal.disordered_structure import from_disorder_components
-from sodorg_renewal.parse_cif_file import CifParser
-from sodorg_renewal.enumerate import OrderedfromDisordered
-from sodorg_renewal.merge import merge_structures
-from sodorg_renewal.utils import get_new_labels, standardise_cell
+from orgdisord.disordered_structure import from_disorder_components
+from orgdisord.parse_cif_file import CifParser
+from orgdisord.enumerate import OrderedfromDisordered
+from orgdisord.merge import merge_structures
+from orgdisord.utils import get_new_labels, standardise_cell
 import spglib
 import time
 from ase.io import read
@@ -27,7 +27,7 @@ LOGHEADER = '''
 
 
 ###############################################################################
-#                          -----  SODORG-PY  -----                            #
+#                          -----  orgdisord-PY  -----                            #
 #                                                          J. Kane Shenton    #
 #                                                                   CCP-NC    #
 ###############################################################################
@@ -60,14 +60,14 @@ def cli():
 # option to suppress writing out structures
 @click.option('--no_write', is_flag=True, default=False, help='Suppress writing out structures?')
 # add option to output to specified file
-@click.option('--prefix', type=click.STRING, default='sodorg', help='Prefix for output file names.')
+@click.option('--prefix', type=click.STRING, default='orgdisord', help='Prefix for output file names.')
 # option format options
 @click.option('--format', '-f', type=click.Choice(['cif', 'xyz', 'poscar', 'cell']), default='xyz', help='Format of output strucuture files.')
 
 # add option to specify verbosity
 @click.option('--quiet', '-q', is_flag=True, default=False, help='Suppress output?')
 # add option to specify log file
-@click.option('--log', '-l', type=click.Path(exists=False), default="sodorg.log", help='Log file name.')
+@click.option('--log', '-l', type=click.Path(exists=False), default="orgdisord.log", help='Log file name.')
 
 # add option to view structures using ASE gui
 @click.option('--view', is_flag=True, default=False, help='View structures using ASE gui?')
@@ -116,7 +116,7 @@ def main(
         ratio_tol,
          ):
 
-    """Command line interface for sodorg_renewal.
+    """Command line interface for orgdisord.
     """
     # set up logging
     logging.basicConfig(filename=log, level=logging.DEBUG, format='%(asctime)s \t %(message)s')
@@ -130,7 +130,7 @@ def main(
     # set a format which is simpler for console use
     consolefmt = logging.Formatter('%(message)s')
     console.setFormatter(consolefmt)
-    logger = logging.getLogger("sodorg")
+    logger = logging.getLogger("orgdisord")
     # add the handler to the main logger
     logger.addHandler(console)
     logger.info(LOGHEADER)
@@ -352,11 +352,11 @@ def main(
 @cli.command(context_settings={'show_default': True})
 @click.pass_context
 @click.argument('csv_file', type=click.Path(exists=True))
-@click.option('--prefix', type=click.STRING, default='sodorg', help='Prefix for output file names.')
+@click.option('--prefix', type=click.STRING, default='orgdisord', help='Prefix for output file names.')
 # add option to specify verbosity
 @click.option('--quiet', '-q', is_flag=True, default=False, help='Suppress output?')
 # add option to specify log file
-@click.option('--log', '-l', type=click.Path(exists=False), default="sodorg.analyse.log", help='Log file name.')
+@click.option('--log', '-l', type=click.Path(exists=False), default="orgdisord.analyse.log", help='Log file name.')
 # specify temperature range and number of steps
 @click.option('--temperatures', '-t', nargs=2, type=click.FLOAT, default=[10, 300], help='Temperature range in K (inclusive of end points).')
 @click.option('--steps', '-s', type=click.INT, default=50, help='Number of temperature steps.')
@@ -374,7 +374,7 @@ def analyse(ctx,
          log,
          ):
 
-    """Command line interface for sodorg_renewal thermodynamics.
+    """Command line interface for orgdisord thermodynamics.
 
     TODO energy units!
     TODO: slight numerical inconsistencies wrt to Jonas' code
@@ -392,13 +392,13 @@ def analyse(ctx,
     # set a format which is simpler for console use
     consolefmt = logging.Formatter('%(message)s')
     console.setFormatter(consolefmt)
-    logger = logging.getLogger("sodorg.analyse")
+    logger = logging.getLogger("orgdisord.analyse")
     # add the handler to the main logger
     logger.addHandler(console)
     logger.info(LOGHEADER)
     
     # log the Click command line arguments and options used
-    logger.debug("Run sodorg analyse with these command line arguments: ")
+    logger.debug("Run orgdisord analyse with these command line arguments: ")
     for param, value in ctx.params.items():
         logger.debug(f"          {param}: {value}")
 

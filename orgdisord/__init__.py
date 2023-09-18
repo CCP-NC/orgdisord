@@ -1,4 +1,4 @@
-"""Top-level package for SODORG Renewal."""
+"""Top-level package for orgdisord."""
 
 __author__ = """Kane Shenton"""
 __email__ = 'jkshenton@gmail.com'

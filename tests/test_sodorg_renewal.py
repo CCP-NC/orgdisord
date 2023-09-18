@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 
-"""Tests for `sodorg_renewal` package."""
+"""Tests for `orgdisord` package."""
 
 import pytest
 
 from click.testing import CliRunner
 
-#from sodorg_renewal import sodorg_renewal
-from sodorg_renewal import cli
+#from orgdisord import orgdisord
+from orgdisord import cli
 import numpy as np
 
 
@@ -18,13 +18,13 @@ def erohea():
     return a CifParser object
     
     """
-    import sodorg_renewal.parse_cif_file as CifParser
+    import orgdisord.parse_cif_file as CifParser
     return CifParser.CifParser('tests/EROHEA_modified.cif')
 
 @pytest.fixture
 def test_enumerator(cif):
     """Use the pytest fixture cif to test the enumerator module."""
-    from sodorg_renewal.enumerate import OrderedfromDisordered
+    from orgdisord.enumerate import OrderedfromDisordered
     od = OrderedfromDisordered(cif)
     # exhaustive enumeration in 111 supercell:
     supercell = [1,1,1]
@@ -55,7 +55,7 @@ def test_command_line_interface():
     runner = CliRunner()
     result = runner.invoke(cli.main)
     assert result.exit_code == 0
-    assert 'sodorg_renewal.cli.main' in result.output
+    assert 'orgdisord.cli.main' in result.output
     help_result = runner.invoke(cli.main, ['--help'])
     assert help_result.exit_code == 0
     assert '--help  Show this message and exit.' in help_result.output

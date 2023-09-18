@@ -9,7 +9,7 @@ generate 50 configs containing
 There should merge to just 5 groups of symmetry-inequivalent configs.
 """
 import pytest
-from sodorg_renewal.merge import merge_structures
+from orgdisord.merge import merge_structures
 from ase.spacegroup import get_spacegroup
 import numpy as np
 from ase.io import read

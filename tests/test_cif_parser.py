@@ -2,7 +2,7 @@
 
 """Tests for the parse_cif_file module."""
 import pytest
-from sodorg_renewal.parse_cif_file import CifParser
+from orgdisord.parse_cif_file import CifParser
 import numpy as np
 # suppress warnings for these tests
 import warnings

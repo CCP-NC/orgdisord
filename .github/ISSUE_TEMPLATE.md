@@ -1,4 +1,4 @@
-* SODORG Renewal version:
+* orgdisord version:
 * Python version:
 * Operating System:
 

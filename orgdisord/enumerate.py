@@ -10,10 +10,10 @@ import itertools
 from tqdm import tqdm
 from scipy.spatial.distance import pdist
 import logging
-from sodorg_renewal.utils import reload_as_molecular_crystal, random_product
+from orgdisord.utils import reload_as_molecular_crystal, random_product
 import random
 
-logger = logging.getLogger("sodorg.enumerate")
+logger = logging.getLogger("orgdisord.enumerate")
 
 
 
@@ -67,7 +67,7 @@ class OrderedfromDisordered:
         self.disordered_structure = disordered_structure
         
         self.symprec = symprec
-        self.logger = logging.getLogger("sodorg.enumerate")
+        self.logger = logging.getLogger("orgdisord.enumerate")
         self.logger.debug("\n\n")
         self.logger.debug("------------------------------")
         self.logger.debug("--- ENUMERATING STRUCTURES ---")

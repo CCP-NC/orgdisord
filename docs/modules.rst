@@ -13,7 +13,7 @@ However, this is not recommended as the library is not stable and the API is sub
    :toctree: _autosummary
    :recursive:
 
-   sodorg_renewal
+   orgdisord
 
 
 

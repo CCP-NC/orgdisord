@@ -1,4 +1,4 @@
-from sodorg_renewal.utils import molecule_collide
+from orgdisord.utils import molecule_collide
 from ase.build import molecule
 from ase.visualize import view
 from ase import Atom

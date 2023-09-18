@@ -3,7 +3,7 @@ Contains the class DisorderedStructure, which is used to represent a
 disordered structure.
 '''
 from logging import warning
-from sodorg_renewal.utils import molecule_collide, get_unique_atoms, standardise_cell
+from orgdisord.utils import molecule_collide, get_unique_atoms, standardise_cell
 from dataclasses import dataclass
 from typing import List, Tuple, Union
 from ase import Atoms, Atom

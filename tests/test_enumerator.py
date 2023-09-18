@@ -2,9 +2,9 @@
 
 """Tests for the enumerate.py module."""
 import pytest
-from sodorg_renewal.enumerate import OrderedfromDisordered
-from sodorg_renewal.parse_cif_file import CifParser
-from sodorg_renewal.disordered_structure import from_disorder_components 
+from orgdisord.enumerate import OrderedfromDisordered
+from orgdisord.parse_cif_file import CifParser
+from orgdisord.disordered_structure import from_disorder_components 
 import numpy as np
 from ase.io import read
 from ase.spacegroup import Spacegroup

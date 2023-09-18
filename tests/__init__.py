@@ -1,1 +1,1 @@
-"""Unit test package for sodorg_renewal."""
+"""Unit test package for orgdisord."""

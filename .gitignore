@@ -36,7 +36,7 @@ pip-log.txt
 pip-delete-this-directory.txt
 scrap/
 examples/*-results/
-examples/sodorg*.log
+examples/orgdisord*.log
 # Unit test / coverage reports
 htmlcov/
 .tox/

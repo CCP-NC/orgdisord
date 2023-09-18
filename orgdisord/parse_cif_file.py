@@ -7,8 +7,8 @@ from ase.io import read
 from ase import Atoms, Atom
 import warnings
 from ase.spacegroup import get_spacegroup, crystal
-from sodorg_renewal.utils import molecule_collide
-from sodorg_renewal.disordered_structure import DisorderedStructure, DisorderGroup, DisorderAssembly
+from orgdisord.utils import molecule_collide
+from orgdisord.disordered_structure import DisorderedStructure, DisorderGroup, DisorderAssembly
 
 import numpy as np
 import logging
@@ -28,7 +28,7 @@ class CifParser:
         self.molecular_crystal = molecular_crystal
         # save the info dictionary
         self.info = self.atoms.info
-        self.logger = logging.getLogger("sodorg.parse_cif_file")
+        self.logger = logging.getLogger("orgdisord.parse_cif_file")
         self.logger.debug("\n\n")
         self.logger.debug("------------------------------")
         self.logger.debug("---    PARSING CIF FILE    ---")

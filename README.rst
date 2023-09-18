@@ -2,15 +2,15 @@
 
 
 ==============
-SODORG Renewal
+orgdisord
 ==============
 
 
-.. image:: https://img.shields.io/pypi/v/sodorg_renewal.svg
-        :target: https://pypi.python.org/pypi/sodorg_renewal
+.. image:: https://img.shields.io/pypi/v/orgdisord.svg
+        :target: https://pypi.python.org/pypi/orgdisord
 
-.. image:: https://img.shields.io/travis/jkshenton/sodorg_renewal.svg
-        :target: https://travis-ci.com/jkshenton/sodorg_renewal
+.. image:: https://img.shields.io/travis/jkshenton/orgdisord.svg
+        :target: https://travis-ci.com/jkshenton/orgdisord
 
 
 
@@ -25,7 +25,7 @@ Python code to handle disordered molecular crystals.
 
 
 * Free software: MIT license
-* Documentation: https://jkshenton.github.io/sodorg_renewal
+* Documentation: https://jkshenton.github.io/orgdisord
 
 
 Features
@@ -59,38 +59,38 @@ The examples below assume you have installed the package as per the :doc:`instal
 
 #. Generate all possible ordered configurations in the primitive cell: ::
 
-        $ sodorg_renewal enumerate ABABUB.cif --no_write --view
+        $ orgdisord enumerate ABABUB.cif --no_write --view
 
 #. Generate all possible ordered configurations in a 2x1x1 supercell: ::
 
-        $ sodorg_renewal enumerate ABABUB.cif --supercell 2 1 1 --no_write --view
+        $ orgdisord enumerate ABABUB.cif --supercell 2 1 1 --no_write --view
 
 #. Merge fully enumerated configurations: ::
 
-        $ sodorg_renewal enumerate ABABUB.cif -m --no_write --view
+        $ orgdisord enumerate ABABUB.cif -m --no_write --view
 
 #. Merge randomly generated configurations in the primitive cell. If you have enough of them, you will end up with the same groups as the fully enumerated case (though this is much less efficient): ::
 
-        $ sodorg_renewal enumerate ABABUB.cif -m --no_write --view --random -N 1000
+        $ orgdisord enumerate ABABUB.cif -m --no_write --view --random -N 1000
 
 #. Generate 5000 randomly ordered structures in a specified supercell: ::
 
-        $ sodorg_renewal enumerate ABABUB.cif --supercell 2 1 2 --random -N 5000 --no_write --view
+        $ orgdisord enumerate ABABUB.cif --supercell 2 1 2 --random -N 5000 --no_write --view
 
 #. Generate 3 randomly ordered structures in a very large supercell: ::
                 
-        $ sodorg_renewal enumerate ABABUB.cif --supercell 4 6 4 --random -N 3 --no_write --view
+        $ orgdisord enumerate ABABUB.cif --supercell 4 6 4 --random -N 3 --no_write --view
 
 
-Notice that a `sodorg.log` file is generated in the current directory. This file contains the full command line options used to generate the output, as well as information about how the CIF file was parsed, the enumeration was done and, if applicable, how the merging was done. This can be useful for debugging and reproducing results.
+Notice that a `orgdisord.log` file is generated in the current directory. This file contains the full command line options used to generate the output, as well as information about how the CIF file was parsed, the enumeration was done and, if applicable, how the merging was done. This can be useful for debugging and reproducing results.
 
 
-The :doc:`command line interface documentation <cli>` has full details of the available commands and options. Alternatively you can run ``sodorg_renewal --help`` to see the available commands and e.g. ``sodorg_renewal enumerate --help`` to see the available options for the ``enumerate`` command.
+The :doc:`command line interface documentation <cli>` has full details of the available commands and options. Alternatively you can run ``orgdisord --help`` to see the available commands and e.g. ``orgdisord enumerate --help`` to see the available options for the ``enumerate`` command.
 
 
 .. note::
 
-        For each of these examples we included the ``--no_write`` option to prevent the configurations from being written to file. Without this flag, the code will write the configurations, in extended xyz format, into a directory named `sodorg-results`, and it will also generate a .csv file containing a summary of the generated structures. 
+        For each of these examples we included the ``--no_write`` option to prevent the configurations from being written to file. Without this flag, the code will write the configurations, in extended xyz format, into a directory named `orgdisord-results`, and it will also generate a .csv file containing a summary of the generated structures. 
         
         We also included the ``--view`` option to visualise the merged configurations using ASE. In the ASE GUI, you can click View→Colors and select color By Tag to easily see the different disorder assemblies and groups. You can also click View→Show Tags to see the tags associated with each atom.
 

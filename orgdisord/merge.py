@@ -12,7 +12,7 @@ except ImportError:
     def tqdm(x, **kwargs):
             return x
 
-logger = logging.getLogger("sodorg.merge")
+logger = logging.getLogger("orgdisord.merge")
 
 
 
