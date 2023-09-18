@@ -1,0 +1,6 @@
+sodorg\_renewal.merge.ewald\_energy
+===================================
+
+.. currentmodule:: sodorg_renewal.merge
+
+.. autofunction:: ewald_energy

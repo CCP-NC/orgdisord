@@ -1,0 +1,6 @@
+sodorg\_renewal.utils.random\_product
+=====================================
+
+.. currentmodule:: sodorg_renewal.utils
+
+.. autofunction:: random_product

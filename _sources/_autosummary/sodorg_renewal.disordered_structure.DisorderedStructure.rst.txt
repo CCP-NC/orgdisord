@@ -1,0 +1,6 @@
+sodorg\_renewal.disordered\_structure.DisorderedStructure
+=========================================================
+
+.. currentmodule:: sodorg_renewal.disordered_structure
+
+.. autoclass:: DisorderedStructure

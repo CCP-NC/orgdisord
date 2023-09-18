@@ -1,0 +1,36 @@
+﻿sodorg\_renewal
+===============
+
+.. automodule:: sodorg_renewal
+  
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   sodorg_renewal.cli
+   sodorg_renewal.disordered_structure
+   sodorg_renewal.enumerate
+   sodorg_renewal.merge
+   sodorg_renewal.parse_cif_file
+   sodorg_renewal.utils
+
