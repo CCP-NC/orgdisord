@@ -465,15 +465,16 @@ The code can use the difference between the two structures to determine the diso
 
 This functionality is currently limited to the case of one disorder assembly and two disorder groups.
 
-Taking the previous EROHEA example, I manually split the structure into two P1 ordered structures, one for the major disorder component and one for the minor. You can download these here:
+Taking the previous ABABUB example, I manually split the structure into two P1 ordered structures, one for the major disorder component and one for the minor. You can download these here:
 
-* :download:`EROHEA major <../examples/EROHEA_maj_P1.cif>`
-* :download:`EROHEA minor <../examples/EROHEA_min_P1.cif>`
+* :download:`ABABUB major <../examples/ABABUB_maj.xyz>`
+* :download:`ABABUB minor <../examples/ABABUB_min.xyz>`
 
+Note that you can provide the P1 structures in any format that ASE can read; here I've used the extended .xyz format.
 
 If you pass two files to the command-line-interface, it will assume these are the two disorder components ::
     
-        sodorg_renewal enumerate EROHEA_maj_P1.cif EROHEA_min_P1.cif --no_write
+        sodorg_renewal enumerate ABABUB_maj.xyz ABABUB_min.xyz --no_write
 
 
 
