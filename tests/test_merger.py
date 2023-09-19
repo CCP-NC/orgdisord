@@ -15,8 +15,8 @@ import numpy as np
 from ase.io import read
 import spglib
 
-original_atoms = read('tests/EROHEA_modified.cif')
-images = read('tests/images_50-5_groups.traj', index=':')
+original_atoms = read("tests/EROHEA_modified.cif")
+images = read("tests/images_50-5_groups.traj", index=":")
 # more copies?
 # images += images
 # images += images
@@ -24,23 +24,23 @@ images = read('tests/images_50-5_groups.traj', index=':')
 
 symops = get_spacegroup(original_atoms).get_symop()
 groups = merge_structures(
-                        images,
-                        algo='symm',
-                        symops=symops,
-                        use_disordered_only = True,
-                        symprec=1e-4,
-                        quiet = True)
+    images,
+    algo="symm",
+    symops=symops,
+    use_disordered_only=True,
+    symprec=1e-4,
+    quiet=True,
+)
 
 
-print(f'Found {len(groups)} groups')
+print(f"Found {len(groups)} groups")
 for g in groups:
     print(f"Spacegroup: {spglib.get_spacegroup(g[0])}\t multiplicity: {g[1]}")
 
 # Sanity check!
-# note that I have run single point DFT energy calculations on the 16 exhaustive configs and 
+# note that I have run single point DFT energy calculations on the 16 exhaustive configs and
 # verified that the energy grouping is exactly the same as the grouping by symmetry (phew!).
 assert len(groups) == 5
-
 
 
 # print('REmatch approach')
@@ -58,18 +58,18 @@ assert len(groups) == 5
 # assert len(groups) == 5
 
 
-
-print('EWALD approach')
+print("EWALD approach")
 groups = merge_structures(
-                        images,
-                        oxidation_states = {'N': -3.0, 'H': 1.0, 'C': 1.0, 'O': -2.0},
-                        algo='ewald',
-                        symops=symops,
-                        use_disordered_only = True,
-                        symprec=1e-2,
-                        quiet=False)
+    images,
+    oxidation_states={"N": -3.0, "H": 1.0, "C": 1.0, "O": -2.0},
+    algo="ewald",
+    symops=symops,
+    use_disordered_only=True,
+    symprec=1e-2,
+    quiet=False,
+)
 
-print(f'Found {len(groups)} groups')
+print(f"Found {len(groups)} groups")
 for g in groups:
     print(f"Spacegroup: {spglib.get_spacegroup(g[0])}\t multiplicity: {g[1]}")
 assert len(groups) == 5
