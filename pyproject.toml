@@ -36,7 +36,7 @@ version = {attr = "orgdisord.__version__"}
 readme = {file = "README.rst"}
 
 [project.urls]
-Homepage = "https://github.com/jkshenton/orgdisord"
+Homepage = "https://github.com/CCP-NC/orgdisord"
 
 [project.scripts]
 orgdisord = "orgdisord.cli:cli"

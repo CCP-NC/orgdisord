@@ -15,13 +15,13 @@ You can either clone the public repository:
 
 .. code-block:: console
 
-    $ git clone git://github.com/jkshenton/orgdisord
+    $ git clone git://github.com/CCP-NC/orgdisord
 
 Or download the `tarball`_:
 
 .. code-block:: console
 
-    $ curl -OJL https://github.com/jkshenton/orgdisord/tarball/main
+    $ curl -OJL https://github.com/CCP-NC/orgdisord/tarball/main
 
 Once you have a copy of the source, you can install it with:
 
@@ -63,8 +63,8 @@ or
     Though in that case you may need to `set up an X11 server`_ to (optionally) view the generated structures in the ASE GUI.
 
 
-.. _Github repo: https://github.com/jkshenton/orgdisord
-.. _tarball: https://github.com/jkshenton/orgdisord/tarball/main
+.. _Github repo: https://github.com/CCP-NC/orgdisord
+.. _tarball: https://github.com/CCP-NC/orgdisord/tarball/main
 .. _virtual environment: http://docs.python-guide.org/en/latest/dev/virtualenvs/
 .. _conda environment: https://conda.io/docs/user-guide/tasks/manage-environments.html
 .. _set up an X11 server: https://stackoverflow.com/a/61110604

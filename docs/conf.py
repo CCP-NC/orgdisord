@@ -111,7 +111,7 @@ html_theme = "sphinx_book_theme"
 # documentation.
 #
 html_theme_options = {
-    "repository_url": "https://github.com/jkshenton/orgdisord",
+    "repository_url": "https://github.com/CCP-NC/orgdisord",
     "repository_branch": "main",
     "path_to_docs": "docs",
     "use_repository_button": True,

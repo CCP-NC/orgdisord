@@ -24,5 +24,5 @@ deploy:
     secure: PLEASE_REPLACE_ME
   on:
     tags: true
-    repo: jkshenton/orgdisord
+    repo: CCP-NC/orgdisord
     python: 3.8

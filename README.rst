@@ -9,8 +9,8 @@ orgdisord
 .. image:: https://img.shields.io/pypi/v/orgdisord.svg
         :target: https://pypi.python.org/pypi/orgdisord
 
-.. image:: https://img.shields.io/travis/jkshenton/orgdisord.svg
-        :target: https://travis-ci.com/jkshenton/orgdisord
+.. image:: https://img.shields.io/travis/CCP-NC/orgdisord.svg
+        :target: https://travis-ci.com/CCP-NC/orgdisord
 
 
 
@@ -25,7 +25,7 @@ Python code to handle disordered molecular crystals.
 
 
 * Free software: MIT license
-* Documentation: https://jkshenton.github.io/orgdisord
+* Documentation: https://CCP-NC.github.io/orgdisord
 
 
 Features
