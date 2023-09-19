@@ -1,6 +1,0 @@
-sodorg\_renewal.cli.get\_Elatt
-==============================
-
-.. currentmodule:: sodorg_renewal.cli
-
-.. autofunction:: get_Elatt

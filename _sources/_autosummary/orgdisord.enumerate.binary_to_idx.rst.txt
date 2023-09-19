@@ -1,0 +1,6 @@
+orgdisord.enumerate.binary\_to\_idx
+===================================
+
+.. currentmodule:: orgdisord.enumerate
+
+.. autofunction:: binary_to_idx

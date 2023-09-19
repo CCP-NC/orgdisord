@@ -1,6 +1,6 @@
 Command line interface
 =======================
 
-.. click:: sodorg_renewal.cli:cli
-   :prog: sodorg-renewal
+.. click:: orgdisord.cli:cli
+   :prog: orgdisord
    :nested: full

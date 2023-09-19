@@ -1,0 +1,6 @@
+orgdisord.utils.wrap\_molecule
+==============================
+
+.. currentmodule:: orgdisord.utils
+
+.. autofunction:: wrap_molecule

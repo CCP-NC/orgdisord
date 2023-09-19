@@ -1,0 +1,6 @@
+orgdisord.utils.get\_new\_labels
+================================
+
+.. currentmodule:: orgdisord.utils
+
+.. autofunction:: get_new_labels

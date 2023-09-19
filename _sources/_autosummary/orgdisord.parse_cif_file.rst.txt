@@ -1,0 +1,31 @@
+orgdisord.parse\_cif\_file
+==========================
+
+.. automodule:: orgdisord.parse_cif_file
+  
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template: class.rst
+   
+      CifParser
+   
+   
+
+   
+   
+   
+
+
+

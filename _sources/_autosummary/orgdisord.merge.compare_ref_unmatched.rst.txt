@@ -1,0 +1,6 @@
+orgdisord.merge.compare\_ref\_unmatched
+=======================================
+
+.. currentmodule:: orgdisord.merge
+
+.. autofunction:: compare_ref_unmatched

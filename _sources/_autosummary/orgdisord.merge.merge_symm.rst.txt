@@ -1,0 +1,6 @@
+orgdisord.merge.merge\_symm
+===========================
+
+.. currentmodule:: orgdisord.merge
+
+.. autofunction:: merge_symm

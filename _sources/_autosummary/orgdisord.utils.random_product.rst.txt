@@ -1,0 +1,6 @@
+orgdisord.utils.random\_product
+===============================
+
+.. currentmodule:: orgdisord.utils
+
+.. autofunction:: random_product

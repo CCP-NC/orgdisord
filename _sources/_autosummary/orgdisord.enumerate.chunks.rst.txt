@@ -1,0 +1,6 @@
+orgdisord.enumerate.chunks
+==========================
+
+.. currentmodule:: orgdisord.enumerate
+
+.. autofunction:: chunks

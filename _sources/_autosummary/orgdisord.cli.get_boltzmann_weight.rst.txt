@@ -1,0 +1,6 @@
+orgdisord.cli.get\_boltzmann\_weight
+====================================
+
+.. currentmodule:: orgdisord.cli
+
+.. autofunction:: get_boltzmann_weight

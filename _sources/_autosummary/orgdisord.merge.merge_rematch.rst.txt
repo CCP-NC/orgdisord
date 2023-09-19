@@ -1,0 +1,6 @@
+orgdisord.merge.merge\_rematch
+==============================
+
+.. currentmodule:: orgdisord.merge
+
+.. autofunction:: merge_rematch

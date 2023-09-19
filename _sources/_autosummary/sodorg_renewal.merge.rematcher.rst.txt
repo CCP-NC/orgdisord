@@ -1,6 +1,0 @@
-sodorg\_renewal.merge.rematcher
-===============================
-
-.. currentmodule:: sodorg_renewal.merge
-
-.. autofunction:: rematcher

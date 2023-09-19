@@ -1,0 +1,6 @@
+orgdisord.utils.get\_unique\_atoms
+==================================
+
+.. currentmodule:: orgdisord.utils
+
+.. autofunction:: get_unique_atoms

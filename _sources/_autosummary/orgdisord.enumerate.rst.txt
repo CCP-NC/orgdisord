@@ -1,0 +1,40 @@
+orgdisord.enumerate
+===================
+
+.. automodule:: orgdisord.enumerate
+  
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      binary_to_idx
+      chunks
+      select_configs
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template: class.rst
+   
+      OrderedfromDisordered
+   
+   
+
+   
+   
+   
+
+
+

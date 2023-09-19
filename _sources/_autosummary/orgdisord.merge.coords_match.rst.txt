@@ -1,0 +1,6 @@
+orgdisord.merge.coords\_match
+=============================
+
+.. currentmodule:: orgdisord.merge
+
+.. autofunction:: coords_match

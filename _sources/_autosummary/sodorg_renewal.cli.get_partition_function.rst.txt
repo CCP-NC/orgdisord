@@ -1,6 +1,0 @@
-sodorg\_renewal.cli.get\_partition\_function
-============================================
-
-.. currentmodule:: sodorg_renewal.cli
-
-.. autofunction:: get_partition_function

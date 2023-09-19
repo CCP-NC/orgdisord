@@ -1,0 +1,36 @@
+orgdisord.cli
+=============
+
+.. automodule:: orgdisord.cli
+  
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      get_Elatt
+      get_S
+      get_boltzmann_weight
+      get_deltaA
+      get_partition_function
+      get_probability
+      get_tau
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

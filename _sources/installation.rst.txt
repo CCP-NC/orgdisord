@@ -9,19 +9,19 @@ Installation
 From sources
 ------------
 
-The sources for SODORG Renewal can be downloaded from the `Github repo`_.
+The sources for orgdisord can be downloaded from the `Github repo`_.
 
 You can either clone the public repository:
 
 .. code-block:: console
 
-    $ git clone git://github.com/jkshenton/sodorg_renewal
+    $ git clone git://github.com/CCP-NC/orgdisord
 
 Or download the `tarball`_:
 
 .. code-block:: console
 
-    $ curl -OJL https://github.com/jkshenton/sodorg_renewal/tarball/main
+    $ curl -OJL https://github.com/CCP-NC/orgdisord/tarball/main
 
 Once you have a copy of the source, you can install it with:
 
@@ -38,7 +38,7 @@ or
 
 .. tip::
     
-    It is recommended to use a new `virtual environment`_ or new `conda environment`_ rather than installing SODORG Renewal system wide.
+    It is recommended to use a new `virtual environment`_ or new `conda environment`_ rather than installing orgdisord system wide.
 
     From the root of the source directory, you can create a new virtual environment with:
 
@@ -46,16 +46,16 @@ or
 
     .. code-block:: console
 
-        $ python -m venv sodorg_env
-        $ source sodorg_env/bin/activate
+        $ python -m venv orgdisord_env
+        $ source orgdisord_env/bin/activate
         $ pip install .
 
     With ``conda`` the procedure is something like:
 
     .. code-block:: console
 
-        $ conda create -n sodorg_env
-        $ conda activate sodorg_env
+        $ conda create -n orgdisord_env
+        $ conda activate orgdisord_env
         $ conda install pip
         $ pip install .
 
@@ -63,8 +63,8 @@ or
     Though in that case you may need to `set up an X11 server`_ to (optionally) view the generated structures in the ASE GUI.
 
 
-.. _Github repo: https://github.com/jkshenton/sodorg_renewal
-.. _tarball: https://github.com/jkshenton/sodorg_renewal/tarball/main
+.. _Github repo: https://github.com/CCP-NC/orgdisord
+.. _tarball: https://github.com/CCP-NC/orgdisord/tarball/main
 .. _virtual environment: http://docs.python-guide.org/en/latest/dev/virtualenvs/
 .. _conda environment: https://conda.io/docs/user-guide/tasks/manage-environments.html
 .. _set up an X11 server: https://stackoverflow.com/a/61110604
@@ -80,18 +80,18 @@ We will eventually publish a PyPi package such that you can install it with:
 
 .. code-block:: console
 
-    $ pip install sodorg_renewal
+    $ pip install orgdisord
 
 
 **but this is not yet available**. See above for how to build it from source. 
 
-.. To install SODORG Renewal, run this command in your terminal:
+.. To install orgdisord, run this command in your terminal:
 
 .. .. code-block:: console
 
-..     $ pip install sodorg_renewal
+..     $ pip install orgdisord
 
-.. This is the preferred method to install SODORG Renewal, as it will always install the most recent stable release.
+.. This is the preferred method to install orgdisord, as it will always install the most recent stable release.
 
 .. If you don't have `pip`_ installed, this `Python installation guide`_ can guide
 .. you through the process.

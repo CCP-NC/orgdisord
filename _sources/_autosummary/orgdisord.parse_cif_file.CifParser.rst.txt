@@ -1,0 +1,6 @@
+orgdisord.parse\_cif\_file.CifParser
+====================================
+
+.. currentmodule:: orgdisord.parse_cif_file
+
+.. autoclass:: CifParser

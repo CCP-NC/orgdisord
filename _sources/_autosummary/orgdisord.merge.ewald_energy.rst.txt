@@ -1,0 +1,6 @@
+orgdisord.merge.ewald\_energy
+=============================
+
+.. currentmodule:: orgdisord.merge
+
+.. autofunction:: ewald_energy

@@ -1,0 +1,6 @@
+orgdisord.enumerate.select\_configs
+===================================
+
+.. currentmodule:: orgdisord.enumerate
+
+.. autofunction:: select_configs

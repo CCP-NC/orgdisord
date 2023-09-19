@@ -1,0 +1,6 @@
+orgdisord.cli.get\_deltaA
+=========================
+
+.. currentmodule:: orgdisord.cli
+
+.. autofunction:: get_deltaA

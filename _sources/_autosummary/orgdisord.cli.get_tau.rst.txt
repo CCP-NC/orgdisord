@@ -1,0 +1,6 @@
+orgdisord.cli.get\_tau
+======================
+
+.. currentmodule:: orgdisord.cli
+
+.. autofunction:: get_tau

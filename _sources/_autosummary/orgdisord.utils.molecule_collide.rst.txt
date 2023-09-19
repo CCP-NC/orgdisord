@@ -1,0 +1,6 @@
+orgdisord.utils.molecule\_collide
+=================================
+
+.. currentmodule:: orgdisord.utils
+
+.. autofunction:: molecule_collide

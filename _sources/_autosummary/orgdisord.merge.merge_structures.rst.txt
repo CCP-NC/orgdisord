@@ -1,0 +1,6 @@
+orgdisord.merge.merge\_structures
+=================================
+
+.. currentmodule:: orgdisord.merge
+
+.. autofunction:: merge_structures

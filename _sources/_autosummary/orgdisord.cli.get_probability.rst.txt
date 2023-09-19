@@ -1,0 +1,6 @@
+orgdisord.cli.get\_probability
+==============================
+
+.. currentmodule:: orgdisord.cli
+
+.. autofunction:: get_probability

@@ -1,0 +1,6 @@
+orgdisord.cli.get\_S
+====================
+
+.. currentmodule:: orgdisord.cli
+
+.. autofunction:: get_S

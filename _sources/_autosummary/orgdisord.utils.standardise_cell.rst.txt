@@ -1,0 +1,6 @@
+orgdisord.utils.standardise\_cell
+=================================
+
+.. currentmodule:: orgdisord.utils
+
+.. autofunction:: standardise_cell

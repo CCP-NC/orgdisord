@@ -3,7 +3,7 @@ Case Studies
 ================
 
 
-Here are some case studies of specific systems that have been explored using sodorg_renewal.
+Here are some case studies of specific systems that have been explored using orgdisord.
 
 The names of the structures refer to the CSD code/CIF file in the ./examples/ directory.
 
@@ -18,7 +18,7 @@ This is a relatively straightforward system consisting of one disorder assembly 
 
 When we run the code with (mostly) default options: ::
 
-    sodorg_renewal enumerate ABABUB.cif --prefix ababub
+    orgdisord enumerate ABABUB.cif --prefix ababub
 
 Parsing the CIF file
 ^^^^^^^^^^^^^^^^^^^^
@@ -135,7 +135,7 @@ To generate more than this, the ``-N`` flag can be used. For example, to generat
 
 .. code-block:: console
 
-    sodorg_renewal enumerate ABABUB.cif --prefix ababub -N 1024 --supercell 2 2 1
+    orgdisord enumerate ABABUB.cif --prefix ababub -N 1024 --supercell 2 2 1
 
 This will enumerate, in order, all possible configurations in a 2x2x1 supercell up to a maximum of 1024 structures.
 
@@ -145,7 +145,7 @@ This can be done with the ``-r`` flag:
 
 .. code-block:: console
 
-    sodorg_renewal enumerate ABABUB.cif --prefix ababub -r -N 1024 --supercell 2 2 1
+    orgdisord enumerate ABABUB.cif --prefix ababub -r -N 1024 --supercell 2 2 1
 
 .. tip:: 
     To visualise the generated structures, you can add the ``--view`` flag. 
@@ -170,7 +170,7 @@ For example, to generate only structures with 0.75 disorder group 1 and 0.25 dis
 
 .. code-block:: console
 
-    sodorg_renewal enumerate ABABUB.cif --prefix ababub --fix_ratio --ratios 0.75 0.25
+    orgdisord enumerate ABABUB.cif --prefix ababub --fix_ratio --ratios 0.75 0.25
 
 
 .. tip::
@@ -195,7 +195,7 @@ You can disable this check using the ``--not_molecular_crystal`` flag, though th
 * :download:`AXURIX CIF file <../examples/AXURIX.cif>`
 
 We can run the code and merge the structures as before: ::
-        sodorg_renewal enumerate AXURIX.cif --prefix axurix_merged -m
+        orgdisord enumerate AXURIX.cif --prefix axurix_merged -m
 
 The CIF file is parsed as:
 
@@ -304,7 +304,7 @@ Z' < 1 and multiple disorder groups (EROHEA)
 
 This system contains a caffeine molecule that is disordered at a special symmetry site.  
 i.e. it is "disordered by symmetry" where the structure is described by a small unit cell in which the caffeine is disordered over a symmetry axis. 
-Unpicking this into two separate orientations is a difficult challenge for the current version of sodorg_renewal.
+Unpicking this into two separate orientations is a difficult challenge for the current version of orgdisord.
 It currently requires some manual intervention on the CIF file as described below.
 
 This system has one disorder assembly (A) with two groups ("-1" and "-2"). 
@@ -329,7 +329,7 @@ In the future, we might be able to deal with original CIF file without these man
 
 When we run the code with (mostly) default options: ::
 
-    sodorg_renewal enumerate EROHEA_modified.cif --prefix erohea
+    orgdisord enumerate EROHEA_modified.cif --prefix erohea
 
 We get the following output:
 
@@ -421,7 +421,7 @@ Assuming only one cation per unit cell, the code will generate, by default, 32 o
 
 When we run the code with (mostly) default options: ::
 
-    sodorg_renewal enumerate DASRAU.cif --prefix dasrau
+    orgdisord enumerate DASRAU.cif --prefix dasrau
 
 We get the following output:
 
@@ -474,7 +474,7 @@ Note that you can provide the P1 structures in any format that ASE can read; her
 
 If you pass two files to the command-line-interface, it will assume these are the two disorder components ::
     
-        sodorg_renewal enumerate ABABUB_maj.xyz ABABUB_min.xyz --no_write
+        orgdisord enumerate ABABUB_maj.xyz ABABUB_min.xyz --no_write
 
 
 
@@ -498,7 +498,7 @@ However, there may be cases in which we might want to consider the assemblies as
 
 You can do this by specifying the ``-c`` flag. ::
     
-        sodorg_renewal enumerate HAXPIH.cif --prefix haxpih -c
+        orgdisord enumerate HAXPIH.cif --prefix haxpih -c
 
 Parsing the CIF file
 ^^^^^^^^^^^^^^^^^^^^
@@ -629,7 +629,7 @@ Merging the equivalent structures
 
 Running the code again with the ``-m`` flag: ::
 
-    sodorg_renewal enumerate HAXPIH.cif --prefix haxpih_merged -c -m
+    orgdisord enumerate HAXPIH.cif --prefix haxpih_merged -c -m
 
 We get the following table: :download:`HAXPIH results table <../examples/haxpih_merged.csv>` and this information printed to the terminal:
 
@@ -679,7 +679,7 @@ Using ASE we can do this as follows:
 
     # ASE already knows about some molecules :)
     from ase.build import molecule
-    from sodorg_renewal.utils import get_new_labels
+    from orgdisord.utils import get_new_labels
 
     # Spacegroup 1 == P1
     sg_number = 1
@@ -715,10 +715,10 @@ Now we can create a DisorderedStructure object to later be passed to the enumera
 
 .. code-block:: python
 
-    from sodorg_renewal.disordered_structure import DisorderAssembly,
+    from orgdisord.disordered_structure import DisorderAssembly,
                                                     DisorderGroup,
                                                     DisorderedStructure
-    from sodorg_renewal.enumerate import OrderedfromDisordered
+    from orgdisord.enumerate import OrderedfromDisordered
 
     # symmetry operations -- in this case just the identity
     sg = Spacegroup(sg_number)

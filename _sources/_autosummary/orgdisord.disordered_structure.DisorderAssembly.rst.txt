@@ -1,0 +1,6 @@
+orgdisord.disordered\_structure.DisorderAssembly
+================================================
+
+.. currentmodule:: orgdisord.disordered_structure
+
+.. autoclass:: DisorderAssembly

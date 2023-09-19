@@ -1,4 +1,4 @@
-Welcome to SODORG Renewal's documentation!
+Welcome to orgdisord's documentation!
 ============================================
 
 .. toctree::

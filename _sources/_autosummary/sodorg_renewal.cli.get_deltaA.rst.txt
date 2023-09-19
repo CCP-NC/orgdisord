@@ -1,6 +1,0 @@
-sodorg\_renewal.cli.get\_deltaA
-===============================
-
-.. currentmodule:: sodorg_renewal.cli
-
-.. autofunction:: get_deltaA

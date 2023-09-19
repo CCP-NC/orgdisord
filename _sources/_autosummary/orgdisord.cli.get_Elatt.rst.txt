@@ -1,0 +1,6 @@
+orgdisord.cli.get\_Elatt
+========================
+
+.. currentmodule:: orgdisord.cli
+
+.. autofunction:: get_Elatt

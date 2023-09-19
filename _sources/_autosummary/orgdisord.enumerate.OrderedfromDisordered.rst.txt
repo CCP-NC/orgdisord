@@ -1,0 +1,6 @@
+orgdisord.enumerate.OrderedfromDisordered
+=========================================
+
+.. currentmodule:: orgdisord.enumerate
+
+.. autoclass:: OrderedfromDisordered

@@ -1,0 +1,6 @@
+orgdisord.disordered\_structure.DisorderGroup
+=============================================
+
+.. currentmodule:: orgdisord.disordered_structure
+
+.. autoclass:: DisorderGroup

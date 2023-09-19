@@ -1,0 +1,36 @@
+﻿orgdisord
+=========
+
+.. automodule:: orgdisord
+  
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   orgdisord.cli
+   orgdisord.disordered_structure
+   orgdisord.enumerate
+   orgdisord.merge
+   orgdisord.parse_cif_file
+   orgdisord.utils
+

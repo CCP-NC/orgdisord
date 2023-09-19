@@ -1,6 +1,0 @@
-sodorg\_renewal.utils.standardise\_cell
-=======================================
-
-.. currentmodule:: sodorg_renewal.utils
-
-.. autofunction:: standardise_cell

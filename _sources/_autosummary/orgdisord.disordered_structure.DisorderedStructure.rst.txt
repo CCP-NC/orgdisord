@@ -1,0 +1,6 @@
+orgdisord.disordered\_structure.DisorderedStructure
+===================================================
+
+.. currentmodule:: orgdisord.disordered_structure
+
+.. autoclass:: DisorderedStructure

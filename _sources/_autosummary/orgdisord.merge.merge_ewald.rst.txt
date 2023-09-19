@@ -1,0 +1,6 @@
+orgdisord.merge.merge\_ewald
+============================
+
+.. currentmodule:: orgdisord.merge
+
+.. autofunction:: merge_ewald
