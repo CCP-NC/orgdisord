@@ -324,7 +324,7 @@ def main(
     # store information to dataframe
     df["Unique index"] = np.arange(len(images))
     # start out with equal weights
-    df["Multiplicity"] = np.ones(len(images))
+    df["Multiplicity"] = np.ones(len(images), dtype=int)
     df["Configuration"] = configs
 
     # count the number of each group
@@ -390,8 +390,21 @@ def main(
                 df.loc[g, "Unique index"] = ig
 
         # Update dataframe with merged information
+
+        # For the Supercell and Ratio columns, we will assume they are the same for each group
+        # so we can just take the first value.
+        # For the Configuration column, we will take the first value since that corresponds to the
+        # configuration of the first image in the group.
+        # For the other columns, we will take the mean
+        agg_rules = {"Supercell": "first", "Ratio": "first", "Configuration": "first"}
+        for col in df.columns:
+            if col not in agg_rules:
+                agg_rules[col] = np.mean
+        # remove 'Unique index' from agg_rules
+        agg_rules.pop("Unique index")
+
         # merge df by Unique index
-        df = df.groupby("Unique index").aggregate(np.mean).reset_index()
+        df = df.groupby("Unique index").agg(agg_rules).reset_index()
         # add multiplicity to df
         df["Multiplicity"] = [g[1] for g in groups]
         # add spacegroup to df
