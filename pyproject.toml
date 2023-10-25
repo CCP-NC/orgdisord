@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "orgdisord"
-authors = [{name = "Kane Shenton", email = "jkshenton@gmail.com"}]
-license = {text = "MIT license"}
+authors = [{ name = "Kane Shenton", email = "jkshenton@gmail.com" }]
+license = { text = "MIT license" }
 description = "Python code to handle disordered molecular crystals."
 keywords = ["orgdisord"]
 dynamic = ["version", "readme"]
@@ -23,7 +23,6 @@ requires-python = ">=3.6"
 dependencies = [
     "Click>=7.0",
     "ASE>=3.22",
-    "dscribe>=1.2",
     "Soprano>=0.8",
     "pymatgen>=2022.3.7",
     "tqdm>=4.63.0",
@@ -32,8 +31,8 @@ dependencies = [
 ]
 
 [tool.setuptools.dynamic]
-version = {attr = "orgdisord.__version__"}
-readme = {file = "README.rst"}
+version = { attr = "orgdisord.__version__" }
+readme = { file = "README.rst" }
 
 [project.urls]
 Homepage = "https://github.com/CCP-NC/orgdisord"
@@ -43,9 +42,10 @@ orgdisord = "orgdisord.cli:cli"
 
 [project.optional-dependencies]
 testing = ["pytest>=3"]
+ML = ["dscribe>=1.2"]
 
 [tool.bumpversion]
-current_version = "0.1.0"
+current_version = "0.2.0"
 commit = "True"
 tag = "True"
 
