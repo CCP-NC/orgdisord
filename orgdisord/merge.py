@@ -238,9 +238,18 @@ def merge_rematch(supercell_images, eps=1e-3, quiet=False, parallel=True):
     More work is necessary!
 
     """
-
-    from dscribe.descriptors import SOAP
-    from dscribe.kernels import REMatchKernel
+    # try to import dscribe
+    # if it's not available, raise an error, and suggest installing orgdisord with the
+    # ML option
+    try:
+        from dscribe.descriptors import SOAP
+        from dscribe.kernels import REMatchKernel
+    except ImportError:
+        raise ImportError(
+            "The merge_rematch algorithm requires the dscribe package. "
+            "Please install orgdisord with the ML option."
+            "e.g. \npip install orgdisord[ML]"
+        )
 
     ncores = 1
     if parallel:
