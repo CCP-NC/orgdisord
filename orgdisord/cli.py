@@ -247,7 +247,6 @@ def main(
             correlated_assemblies=correlated_assemblies,
             molecular_crystal=not not_molecular_crystal,
         )
-        symops = cif.symops
 
         # get the disordered structure
         disordered_structure = cif.get_disordered_structure()
@@ -303,6 +302,7 @@ def main(
     else:
         raise ValueError(f"Expected 1 or 2 files, got {nfiles}.")
 
+    symops = disordered_structure.spacegroup.get_symop()
     logger.info("Enumerating ordered configurations.")
     # enumerate ordered configurations
     od = OrderedfromDisordered(disordered_structure, quiet=quiet)
