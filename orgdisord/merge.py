@@ -4,6 +4,8 @@ to reduce a list of ASE atoms objects to the symmetry inequivalent ones."""
 
 # import modules
 import numpy as np
+from typing import List, Tuple
+
 import logging
 from multiprocessing import Pool, cpu_count
 
@@ -28,6 +30,7 @@ def merge_structures(
     oxidation_states=None,
     return_group_indices=False,
     quiet=False,
+    check_species=True,
 ):
     """Merge a list of ASE atoms objects to the symmetry inequivalent ones.
 
@@ -43,6 +46,9 @@ def merge_structures(
                                 (Only needed for the 'ewald' algorithm.)
         return_group_indices (bool): If True, return the indices of the merged structures
                                     in addition to the merged structures.
+        quiet (bool): If True, suppress progress bar.
+        check_species (bool): If True, check that the species match before comparing
+                              the coordinates.
 
     Returns:
         Tuple of one structure per group and the group multiplicity. If return_group_indices is True,
@@ -55,6 +61,9 @@ def merge_structures(
     logger.debug("---  MERGING STRUCTURES  ---")
     logger.debug("-----------------------------")
     logger.debug("Algorithm: {}".format(algo))
+
+    if not check_species:
+        logger.warning("WARNING: not checking species before comparing coordinates")
 
     # get the number of atoms in each structure
     natoms = [len(atoms) for atoms in images]
@@ -79,6 +88,7 @@ def merge_structures(
             use_disordered_only=use_disordered_only,
             symprec=symprec,
             quiet=quiet,
+            check_species=check_species,
         )
     elif algo == "rematch":
         groups = merge_rematch(images, eps=symprec, quiet=quiet)
@@ -101,15 +111,21 @@ def merge_structures(
         return merged_images
 
 
-def coords_match_symmops(coords_ref, coords, symops, symprec=1e-4):
+def coords_match_symmops(
+    ref: Tuple[int, np.ndarray, List],
+    to_match: Tuple[int, np.ndarray, List],
+    symops,
+    symprec=1e-4,
+    check_species=True,
+):
     """
     Check if two sets of coordinates match under any of the
     symmetry operations of the crystal
     and under permutations of the order of the atoms.
 
     Args:
-        coords_ref (array): A reference numpy array of fractional coordinates.
-        coords (array): A numpy array of fractional coordinates.
+        ref ((int, np.array, list)): A reference tuple of (index, coords, symbols) .
+        to_match ((int, np.array, list)): A tuple of (index, coords, symbols) to check against the ref.
         symops (list): A list of tuples: (rotation, translation).
                        Note: we skip the first one assuming it's the identity.
         symprec (float): The tolerance for the similarity.
@@ -120,13 +136,48 @@ def coords_match_symmops(coords_ref, coords, symops, symprec=1e-4):
 
     """
     thesame = False
+    _, coords_ref, symbols_ref = ref
+    _, coords_to_match, symbols_to_match = to_match
+
+    # check the species match
+    if check_species:
+        # Set of species must be the same (ignoring number and order)
+        if set(symbols_ref) != set(symbols_to_match):
+            return False
+        else:
+            # check that the number of each species matches
+            # Note that this still allows for different orderings
+            # of the species. Later we will check that the orderings
+            # match, but we can't do that until we've checked the
+            # symmetry operations to see which positions map to which
+            # positions
+            for symbol in set(symbols_ref):
+                if symbols_ref.count(symbol) != symbols_to_match.count(symbol):
+                    return False
+
     # loop over all symmetry operations
+    a1 = np.mod(coords_ref, 1.0)
     for symop in symops:
         rot, trans = symop
-        a1 = np.mod(coords_ref, 1.0)
-        a2 = np.mod((np.dot(rot, coords.T).T + trans), 1.0)
-        if coords_match(a1, a2, symprec=symprec):
+        a2 = np.mod((np.dot(rot, coords_to_match.T).T + trans), 1.0)
+        matching_coords, mapping = coords_match(
+            a1, a2, symprec=symprec, return_indices=True
+        )
+        if matching_coords:
+            if check_species:
+                # make sure the species match when reordered
+                # according to the positions
+                if not all(
+                    [
+                        symbols_ref[mapping[i]] == symbols_to_match[i]
+                        for i in range(len(symbols_ref))
+                    ]
+                ):
+                    logger.debug("species don't match despite coords matching")
+                    logger.debug("mapping: {}".format(mapping))
+                    continue
             thesame = True
+
             # break out of trying all the symmetry
             # operations, we're done...
             break
@@ -134,7 +185,9 @@ def coords_match_symmops(coords_ref, coords, symops, symprec=1e-4):
     return thesame
 
 
-def compare_ref_unmatched(ref, unmatched, symops, symprec=1e-4, parallel=True):
+def compare_ref_unmatched(
+    ref, unmatched, symops, symprec=1e-4, parallel=True, check_species=True
+):
     """
     compare lists of fractional coordinates with reference
     return the indices of the unmatched atoms
@@ -148,7 +201,8 @@ def compare_ref_unmatched(ref, unmatched, symops, symprec=1e-4, parallel=True):
     if parallel and ncores > 1:
         pool = Pool(processes=ncores)
         argument_list = [
-            (ref, unmatched_i[1], symops, symprec) for unmatched_i in unmatched
+            (ref, unmatched_i, symops, symprec, check_species)
+            for unmatched_i in unmatched
         ]
         jobs = [
             pool.apply_async(func=coords_match_symmops, args=(*argument,))
@@ -160,7 +214,7 @@ def compare_ref_unmatched(ref, unmatched, symops, symprec=1e-4, parallel=True):
             mask.append(job.get())
     else:
         mask = [
-            coords_match_symmops(ref, unmatched_i[1], symops, symprec)
+            coords_match_symmops(ref, unmatched_i, symops, symprec, check_species)
             for unmatched_i in unmatched
         ]
     matching_inds = np.where(mask)[0]
@@ -169,29 +223,41 @@ def compare_ref_unmatched(ref, unmatched, symops, symprec=1e-4, parallel=True):
 
 
 def merge_symm(
-    supercell_images, symops, symprec=1e-4, use_disordered_only=True, quiet=False
+    supercell_images,
+    symops,
+    symprec=1e-4,
+    use_disordered_only=True,
+    quiet=False,
+    check_species=True,
 ):
-    if use_disordered_only:
-        frac_positions = []
-        for atoms in supercell_images:
+    frac_positions = []
+    symbols = []
+    for atoms in supercell_images:
+        current_symbols = atoms.get_chemical_symbols()
+        current_positions = atoms.get_scaled_positions()
+        if use_disordered_only:
             disordered_idx = np.where(atoms.get_tags() != 0)[0]
-            pos_f = atoms.get_scaled_positions()[disordered_idx]
-            frac_positions.append(pos_f)
-    else:
-        frac_positions = [atoms.get_scaled_positions() for atoms in supercell_images]
+            frac_positions.append(current_positions[disordered_idx])
+            symbols.append([current_symbols[i] for i in disordered_idx])
+        else:
+            frac_positions.append(current_positions)
+            symbols.append(current_symbols)
 
     all_groups = []
-    tagged_images = [[i, np.array(sites)] for i, sites in enumerate(frac_positions)]
-    unmatched = tagged_images.copy()
+    # create a list of (index, frac_positions, symbols) tuples
+    unmatched = [(i, frac_positions[i], symbols[i]) for i in range(len(symbols))]
+
     # set up progress bar
     pbar = tqdm(
-        desc="Checking symmetry-equivalence", total=len(tagged_images), disable=quiet
+        desc="Checking symmetry-equivalence", total=len(unmatched), disable=quiet
     )
     # loop over unmatched images
     while len(unmatched) > 0:
-        i, ref_coords = unmatched.pop(0)
-        matches = [i]
-        inds = compare_ref_unmatched(ref_coords, unmatched, symops, symprec=symprec)
+        ref = unmatched.pop(0)
+        matches = [ref[0]]
+        inds = compare_ref_unmatched(
+            ref, unmatched, symops, symprec=symprec, check_species=check_species
+        )
         matches.extend([unmatched[i][0] for i in inds])
         unmatched = [unmatched[i] for i in range(len(unmatched)) if i not in inds]
         all_groups.append(matches)
@@ -299,21 +365,33 @@ def merge_rematch(supercell_images, eps=1e-3, quiet=False, parallel=True):
     return all_groups
 
 
-def coords_match(a1, a2, symprec=1e-4):
+def coords_match(a1, a2, symprec=1e-4, return_indices=False):
     """
     Returns True if a1 and a2
     are equal apart from a reordering of the
     rows.
 
+    Args:
+        a1 (np.array): An array of coordinates.
+        a2 (np.array): An array of coordinates.
+        symprec (float): The tolerance for the similarity.
+        return_indices (bool): If True, return the mapping indices of the matching atoms.
+                               i.e. an array of indices such that a1[indices] == a2
+
     """
+
+    # Normalise a1 and a2 to the unit cell
+    a1 = np.mod(a1, 1.0)
+    a2 = np.mod(a2, 1.0)
 
     cmp = np.abs(a1[:, None] - a2) < symprec
     eq = np.all(cmp, axis=-1)
     number_of_matches = np.argwhere(eq).shape[0]
-    if number_of_matches == a1.shape[0]:
-        return True
-    else:
-        return False
+    is_match = number_of_matches == a1.shape[0]
+    if return_indices:
+        indices = np.argwhere(eq)[:, 1]
+        return is_match, indices
+    return is_match
 
 
 def merge_ewald(

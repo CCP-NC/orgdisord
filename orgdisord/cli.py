@@ -188,6 +188,13 @@ def cli():
     "See atol in numpy.isclose."
     "Only used if --fix-ratio is specified.",
 )
+# check species
+@click.option(
+    "--ignore-species",
+    is_flag=True,
+    default=False,
+    help="Ignore species when merging structures?",
+)
 def main(
     ctx,
     files,
@@ -211,6 +218,7 @@ def main(
     fix_ratio,
     ratio,
     ratio_tol,
+    ignore_species,
 ):
     """Command line interface for orgdisord."""
     # set up logging
@@ -372,6 +380,7 @@ def main(
             oxidation_states=oxidation_states,
             return_group_indices=True,
             quiet=quiet,
+            check_species=not ignore_species,
         )
 
         stop = time.time()
