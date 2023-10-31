@@ -313,6 +313,19 @@ def from_disorder_components(
     # get the indices of the atoms that are different
     diff_idx = np.where(maj_min_dist > tolerance)[0]
 
+    # Or check where the symbol list is different
+    diff_idx_symbols = np.where(
+        [
+            maj != min
+            for maj, min in zip(
+                atoms_maj.get_chemical_symbols(), atoms_min.get_chemical_symbols()
+            )
+        ]
+    )[0]
+
+    # combine the two
+    diff_idx = np.unique(np.concatenate([diff_idx, diff_idx_symbols]))
+
     maj_atoms = atoms_maj[diff_idx].copy()
     min_atoms = atoms_min[diff_idx].copy()
 
