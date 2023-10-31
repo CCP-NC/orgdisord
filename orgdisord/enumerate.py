@@ -225,7 +225,8 @@ class OrderedfromDisordered:
         else:
             atoms = self.disordered_structure.ordered_atoms.copy()
             if len(atoms) > 0:
-                max_spacegroup_kinds = atoms.get_array("spacegroup_kinds").max()
+                sg = self.disordered_structure.spacegroup
+                max_spacegroup_kinds = sg.tag_sites(atoms.get_scaled_positions()).max()
                 # give ordered sites a tag of 0
                 atoms.set_tags(0)
 
