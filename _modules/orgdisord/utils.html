@@ -506,7 +506,7 @@ title="Source repository"
 
 
 <div class="viewcode-block" id="get_molecules"><a class="viewcode-back" href="../../_autosummary/orgdisord.utils.get_molecules.html#orgdisord.utils.get_molecules">[docs]</a><span class="k">def</span> <span class="nf">get_molecules</span><span class="p">(</span><span class="n">atoms</span><span class="p">:</span> <span class="n">Atoms</span><span class="p">,</span> <span class="n">use_cell_indices</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the molecules from an atoms object.</span>
 
 <span class="sd">    Args:</span>
@@ -526,7 +526,7 @@ title="Source repository"
 <div class="viewcode-block" id="reload_as_molecular_crystal"><a class="viewcode-back" href="../../_autosummary/orgdisord.utils.reload_as_molecular_crystal.html#orgdisord.utils.reload_as_molecular_crystal">[docs]</a><span class="k">def</span> <span class="nf">reload_as_molecular_crystal</span><span class="p">(</span>
     <span class="n">images</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Atoms</span><span class="p">],</span> <span class="n">parallel</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">cheap</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">wrap</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    takes in a list of atoms,</span>
 <span class="sd">    identifies molecules,</span>
 <span class="sd">    unwraps molecules so that they&#39;re &#39;connected&#39;</span>
@@ -607,7 +607,7 @@ title="Source repository"
 
 
 <div class="viewcode-block" id="wrap_molecule"><a class="viewcode-back" href="../../_autosummary/orgdisord.utils.wrap_molecule.html#orgdisord.utils.wrap_molecule">[docs]</a><span class="k">def</span> <span class="nf">wrap_molecule</span><span class="p">(</span><span class="n">atoms</span><span class="p">:</span> <span class="n">Atoms</span><span class="p">,</span> <span class="n">max_dist</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Translates molecule such that no bit of the</span>
 <span class="sd">    molecule sticks out passed max_dist in any direction.</span>
 
@@ -626,7 +626,7 @@ title="Source repository"
 <div class="viewcode-block" id="molecule_collide"><a class="viewcode-back" href="../../_autosummary/orgdisord.utils.molecule_collide.html#orgdisord.utils.molecule_collide">[docs]</a><span class="k">def</span> <span class="nf">molecule_collide</span><span class="p">(</span>
     <span class="n">atom</span><span class="p">:</span> <span class="n">Atom</span><span class="p">,</span> <span class="n">atoms</span><span class="p">:</span> <span class="n">Atoms</span><span class="p">,</span> <span class="n">vdw_scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Checks if an atom is colliding with a group of atoms defined by the</span>
 <span class="sd">    initial_fractional_positions.</span>
 
@@ -675,7 +675,7 @@ title="Source repository"
 
 
 <div class="viewcode-block" id="get_unique_atoms"><a class="viewcode-back" href="../../_autosummary/orgdisord.utils.get_unique_atoms.html#orgdisord.utils.get_unique_atoms">[docs]</a><span class="k">def</span> <span class="nf">get_unique_atoms</span><span class="p">(</span><span class="n">atoms</span><span class="p">:</span> <span class="n">Atoms</span><span class="p">,</span> <span class="n">sg</span><span class="p">:</span> <span class="n">Spacegroup</span><span class="p">,</span> <span class="n">symprec</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-3</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return the unique atoms in an atoms object and the count of duplicates</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">tags</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">tag_sites</span><span class="p">(</span><span class="n">atoms</span><span class="o">.</span><span class="n">get_scaled_positions</span><span class="p">(),</span> <span class="n">symprec</span><span class="o">=</span><span class="n">symprec</span><span class="p">)</span>
@@ -706,7 +706,7 @@ title="Source repository"
 
 
 <div class="viewcode-block" id="random_product"><a class="viewcode-back" href="../../_autosummary/orgdisord.utils.random_product.html#orgdisord.utils.random_product">[docs]</a><span class="k">def</span> <span class="nf">random_product</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">repeat</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Random selection from itertools.product(*args, **kwds)</span>
 <span class="sd">    From https://docs.python.org/3/library/itertools.html#itertools-recipes</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -716,7 +716,7 @@ title="Source repository"
 
 
 <div class="viewcode-block" id="get_new_labels"><a class="viewcode-back" href="../../_autosummary/orgdisord.utils.get_new_labels.html#orgdisord.utils.get_new_labels">[docs]</a><span class="k">def</span> <span class="nf">get_new_labels</span><span class="p">(</span><span class="n">atoms</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the labels for a given atoms object in the style of JMOL/ MagresView</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># make up some labels</span>
@@ -731,7 +731,7 @@ title="Source repository"
 
 
 <div class="viewcode-block" id="standardise_cell"><a class="viewcode-back" href="../../_autosummary/orgdisord.utils.standardise_cell.html#orgdisord.utils.standardise_cell">[docs]</a><span class="k">def</span> <span class="nf">standardise_cell</span><span class="p">(</span><span class="n">atoms</span><span class="p">:</span> <span class="n">Atoms</span><span class="p">,</span> <span class="n">symprec</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-3</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Atoms</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert an ASE Atoms object to the standardised unit cell</span>
 <span class="sd">    according to spglib</span>
 <span class="sd">    &quot;&quot;&quot;</span>

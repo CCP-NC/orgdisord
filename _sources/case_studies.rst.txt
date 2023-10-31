@@ -170,12 +170,12 @@ For example, to generate only structures with 0.75 disorder group 1 and 0.25 dis
 
 .. code-block:: console
 
-    orgdisord enumerate ABABUB.cif --prefix ababub --fix_ratio --ratios 0.75 0.25
+    orgdisord enumerate ABABUB.cif --prefix ababub --fix_ratio --ratio 0.75
 
 
 .. tip::
-    The ``--ratio-tol`` flag is useful when the occupancies in the CIF file are not exact.
-    For example, if the occupancies are 0.75 and 0.25, the code will generate structures with a ratio of 0.75 and 0.25, but also structures with a ratio of 0.76 and 0.24.
+    The ``--ratio-tol`` flag is useful when the occupancies possible for a given supercell size don't exactly match those based on the experimental occupancies.
+    For example, if the occupancies are 0.76 and 0.24, the code can accept generated structures with a ratio of 0.75 and 0.25 (if within the tolerance).
     This is because the code will generate structures with occupancies that are within the tolerance of the specified ratio.
     The default tolerance is 0.01, but this can be changed using the ``--ratio-tol`` flag.
 
@@ -194,7 +194,10 @@ You can disable this check using the ``--not_molecular_crystal`` flag, though th
 
 * :download:`AXURIX CIF file <../examples/AXURIX.cif>`
 
-We can run the code and merge the structures as before: ::
+We can run the code and merge the structures as before: 
+
+.. code-block:: console
+
         orgdisord enumerate AXURIX.cif --prefix axurix_merged -m
 
 The CIF file is parsed as:
@@ -205,7 +208,7 @@ The CIF file is parsed as:
     Disordered structure:
     Disorder assembly: A
     Contains the following groups:
-    Disorder group: 1 contains 8 symm. ops. and 12 sites:
+    Disorder group: 1 contains 8 symm. ops., a group occupancy of 0.75 and 12 sites:
             label:     C28A, species:    C, occupancy:  0.75
             label:     H28A, species:    H, occupancy:  0.75
             label:     H28B, species:    H, occupancy:  0.75
@@ -219,7 +222,7 @@ The CIF file is parsed as:
             label:     H30B, species:    H, occupancy:  0.75
             label:     H30C, species:    H, occupancy:  0.75
 
-    Disorder group: 2 contains 8 symm. ops. and 12 sites:
+    Disorder group: 2 contains 8 symm. ops., a group occupancy of 0.25 and 12 sites:
             label:     C28B, species:    C, occupancy:  0.25
             label:     H28D, species:    H, occupancy:  0.25
             label:     H28E, species:    H, occupancy:  0.25
@@ -239,10 +242,10 @@ The 256 structures are generated and merged as follows:
 
     Enumerating ordered configurations.
     Generating 256 out of the 256 possible configurations in the (1, 1, 1) supercell:
-    100%|████████████████████████████| 256/256 [00:00<00:00, 1939.00it/s]
+    100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████| 256/256 [00:00<00:00, 2240.98it/s]
     Merging structures...
-    Checking symmetry-equivalence: 100%|█| 256/256 [00:04<00:00, 57.51it/
-    Merging took     4.48 s and found 46 groups
+    Checking symmetry-equivalence: 100%|█████████████████████████████████████████████████████████████████████████████| 256/256 [00:03<00:00, 78.84it/s]
+    Merging took     3.27 s and found 46 groups
     Spacegroup: Pbca (61)            multiplicity: 1
     Spacegroup: P1 (1)               multiplicity: 8
     Spacegroup: P2_1 (4)             multiplicity: 4
@@ -396,14 +399,6 @@ and the corresponding table is:
    :header-rows: 1
 
 
-.. warning::
-
-    For systems with special symmetry groups (i.e. with disorder group labels starting with "-"),
-    The code may not correctly partition the symmetry operations into subgroups. So please check your output carefully!
-
-    Another serious limitation in these cases is that generated supercells may have overlapping sites.
-
-    We're working to make the code more robust for these cases. 
 
 
 
@@ -432,7 +427,7 @@ We get the following output:
     Disordered structure:
     Disorder assembly: A
     Contains the following groups:
-    Disorder group: -1 has special disorder symmetry and contains [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1] symm. ops. and 17 sites:
+    Disorder group: -1 has special disorder symmetry and contains [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1] symm. ops. and a group occupancy of 0.125 and 17 sites:
             label:       N1, species:    N, occupancy:  0.12
             label:      H1A, species:    H, occupancy:  0.12
             label:      H1B, species:    H, occupancy:  0.12
@@ -455,6 +450,15 @@ We get the following output:
 The code correctly generates a total of 32 (32\ :sup:`1` ) ordered structures and outputs the following table: :download:`DASRAU results table <../examples/dasrau.csv>`
 
 
+.. warning::
+
+    For systems with special symmetry groups (i.e. with disorder group labels starting with "-"),
+    The code may not correctly partition the symmetry operations into subgroups. So please check your output carefully!
+
+    Another serious limitation in these cases is that generated supercells may have overlapping sites.
+
+    We're working to make the code more robust for these cases. 
+
 
 Specifying the disorder components using two ordered structures
 ----------------------------------------------------------------
@@ -470,11 +474,11 @@ Taking the previous ABABUB example, I manually split the structure into two P1 o
 * :download:`ABABUB major <../examples/ABABUB_maj.xyz>`
 * :download:`ABABUB minor <../examples/ABABUB_min.xyz>`
 
-Note that you can provide the P1 structures in any format that ASE can read; here I've used the extended .xyz format.
+Note that you can provide the P1 crystal structures in any format that ASE can read; here I've used the extended .xyz format.
 
 If you pass two files to the command-line-interface, it will assume these are the two disorder components ::
     
-        orgdisord enumerate ABABUB_maj.xyz ABABUB_min.xyz --no_write
+        orgdisord enumerate ABABUB_maj.xyz ABABUB_min.xyz --prefix ababub_from_maj_min -m
 
 
 

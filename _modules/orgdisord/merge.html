@@ -501,6 +501,8 @@ title="Source repository"
 
 <span class="c1"># import modules</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span><span class="p">,</span> <span class="n">cpu_count</span>
 
@@ -525,8 +527,9 @@ title="Source repository"
     <span class="n">oxidation_states</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">return_group_indices</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">check_species</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Merge a list of ASE atoms objects to the symmetry inequivalent ones.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Merge a list of ASE atoms objects to the symmetry inequivalent ones.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        images (list): A list of ASE atoms objects.</span>
@@ -540,6 +543,9 @@ title="Source repository"
 <span class="sd">                                (Only needed for the &#39;ewald&#39; algorithm.)</span>
 <span class="sd">        return_group_indices (bool): If True, return the indices of the merged structures</span>
 <span class="sd">                                    in addition to the merged structures.</span>
+<span class="sd">        quiet (bool): If True, suppress progress bar.</span>
+<span class="sd">        check_species (bool): If True, check that the species match before comparing</span>
+<span class="sd">                              the coordinates.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Tuple of one structure per group and the group multiplicity. If return_group_indices is True,</span>
@@ -552,6 +558,9 @@ title="Source repository"
     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;---  MERGING STRUCTURES  ---&quot;</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;-----------------------------&quot;</span><span class="p">)</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Algorithm: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">algo</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">check_species</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;WARNING: not checking species before comparing coordinates&quot;</span><span class="p">)</span>
 
     <span class="c1"># get the number of atoms in each structure</span>
     <span class="n">natoms</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span> <span class="k">for</span> <span class="n">atoms</span> <span class="ow">in</span> <span class="n">images</span><span class="p">]</span>
@@ -576,6 +585,7 @@ title="Source repository"
             <span class="n">use_disordered_only</span><span class="o">=</span><span class="n">use_disordered_only</span><span class="p">,</span>
             <span class="n">symprec</span><span class="o">=</span><span class="n">symprec</span><span class="p">,</span>
             <span class="n">quiet</span><span class="o">=</span><span class="n">quiet</span><span class="p">,</span>
+            <span class="n">check_species</span><span class="o">=</span><span class="n">check_species</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="k">elif</span> <span class="n">algo</span> <span class="o">==</span> <span class="s2">&quot;rematch&quot;</span><span class="p">:</span>
         <span class="n">groups</span> <span class="o">=</span> <span class="n">merge_rematch</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="n">symprec</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="n">quiet</span><span class="p">)</span>
@@ -598,15 +608,21 @@ title="Source repository"
         <span class="k">return</span> <span class="n">merged_images</span></div>
 
 
-<div class="viewcode-block" id="coords_match_symmops"><a class="viewcode-back" href="../../_autosummary/orgdisord.merge.coords_match_symmops.html#orgdisord.merge.coords_match_symmops">[docs]</a><span class="k">def</span> <span class="nf">coords_match_symmops</span><span class="p">(</span><span class="n">coords_ref</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">symops</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="coords_match_symmops"><a class="viewcode-back" href="../../_autosummary/orgdisord.merge.coords_match_symmops.html#orgdisord.merge.coords_match_symmops">[docs]</a><span class="k">def</span> <span class="nf">coords_match_symmops</span><span class="p">(</span>
+    <span class="n">ref</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">List</span><span class="p">],</span>
+    <span class="n">to_match</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">List</span><span class="p">],</span>
+    <span class="n">symops</span><span class="p">,</span>
+    <span class="n">symprec</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span>
+    <span class="n">check_species</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Check if two sets of coordinates match under any of the</span>
 <span class="sd">    symmetry operations of the crystal</span>
 <span class="sd">    and under permutations of the order of the atoms.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        coords_ref (array): A reference numpy array of fractional coordinates.</span>
-<span class="sd">        coords (array): A numpy array of fractional coordinates.</span>
+<span class="sd">        ref ((int, np.array, list)): A reference tuple of (index, coords, symbols) .</span>
+<span class="sd">        to_match ((int, np.array, list)): A tuple of (index, coords, symbols) to check against the ref.</span>
 <span class="sd">        symops (list): A list of tuples: (rotation, translation).</span>
 <span class="sd">                       Note: we skip the first one assuming it&#39;s the identity.</span>
 <span class="sd">        symprec (float): The tolerance for the similarity.</span>
@@ -617,13 +633,48 @@ title="Source repository"
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">thesame</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">coords_ref</span><span class="p">,</span> <span class="n">symbols_ref</span> <span class="o">=</span> <span class="n">ref</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">coords_to_match</span><span class="p">,</span> <span class="n">symbols_to_match</span> <span class="o">=</span> <span class="n">to_match</span>
+
+    <span class="c1"># check the species match</span>
+    <span class="k">if</span> <span class="n">check_species</span><span class="p">:</span>
+        <span class="c1"># Set of species must be the same (ignoring number and order)</span>
+        <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">symbols_ref</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">set</span><span class="p">(</span><span class="n">symbols_to_match</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># check that the number of each species matches</span>
+            <span class="c1"># Note that this still allows for different orderings</span>
+            <span class="c1"># of the species. Later we will check that the orderings</span>
+            <span class="c1"># match, but we can&#39;t do that until we&#39;ve checked the</span>
+            <span class="c1"># symmetry operations to see which positions map to which</span>
+            <span class="c1"># positions</span>
+            <span class="k">for</span> <span class="n">symbol</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">symbols_ref</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">symbols_ref</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">symbol</span><span class="p">)</span> <span class="o">!=</span> <span class="n">symbols_to_match</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">symbol</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+
     <span class="c1"># loop over all symmetry operations</span>
+    <span class="n">a1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">(</span><span class="n">coords_ref</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">symop</span> <span class="ow">in</span> <span class="n">symops</span><span class="p">:</span>
         <span class="n">rot</span><span class="p">,</span> <span class="n">trans</span> <span class="o">=</span> <span class="n">symop</span>
-        <span class="n">a1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">(</span><span class="n">coords_ref</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
-        <span class="n">a2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">rot</span><span class="p">,</span> <span class="n">coords</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span> <span class="o">+</span> <span class="n">trans</span><span class="p">),</span> <span class="mf">1.0</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">coords_match</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="n">symprec</span><span class="p">):</span>
+        <span class="n">a2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">rot</span><span class="p">,</span> <span class="n">coords_to_match</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span> <span class="o">+</span> <span class="n">trans</span><span class="p">),</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="n">matching_coords</span><span class="p">,</span> <span class="n">mapping</span> <span class="o">=</span> <span class="n">coords_match</span><span class="p">(</span>
+            <span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="n">symprec</span><span class="p">,</span> <span class="n">return_indices</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">matching_coords</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">check_species</span><span class="p">:</span>
+                <span class="c1"># make sure the species match when reordered</span>
+                <span class="c1"># according to the positions</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="n">symbols_ref</span><span class="p">[</span><span class="n">mapping</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">==</span> <span class="n">symbols_to_match</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">symbols_ref</span><span class="p">))</span>
+                    <span class="p">]</span>
+                <span class="p">):</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;species don&#39;t match despite coords matching&quot;</span><span class="p">)</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;mapping: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mapping</span><span class="p">))</span>
+                    <span class="k">continue</span>
             <span class="n">thesame</span> <span class="o">=</span> <span class="kc">True</span>
+
             <span class="c1"># break out of trying all the symmetry</span>
             <span class="c1"># operations, we&#39;re done...</span>
             <span class="k">break</span>
@@ -631,8 +682,10 @@ title="Source repository"
     <span class="k">return</span> <span class="n">thesame</span></div>
 
 
-<div class="viewcode-block" id="compare_ref_unmatched"><a class="viewcode-back" href="../../_autosummary/orgdisord.merge.compare_ref_unmatched.html#orgdisord.merge.compare_ref_unmatched">[docs]</a><span class="k">def</span> <span class="nf">compare_ref_unmatched</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">unmatched</span><span class="p">,</span> <span class="n">symops</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="compare_ref_unmatched"><a class="viewcode-back" href="../../_autosummary/orgdisord.merge.compare_ref_unmatched.html#orgdisord.merge.compare_ref_unmatched">[docs]</a><span class="k">def</span> <span class="nf">compare_ref_unmatched</span><span class="p">(</span>
+    <span class="n">ref</span><span class="p">,</span> <span class="n">unmatched</span><span class="p">,</span> <span class="n">symops</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">check_species</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    compare lists of fractional coordinates with reference</span>
 <span class="sd">    return the indices of the unmatched atoms</span>
 
@@ -645,7 +698,8 @@ title="Source repository"
     <span class="k">if</span> <span class="n">parallel</span> <span class="ow">and</span> <span class="n">ncores</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">pool</span> <span class="o">=</span> <span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="n">ncores</span><span class="p">)</span>
         <span class="n">argument_list</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">unmatched_i</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">symops</span><span class="p">,</span> <span class="n">symprec</span><span class="p">)</span> <span class="k">for</span> <span class="n">unmatched_i</span> <span class="ow">in</span> <span class="n">unmatched</span>
+            <span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">unmatched_i</span><span class="p">,</span> <span class="n">symops</span><span class="p">,</span> <span class="n">symprec</span><span class="p">,</span> <span class="n">check_species</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">unmatched_i</span> <span class="ow">in</span> <span class="n">unmatched</span>
         <span class="p">]</span>
         <span class="n">jobs</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">pool</span><span class="o">.</span><span class="n">apply_async</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">coords_match_symmops</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="o">*</span><span class="n">argument</span><span class="p">,))</span>
@@ -657,7 +711,7 @@ title="Source repository"
             <span class="n">mask</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">mask</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">coords_match_symmops</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">unmatched_i</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">symops</span><span class="p">,</span> <span class="n">symprec</span><span class="p">)</span>
+            <span class="n">coords_match_symmops</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">unmatched_i</span><span class="p">,</span> <span class="n">symops</span><span class="p">,</span> <span class="n">symprec</span><span class="p">,</span> <span class="n">check_species</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">unmatched_i</span> <span class="ow">in</span> <span class="n">unmatched</span>
         <span class="p">]</span>
     <span class="n">matching_inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mask</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
@@ -666,29 +720,41 @@ title="Source repository"
 
 
 <div class="viewcode-block" id="merge_symm"><a class="viewcode-back" href="../../_autosummary/orgdisord.merge.merge_symm.html#orgdisord.merge.merge_symm">[docs]</a><span class="k">def</span> <span class="nf">merge_symm</span><span class="p">(</span>
-    <span class="n">supercell_images</span><span class="p">,</span> <span class="n">symops</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span> <span class="n">use_disordered_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span>
+    <span class="n">supercell_images</span><span class="p">,</span>
+    <span class="n">symops</span><span class="p">,</span>
+    <span class="n">symprec</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span>
+    <span class="n">use_disordered_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">check_species</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="k">if</span> <span class="n">use_disordered_only</span><span class="p">:</span>
-        <span class="n">frac_positions</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">atoms</span> <span class="ow">in</span> <span class="n">supercell_images</span><span class="p">:</span>
+    <span class="n">frac_positions</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">symbols</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">atoms</span> <span class="ow">in</span> <span class="n">supercell_images</span><span class="p">:</span>
+        <span class="n">current_symbols</span> <span class="o">=</span> <span class="n">atoms</span><span class="o">.</span><span class="n">get_chemical_symbols</span><span class="p">()</span>
+        <span class="n">current_positions</span> <span class="o">=</span> <span class="n">atoms</span><span class="o">.</span><span class="n">get_scaled_positions</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">use_disordered_only</span><span class="p">:</span>
             <span class="n">disordered_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">atoms</span><span class="o">.</span><span class="n">get_tags</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">pos_f</span> <span class="o">=</span> <span class="n">atoms</span><span class="o">.</span><span class="n">get_scaled_positions</span><span class="p">()[</span><span class="n">disordered_idx</span><span class="p">]</span>
-            <span class="n">frac_positions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pos_f</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">frac_positions</span> <span class="o">=</span> <span class="p">[</span><span class="n">atoms</span><span class="o">.</span><span class="n">get_scaled_positions</span><span class="p">()</span> <span class="k">for</span> <span class="n">atoms</span> <span class="ow">in</span> <span class="n">supercell_images</span><span class="p">]</span>
+            <span class="n">frac_positions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_positions</span><span class="p">[</span><span class="n">disordered_idx</span><span class="p">])</span>
+            <span class="n">symbols</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">current_symbols</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">disordered_idx</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">frac_positions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_positions</span><span class="p">)</span>
+            <span class="n">symbols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_symbols</span><span class="p">)</span>
 
     <span class="n">all_groups</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">tagged_images</span> <span class="o">=</span> <span class="p">[[</span><span class="n">i</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sites</span><span class="p">)]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">sites</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">frac_positions</span><span class="p">)]</span>
-    <span class="n">unmatched</span> <span class="o">=</span> <span class="n">tagged_images</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="c1"># create a list of (index, frac_positions, symbols) tuples</span>
+    <span class="n">unmatched</span> <span class="o">=</span> <span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="n">frac_positions</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">symbols</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">symbols</span><span class="p">))]</span>
+
     <span class="c1"># set up progress bar</span>
     <span class="n">pbar</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span>
-        <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Checking symmetry-equivalence&quot;</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">tagged_images</span><span class="p">),</span> <span class="n">disable</span><span class="o">=</span><span class="n">quiet</span>
+        <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Checking symmetry-equivalence&quot;</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">unmatched</span><span class="p">),</span> <span class="n">disable</span><span class="o">=</span><span class="n">quiet</span>
     <span class="p">)</span>
     <span class="c1"># loop over unmatched images</span>
     <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">unmatched</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">i</span><span class="p">,</span> <span class="n">ref_coords</span> <span class="o">=</span> <span class="n">unmatched</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">matches</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="p">]</span>
-        <span class="n">inds</span> <span class="o">=</span> <span class="n">compare_ref_unmatched</span><span class="p">(</span><span class="n">ref_coords</span><span class="p">,</span> <span class="n">unmatched</span><span class="p">,</span> <span class="n">symops</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="n">symprec</span><span class="p">)</span>
+        <span class="n">ref</span> <span class="o">=</span> <span class="n">unmatched</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">matches</span> <span class="o">=</span> <span class="p">[</span><span class="n">ref</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="n">inds</span> <span class="o">=</span> <span class="n">compare_ref_unmatched</span><span class="p">(</span>
+            <span class="n">ref</span><span class="p">,</span> <span class="n">unmatched</span><span class="p">,</span> <span class="n">symops</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="n">symprec</span><span class="p">,</span> <span class="n">check_species</span><span class="o">=</span><span class="n">check_species</span>
+        <span class="p">)</span>
         <span class="n">matches</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">unmatched</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">inds</span><span class="p">])</span>
         <span class="n">unmatched</span> <span class="o">=</span> <span class="p">[</span><span class="n">unmatched</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">unmatched</span><span class="p">))</span> <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">inds</span><span class="p">]</span>
         <span class="n">all_groups</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span>
@@ -702,7 +768,7 @@ title="Source repository"
 
 
 <div class="viewcode-block" id="rematcher"><a class="viewcode-back" href="../../_autosummary/orgdisord.merge.rematcher.html#orgdisord.merge.rematcher">[docs]</a><span class="k">def</span> <span class="nf">rematcher</span><span class="p">(</span><span class="n">re</span><span class="p">,</span> <span class="n">features1</span><span class="p">,</span> <span class="n">features2</span><span class="p">,</span> <span class="n">eps</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Compare two sets of SOAP features and return True if the</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compare two sets of SOAP features and return True if the</span>
 <span class="sd">    features match.</span>
 
 <span class="sd">    Args:</span>
@@ -723,7 +789,7 @@ title="Source repository"
 
 
 <div class="viewcode-block" id="merge_rematch"><a class="viewcode-back" href="../../_autosummary/orgdisord.merge.merge_rematch.html#orgdisord.merge.merge_rematch">[docs]</a><span class="k">def</span> <span class="nf">merge_rematch</span><span class="p">(</span><span class="n">supercell_images</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This merging algorithm creates a fingerprint for each structure</span>
 <span class="sd">    bases on the SOAP representation and then used the</span>
 <span class="sd">    ReMatch kernel  to try to find equivalences.</span>
@@ -735,9 +801,18 @@ title="Source repository"
 <span class="sd">    More work is necessary!</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="kn">from</span> <span class="nn">dscribe.descriptors</span> <span class="kn">import</span> <span class="n">SOAP</span>
-    <span class="kn">from</span> <span class="nn">dscribe.kernels</span> <span class="kn">import</span> <span class="n">REMatchKernel</span>
+    <span class="c1"># try to import dscribe</span>
+    <span class="c1"># if it&#39;s not available, raise an error, and suggest installing orgdisord with the</span>
+    <span class="c1"># ML option</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">dscribe.descriptors</span> <span class="kn">import</span> <span class="n">SOAP</span>
+        <span class="kn">from</span> <span class="nn">dscribe.kernels</span> <span class="kn">import</span> <span class="n">REMatchKernel</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+            <span class="s2">&quot;The merge_rematch algorithm requires the dscribe package. &quot;</span>
+            <span class="s2">&quot;Please install orgdisord with the ML option.&quot;</span>
+            <span class="s2">&quot;e.g. </span><span class="se">\n</span><span class="s2">pip install orgdisord[ML]&quot;</span>
+        <span class="p">)</span>
 
     <span class="n">ncores</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="k">if</span> <span class="n">parallel</span><span class="p">:</span>
@@ -787,27 +862,39 @@ title="Source repository"
     <span class="k">return</span> <span class="n">all_groups</span></div>
 
 
-<div class="viewcode-block" id="coords_match"><a class="viewcode-back" href="../../_autosummary/orgdisord.merge.coords_match.html#orgdisord.merge.coords_match">[docs]</a><span class="k">def</span> <span class="nf">coords_match</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="coords_match"><a class="viewcode-back" href="../../_autosummary/orgdisord.merge.coords_match.html#orgdisord.merge.coords_match">[docs]</a><span class="k">def</span> <span class="nf">coords_match</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span> <span class="n">return_indices</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns True if a1 and a2</span>
 <span class="sd">    are equal apart from a reordering of the</span>
 <span class="sd">    rows.</span>
 
+<span class="sd">    Args:</span>
+<span class="sd">        a1 (np.array): An array of coordinates.</span>
+<span class="sd">        a2 (np.array): An array of coordinates.</span>
+<span class="sd">        symprec (float): The tolerance for the similarity.</span>
+<span class="sd">        return_indices (bool): If True, return the mapping indices of the matching atoms.</span>
+<span class="sd">                               i.e. an array of indices such that a1[indices] == a2</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Normalise a1 and a2 to the unit cell</span>
+    <span class="n">a1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">a2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
 
     <span class="n">cmp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">a1</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">-</span> <span class="n">a2</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">symprec</span>
     <span class="n">eq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">cmp</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">number_of_matches</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">eq</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">number_of_matches</span> <span class="o">==</span> <span class="n">a1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="kc">True</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">False</span></div>
+    <span class="n">is_match</span> <span class="o">=</span> <span class="n">number_of_matches</span> <span class="o">==</span> <span class="n">a1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">return_indices</span><span class="p">:</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">eq</span><span class="p">)[:,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">is_match</span><span class="p">,</span> <span class="n">indices</span>
+    <span class="k">return</span> <span class="n">is_match</span></div>
 
 
 <div class="viewcode-block" id="merge_ewald"><a class="viewcode-back" href="../../_autosummary/orgdisord.merge.merge_ewald.html#orgdisord.merge.merge_ewald">[docs]</a><span class="k">def</span> <span class="nf">merge_ewald</span><span class="p">(</span>
     <span class="n">supercell_images</span><span class="p">,</span> <span class="n">oxidation_states</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This merging algorithm calculates the ewald sum of each structure</span>
 <span class="sd">    and then uses the ewald sum to try to find equivalences.</span>
 
@@ -872,7 +959,7 @@ title="Source repository"
 
 
 <div class="viewcode-block" id="ewald_energy"><a class="viewcode-back" href="../../_autosummary/orgdisord.merge.ewald_energy.html#orgdisord.merge.ewald_energy">[docs]</a><span class="k">def</span> <span class="nf">ewald_energy</span><span class="p">(</span><span class="n">ewald</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    acc_factor (float): No. of significant figures each sum is</span>
 <span class="sd">            converged to.</span>
 <span class="sd">            (defaults to 12.0 in pymatgen. Here we just need a quick and dirty answer)</span>

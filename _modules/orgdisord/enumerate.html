@@ -516,7 +516,7 @@ title="Source repository"
 
 
 <div class="viewcode-block" id="select_configs"><a class="viewcode-back" href="../../_autosummary/orgdisord.enumerate.select_configs.html#orgdisord.enumerate.select_configs">[docs]</a><span class="k">def</span> <span class="nf">select_configs</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">supercell</span><span class="p">,</span> <span class="n">maxgroups</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    from the supercell config, return indices of each</span>
 <span class="sd">    component primitive cell</span>
 <span class="sd">    e.g.</span>
@@ -539,7 +539,7 @@ title="Source repository"
 
 
 <div class="viewcode-block" id="chunks"><a class="viewcode-back" href="../../_autosummary/orgdisord.enumerate.chunks.html#orgdisord.enumerate.chunks">[docs]</a><span class="k">def</span> <span class="nf">chunks</span><span class="p">(</span><span class="n">lst</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Yield successive n-sized chunks from lst.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Yield successive n-sized chunks from lst.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">offset</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
         <span class="c1"># rotate copy of list by offset</span>
         <span class="n">temp</span> <span class="o">=</span> <span class="n">lst</span><span class="p">[</span><span class="n">offset</span><span class="p">:]</span> <span class="o">+</span> <span class="n">lst</span><span class="p">[:</span><span class="n">offset</span><span class="p">]</span>
@@ -551,7 +551,7 @@ title="Source repository"
 
 <div class="viewcode-block" id="OrderedfromDisordered"><a class="viewcode-back" href="../../_autosummary/orgdisord.enumerate.OrderedfromDisordered.html#orgdisord.enumerate.OrderedfromDisordered">[docs]</a><span class="k">class</span> <span class="nc">OrderedfromDisordered</span><span class="p">:</span>
 <div class="viewcode-block" id="OrderedfromDisordered.__init__"><a class="viewcode-back" href="../../_autosummary/orgdisord.enumerate.OrderedfromDisordered.html#orgdisord.enumerate.OrderedfromDisordered.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">disordered_structure</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            disordered_structure (DisorderedStructure)</span>
 <span class="sd">            symprec (float): tolerance for symmetry finding</span>
@@ -569,7 +569,7 @@ title="Source repository"
         <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;------------------------------&quot;</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_get_config_symbols_coords</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">asslabel</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        takes config as an int (often binary) list</span>
 <span class="sd">        of length Z (number of disordered molecular units in cell)</span>
 <span class="sd">        and the index of the chosen assembly</span>
@@ -681,7 +681,7 @@ title="Source repository"
         <span class="k">return</span> <span class="p">[</span><span class="n">symbols</span><span class="p">,</span> <span class="n">sites</span><span class="p">,</span> <span class="n">tags</span><span class="p">,</span> <span class="n">labels</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">get_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">asslabel</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return a fully ordered atoms object for the specified config</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -701,7 +701,7 @@ title="Source repository"
         <span class="k">return</span> <span class="n">atoms</span>
 
     <span class="k">def</span> <span class="nf">get_all_configs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exclude_ordered</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Generate all possible configs for the primitive cell.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate all possible configs for the primitive cell.&quot;&quot;&quot;</span>
 
         <span class="c1"># TODO this could be made more efficient!</span>
 
@@ -722,7 +722,8 @@ title="Source repository"
         <span class="k">else</span><span class="p">:</span>
             <span class="n">atoms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">disordered_structure</span><span class="o">.</span><span class="n">ordered_atoms</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">max_spacegroup_kinds</span> <span class="o">=</span> <span class="n">atoms</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span><span class="s2">&quot;spacegroup_kinds&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+                <span class="n">sg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">disordered_structure</span><span class="o">.</span><span class="n">spacegroup</span>
+                <span class="n">max_spacegroup_kinds</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">tag_sites</span><span class="p">(</span><span class="n">atoms</span><span class="o">.</span><span class="n">get_scaled_positions</span><span class="p">())</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
                 <span class="c1"># give ordered sites a tag of 0</span>
                 <span class="n">atoms</span><span class="o">.</span><span class="n">set_tags</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 
@@ -850,7 +851,7 @@ title="Source repository"
         <span class="n">ratio</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">ratio_tolerance</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        loop over supercell cells,</span>
 <span class="sd">        add in one of the ndisordergroups^Z configurations per cell</span>
 <span class="sd">        if return_configs is True, return the configs as well as the supercells</span>
@@ -1005,7 +1006,7 @@ title="Source repository"
         <span class="k">return</span> <span class="n">all_supercells</span>
 
     <span class="k">def</span> <span class="nf">_process_ratio</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ratio</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Process the ratio argument</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">ratio</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -1040,7 +1041,7 @@ title="Source repository"
         <span class="k">return</span> <span class="n">ratio</span>
 
     <span class="k">def</span> <span class="nf">_ratio_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns True if the config matches the ratio</span>
 
 <span class="sd">        TODO: test/make this work for multiple assemblies!</span>
@@ -1067,7 +1068,7 @@ title="Source repository"
         <span class="c1"># return filtered_combination</span>
 
     <span class="k">def</span> <span class="nf">get_supercell_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Atoms</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        get a supercell config</span>
 
 <span class="sd">        Args:</span>

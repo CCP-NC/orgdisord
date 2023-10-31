@@ -579,10 +579,21 @@ title="Print to PDF"
 <h1>orgdisord.merge.coords_match<a class="headerlink" href="#orgdisord-merge-coords-match" title="Permalink to this headline">#</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="orgdisord.merge.coords_match">
-<span class="sig-prename descclassname"><span class="pre">orgdisord.merge.</span></span><span class="sig-name descname"><span class="pre">coords_match</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symprec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orgdisord/merge.html#coords_match"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#orgdisord.merge.coords_match" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">orgdisord.merge.</span></span><span class="sig-name descname"><span class="pre">coords_match</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symprec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_indices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/orgdisord/merge.html#coords_match"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#orgdisord.merge.coords_match" title="Permalink to this definition">#</a></dt>
 <dd><p>Returns True if a1 and a2
 are equal apart from a reordering of the
 rows.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a1</strong> (<em>np.array</em>) – An array of coordinates.</p></li>
+<li><p><strong>a2</strong> (<em>np.array</em>) – An array of coordinates.</p></li>
+<li><p><strong>symprec</strong> (<em>float</em>) – The tolerance for the similarity.</p></li>
+<li><p><strong>return_indices</strong> (<em>bool</em>) – If True, return the mapping indices of the matching atoms.
+i.e. an array of indices such that a1[indices] == a2</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </section>

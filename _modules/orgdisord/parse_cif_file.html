@@ -515,7 +515,7 @@ title="Source repository"
 
 
 <div class="viewcode-block" id="CifParser"><a class="viewcode-back" href="../../_autosummary/orgdisord.parse_cif_file.CifParser.html#orgdisord.parse_cif_file.CifParser">[docs]</a><span class="k">class</span> <span class="nc">CifParser</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class to parse cif file containing marked up disorder.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -658,7 +658,7 @@ title="Source repository"
         <span class="n">sg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s2">&quot;spacegroup&quot;</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">sg</span><span class="o">.</span><span class="n">centrosymmetric</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">                </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">            The crystal read as centrosymmetric, </span>
 <span class="sd">            but since we read in the symmetry operations </span>
 <span class="sd">            from the CIF file (which include the inversion operations explicitly),</span>
@@ -780,7 +780,7 @@ title="Source repository"
         <span class="k">return</span> <span class="n">raw_disorder_assemblies</span><span class="p">,</span> <span class="n">raw_disorder_groups</span>
 
     <span class="k">def</span> <span class="nf">gen_ordered_atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        if there are any fully ordered sites,</span>
 <span class="sd">        build out the full crystal with the ordered sites</span>
 <span class="sd">        otherwise return empty atoms object</span>
@@ -830,7 +830,7 @@ title="Source repository"
         <span class="k">return</span> <span class="n">ordered_atoms</span>
 
     <span class="k">def</span> <span class="nf">split_assembly_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atoms</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        Note: atoms.info must contain _atom_site_disorder_assembly</span>
 <span class="sd">        Returns indices grouped by the sorted assembly label</span>
@@ -866,7 +866,7 @@ title="Source repository"
         <span class="c1"># return assembly_groups</span>
 
     <span class="k">def</span> <span class="nf">split_disorder_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">assemblies_present</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Note: atoms.info must contain _atom_site_disorder_assembly and _atom_site_disorder_group</span>
 <span class="sd">        Returns indices of asymmetric atoms grouped by sorted disorder group within each assembly group</span>
 
@@ -991,7 +991,7 @@ title="Source repository"
     <span class="c1">#     return asymmetric_assembly</span>
 
     <span class="k">def</span> <span class="nf">get_disordered_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Retruns a DisorderedStructure object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># get ordered part</span>

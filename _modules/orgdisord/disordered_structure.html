@@ -513,7 +513,7 @@ title="Source repository"
 
 <div class="viewcode-block" id="DisorderGroup"><a class="viewcode-back" href="../../_autosummary/orgdisord.disordered_structure.DisorderGroup.html#orgdisord.disordered_structure.DisorderGroup">[docs]</a><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">DisorderGroup</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class for representing a disorder group.</span>
 <span class="sd">    This contains the fractional coordinates of the atoms in the group,</span>
 <span class="sd">    their symbols and their symmetry operations.</span>
@@ -554,7 +554,7 @@ title="Source repository"
             <span class="bp">self</span><span class="o">.</span><span class="n">special_disorder_symmetry</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="k">def</span> <span class="nf">_process_occupancies</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Process the occupancies of the atoms in the group.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">occupancy</span><span class="p">:</span>
@@ -577,7 +577,7 @@ title="Source repository"
         <span class="n">sg</span><span class="p">:</span> <span class="n">Spacegroup</span><span class="p">,</span>
         <span class="n">Z</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the symmetry operations of the group.</span>
 
 <span class="sd">        Args:</span>
@@ -609,7 +609,7 @@ title="Source repository"
         <span class="k">return</span> <span class="n">group_symmetry_operations</span>
 
     <span class="k">def</span> <span class="nf">get_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the labels of the atoms in the group.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span><span class="s2">&quot;labels&quot;</span><span class="p">)</span>
@@ -618,7 +618,7 @@ title="Source repository"
         <span class="nb">repr</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Disorder group: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="si">}</span><span class="s2"> &quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">special_disorder_symmetry</span><span class="p">:</span>
             <span class="nb">repr</span> <span class="o">+=</span> <span class="s2">&quot;has special disorder symmetry and contains &quot;</span>
-            <span class="nb">repr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">symops</span><span class="p">)</span> <span class="k">for</span> <span class="n">symops</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">symmetry_operations</span><span class="p">]</span><span class="si">}</span><span class="s2"> symm. ops. and &quot;</span>
+            <span class="nb">repr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">symops</span><span class="p">)</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">symops</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">symmetry_operations</span><span class="p">]</span><span class="si">}</span><span class="s2"> symm. ops. and &quot;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="nb">repr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;contains </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">symmetry_operations</span><span class="p">)</span><span class="si">}</span><span class="s2"> symm. ops., &quot;</span>
         <span class="nb">repr</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;a group occupancy of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">occupancy</span><span class="si">}</span><span class="s2"> and &quot;</span>
@@ -634,7 +634,7 @@ title="Source repository"
 
 <div class="viewcode-block" id="DisorderAssembly"><a class="viewcode-back" href="../../_autosummary/orgdisord.disordered_structure.DisorderAssembly.html#orgdisord.disordered_structure.DisorderAssembly">[docs]</a><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">DisorderAssembly</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class for representing a disorder assembly.</span>
 <span class="sd">    An assembly is a list of DisorderGroups</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -645,7 +645,7 @@ title="Source repository"
     <span class="n">tag</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Post-initialization.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ngroups</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">disorder_groups</span><span class="p">)</span>
@@ -659,7 +659,7 @@ title="Source repository"
         <span class="k">return</span> <span class="nb">repr</span>
 
     <span class="k">def</span> <span class="nf">get_disorder_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DisorderGroup</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the disorder group of the assembly with</span>
 <span class="sd">        the given label.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -671,7 +671,7 @@ title="Source repository"
 
 <div class="viewcode-block" id="DisorderedStructure"><a class="viewcode-back" href="../../_autosummary/orgdisord.disordered_structure.DisorderedStructure.html#orgdisord.disordered_structure.DisorderedStructure">[docs]</a><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">DisorderedStructure</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class for representing a disordered structure.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -688,7 +688,7 @@ title="Source repository"
     <span class="n">correlated_assemblies</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Post-initialization.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># get cell</span>
@@ -717,13 +717,13 @@ title="Source repository"
                 <span class="k">assert</span> <span class="n">assembly</span><span class="o">.</span><span class="n">ngroups</span> <span class="o">==</span> <span class="n">ngroups</span>
 
     <span class="k">def</span> <span class="nf">get_number_of_assemblies</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the number of disorder assemblies in the structure.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">disorder_assemblies</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_number_of_disorder_groups_per_assembly</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the number of disorder groups in each assembly in the structure.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">assembly</span><span class="o">.</span><span class="n">ngroups</span> <span class="k">for</span> <span class="n">assembly</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">disorder_assemblies</span><span class="p">]</span>
@@ -738,7 +738,7 @@ title="Source repository"
         <span class="k">return</span> <span class="n">rep</span>
 
     <span class="k">def</span> <span class="nf">get_assembly</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DisorderAssembly</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the disorder assembly with</span>
 <span class="sd">        the given label.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -756,7 +756,7 @@ title="Source repository"
     <span class="n">ratio</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">group_occupancies</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Given the major and minor components of a disordered structure,</span>
 <span class="sd">    (i.e. two fully ordered structures representing the two disordered structures)</span>
 <span class="sd">    return a DisorderedStructure object.</span>
@@ -809,6 +809,19 @@ title="Source repository"
 
     <span class="c1"># get the indices of the atoms that are different</span>
     <span class="n">diff_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">maj_min_dist</span> <span class="o">&gt;</span> <span class="n">tolerance</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># Or check where the symbol list is different</span>
+    <span class="n">diff_idx_symbols</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="n">maj</span> <span class="o">!=</span> <span class="nb">min</span>
+            <span class="k">for</span> <span class="n">maj</span><span class="p">,</span> <span class="nb">min</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+                <span class="n">atoms_maj</span><span class="o">.</span><span class="n">get_chemical_symbols</span><span class="p">(),</span> <span class="n">atoms_min</span><span class="o">.</span><span class="n">get_chemical_symbols</span><span class="p">()</span>
+            <span class="p">)</span>
+        <span class="p">]</span>
+    <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># combine the two</span>
+    <span class="n">diff_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">diff_idx</span><span class="p">,</span> <span class="n">diff_idx_symbols</span><span class="p">]))</span>
 
     <span class="n">maj_atoms</span> <span class="o">=</span> <span class="n">atoms_maj</span><span class="p">[</span><span class="n">diff_idx</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="n">min_atoms</span> <span class="o">=</span> <span class="n">atoms_min</span><span class="p">[</span><span class="n">diff_idx</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>

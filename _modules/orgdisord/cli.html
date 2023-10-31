@@ -685,6 +685,13 @@ title="Source repository"
     <span class="s2">&quot;See atol in numpy.isclose.&quot;</span>
     <span class="s2">&quot;Only used if --fix-ratio is specified.&quot;</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="c1"># check species</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;--ignore-species&quot;</span><span class="p">,</span>
+    <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Ignore species when merging structures?&quot;</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="k">def</span> <span class="nf">main</span><span class="p">(</span>
     <span class="n">ctx</span><span class="p">,</span>
     <span class="n">files</span><span class="p">,</span>
@@ -708,8 +715,9 @@ title="Source repository"
     <span class="n">fix_ratio</span><span class="p">,</span>
     <span class="n">ratio</span><span class="p">,</span>
     <span class="n">ratio_tol</span><span class="p">,</span>
+    <span class="n">ignore_species</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Command line interface for orgdisord.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Command line interface for orgdisord.&quot;&quot;&quot;</span>
     <span class="c1"># set up logging</span>
     <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span>
         <span class="n">filename</span><span class="o">=</span><span class="n">log</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%(asctime)s</span><span class="s2"> </span><span class="se">\t</span><span class="s2"> </span><span class="si">%(message)s</span><span class="s2">&quot;</span>
@@ -744,7 +752,6 @@ title="Source repository"
             <span class="n">correlated_assemblies</span><span class="o">=</span><span class="n">correlated_assemblies</span><span class="p">,</span>
             <span class="n">molecular_crystal</span><span class="o">=</span><span class="ow">not</span> <span class="n">not_molecular_crystal</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">symops</span> <span class="o">=</span> <span class="n">cif</span><span class="o">.</span><span class="n">symops</span>
 
         <span class="c1"># get the disordered structure</span>
         <span class="n">disordered_structure</span> <span class="o">=</span> <span class="n">cif</span><span class="o">.</span><span class="n">get_disordered_structure</span><span class="p">()</span>
@@ -800,6 +807,7 @@ title="Source repository"
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected 1 or 2 files, got </span><span class="si">{</span><span class="n">nfiles</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
 
+    <span class="n">symops</span> <span class="o">=</span> <span class="n">disordered_structure</span><span class="o">.</span><span class="n">spacegroup</span><span class="o">.</span><span class="n">get_symop</span><span class="p">()</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Enumerating ordered configurations.&quot;</span><span class="p">)</span>
     <span class="c1"># enumerate ordered configurations</span>
     <span class="n">od</span> <span class="o">=</span> <span class="n">OrderedfromDisordered</span><span class="p">(</span><span class="n">disordered_structure</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="n">quiet</span><span class="p">)</span>
@@ -821,7 +829,7 @@ title="Source repository"
     <span class="c1"># store information to dataframe</span>
     <span class="n">df</span><span class="p">[</span><span class="s2">&quot;Unique index&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">))</span>
     <span class="c1"># start out with equal weights</span>
-    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;Multiplicity&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">))</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;Multiplicity&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
     <span class="n">df</span><span class="p">[</span><span class="s2">&quot;Configuration&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">configs</span>
 
     <span class="c1"># count the number of each group</span>
@@ -869,6 +877,7 @@ title="Source repository"
             <span class="n">oxidation_states</span><span class="o">=</span><span class="n">oxidation_states</span><span class="p">,</span>
             <span class="n">return_group_indices</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">quiet</span><span class="o">=</span><span class="n">quiet</span><span class="p">,</span>
+            <span class="n">check_species</span><span class="o">=</span><span class="ow">not</span> <span class="n">ignore_species</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="n">stop</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
@@ -887,8 +896,21 @@ title="Source repository"
                 <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">g</span><span class="p">,</span> <span class="s2">&quot;Unique index&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ig</span>
 
         <span class="c1"># Update dataframe with merged information</span>
+
+        <span class="c1"># For the Supercell and Ratio columns, we will assume they are the same for each group</span>
+        <span class="c1"># so we can just take the first value.</span>
+        <span class="c1"># For the Configuration column, we will take the first value since that corresponds to the</span>
+        <span class="c1"># configuration of the first image in the group.</span>
+        <span class="c1"># For the other columns, we will take the mean</span>
+        <span class="n">agg_rules</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Supercell&quot;</span><span class="p">:</span> <span class="s2">&quot;first&quot;</span><span class="p">,</span> <span class="s2">&quot;Ratio&quot;</span><span class="p">:</span> <span class="s2">&quot;first&quot;</span><span class="p">,</span> <span class="s2">&quot;Configuration&quot;</span><span class="p">:</span> <span class="s2">&quot;first&quot;</span><span class="p">}</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">agg_rules</span><span class="p">:</span>
+                <span class="n">agg_rules</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span>
+        <span class="c1"># remove &#39;Unique index&#39; from agg_rules</span>
+        <span class="n">agg_rules</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;Unique index&quot;</span><span class="p">)</span>
+
         <span class="c1"># merge df by Unique index</span>
-        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;Unique index&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;Unique index&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">agg_rules</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
         <span class="c1"># add multiplicity to df</span>
         <span class="n">df</span><span class="p">[</span><span class="s2">&quot;Multiplicity&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">g</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">]</span>
         <span class="c1"># add spacegroup to df</span>
@@ -995,7 +1017,7 @@ title="Source repository"
     <span class="n">dt</span><span class="p">,</span>
     <span class="n">log</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Command line interface for orgdisord thermodynamics.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Command line interface for orgdisord thermodynamics.</span>
 
 <span class="sd">    TODO energy units!</span>
 <span class="sd">    TODO: slight numerical inconsistencies wrt to Jonas&#39; code</span>
@@ -1122,12 +1144,12 @@ title="Source repository"
 
 
 <div class="viewcode-block" id="get_boltzmann_weight"><a class="viewcode-back" href="../../_autosummary/orgdisord.cli.get_boltzmann_weight.html#orgdisord.cli.get_boltzmann_weight">[docs]</a><span class="k">def</span> <span class="nf">get_boltzmann_weight</span><span class="p">(</span><span class="n">multiplicity</span><span class="p">,</span> <span class="n">energy</span><span class="p">,</span> <span class="n">temperature</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Calculate the Boltzmann weight for a given temperature.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the Boltzmann weight for a given temperature.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">multiplicity</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">energy</span> <span class="o">/</span> <span class="p">(</span><span class="n">kB</span> <span class="o">*</span> <span class="n">temperature</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="get_partition_function"><a class="viewcode-back" href="../../_autosummary/orgdisord.cli.get_partition_function.html#orgdisord.cli.get_partition_function">[docs]</a><span class="k">def</span> <span class="nf">get_partition_function</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="n">multiplicities</span><span class="p">,</span> <span class="n">energies</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Calculate the partition function for a given temperature.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the partition function for a given temperature.</span>
 <span class="sd">    Args:</span>
 <span class="sd">        temperature: temperature in K</span>
 <span class="sd">        multiplicities: array/list of multiplicities (e.g. [2,2,8,2])</span>
@@ -1138,29 +1160,29 @@ title="Source repository"
 
 
 <div class="viewcode-block" id="get_probability"><a class="viewcode-back" href="../../_autosummary/orgdisord.cli.get_probability.html#orgdisord.cli.get_probability">[docs]</a><span class="k">def</span> <span class="nf">get_probability</span><span class="p">(</span><span class="n">multiplicity</span><span class="p">,</span> <span class="n">energy</span><span class="p">,</span> <span class="n">temperature</span><span class="p">,</span> <span class="n">Z</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Calculate the probability of a configuration</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the probability of a configuration</span>
 <span class="sd">    for a given temperature and partition function, Z.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">get_boltzmann_weight</span><span class="p">(</span><span class="n">multiplicity</span><span class="p">,</span> <span class="n">energy</span><span class="p">,</span> <span class="n">temperature</span><span class="p">)</span> <span class="o">/</span> <span class="n">Z</span></div>
 
 
 <div class="viewcode-block" id="get_tau"><a class="viewcode-back" href="../../_autosummary/orgdisord.cli.get_tau.html#orgdisord.cli.get_tau">[docs]</a><span class="k">def</span> <span class="nf">get_tau</span><span class="p">(</span><span class="n">ratios</span><span class="p">,</span> <span class="n">probabilities</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Calculate the tau factor for a given temperature.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the tau factor for a given temperature.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ratios</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">probabilities</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="get_S"><a class="viewcode-back" href="../../_autosummary/orgdisord.cli.get_S.html#orgdisord.cli.get_S">[docs]</a><span class="k">def</span> <span class="nf">get_S</span><span class="p">(</span><span class="n">probabilities</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Calculate the entropy S factor for</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the entropy S factor for</span>
 <span class="sd">    a given temperature (implicit in probabilities).&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="o">-</span><span class="n">kB</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">probabilities</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">probabilities</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="get_Elatt"><a class="viewcode-back" href="../../_autosummary/orgdisord.cli.get_Elatt.html#orgdisord.cli.get_Elatt">[docs]</a><span class="k">def</span> <span class="nf">get_Elatt</span><span class="p">(</span><span class="n">probabilities</span><span class="p">,</span> <span class="n">energies</span><span class="p">,</span> <span class="n">n_formula_units</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Calculate the lattice energy Elatt for a given temperature.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the lattice energy Elatt for a given temperature.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">probabilities</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">energies</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="get_deltaA"><a class="viewcode-back" href="../../_autosummary/orgdisord.cli.get_deltaA.html#orgdisord.cli.get_deltaA">[docs]</a><span class="k">def</span> <span class="nf">get_deltaA</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">S</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Calculate the change in free energy deltaA for a given temperature.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the change in free energy deltaA for a given temperature.</span>
 <span class="sd">    Args:</span>
 <span class="sd">        U: lattice energy in kJ/mol</span>
 <span class="sd">        T: temperature in K</span>

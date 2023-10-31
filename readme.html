@@ -676,32 +676,32 @@ title="Print to PDF"
 <a class="reference download internal" download="" href="_downloads/581c9ae798db8311e0e869a25f82eb04/ABABUB.cif"><code class="xref download docutils literal notranslate"><span class="pre">ABABUB.cif</span></code></a></p>
 <ol class="arabic">
 <li><p>Generate all possible ordered configurations in the primitive cell:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ orgdisord enumerate ABABUB.cif --no_write --view
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>orgdisord<span class="w"> </span>enumerate<span class="w"> </span>ABABUB.cif<span class="w"> </span>--no_write<span class="w"> </span>--view
 </pre></div>
 </div>
 </li>
 <li><p>Generate all possible ordered configurations in a 2x1x1 supercell:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ orgdisord enumerate ABABUB.cif --supercell <span class="m">2</span> <span class="m">1</span> <span class="m">1</span> --no_write --view
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>orgdisord<span class="w"> </span>enumerate<span class="w"> </span>ABABUB.cif<span class="w"> </span>--supercell<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">1</span><span class="w"> </span>--no_write<span class="w"> </span>--view
 </pre></div>
 </div>
 </li>
 <li><p>Merge fully enumerated configurations:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ orgdisord enumerate ABABUB.cif -m --no_write --view
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>orgdisord<span class="w"> </span>enumerate<span class="w"> </span>ABABUB.cif<span class="w"> </span>-m<span class="w"> </span>--no_write<span class="w"> </span>--view
 </pre></div>
 </div>
 </li>
 <li><p>Merge randomly generated configurations in the primitive cell. If you have enough of them, you will end up with the same groups as the fully enumerated case (though this is much less efficient):</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ orgdisord enumerate ABABUB.cif -m --no_write --view --random -N <span class="m">1000</span>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>orgdisord<span class="w"> </span>enumerate<span class="w"> </span>ABABUB.cif<span class="w"> </span>-m<span class="w"> </span>--no_write<span class="w"> </span>--view<span class="w"> </span>--random<span class="w"> </span>-N<span class="w"> </span><span class="m">1000</span>
 </pre></div>
 </div>
 </li>
 <li><p>Generate 5000 randomly ordered structures in a specified supercell:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ orgdisord enumerate ABABUB.cif --supercell <span class="m">2</span> <span class="m">1</span> <span class="m">2</span> --random -N <span class="m">5000</span> --no_write --view
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>orgdisord<span class="w"> </span>enumerate<span class="w"> </span>ABABUB.cif<span class="w"> </span>--supercell<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">2</span><span class="w"> </span>--random<span class="w"> </span>-N<span class="w"> </span><span class="m">5000</span><span class="w"> </span>--no_write<span class="w"> </span>--view
 </pre></div>
 </div>
 </li>
 <li><p>Generate 3 randomly ordered structures in a very large supercell:</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ orgdisord enumerate ABABUB.cif --supercell <span class="m">4</span> <span class="m">6</span> <span class="m">4</span> --random -N <span class="m">3</span> --no_write --view
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>orgdisord<span class="w"> </span>enumerate<span class="w"> </span>ABABUB.cif<span class="w"> </span>--supercell<span class="w"> </span><span class="m">4</span><span class="w"> </span><span class="m">6</span><span class="w"> </span><span class="m">4</span><span class="w"> </span>--random<span class="w"> </span>-N<span class="w"> </span><span class="m">3</span><span class="w"> </span>--no_write<span class="w"> </span>--view
 </pre></div>
 </div>
 </li>
