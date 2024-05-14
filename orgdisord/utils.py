@@ -2,6 +2,7 @@ import numpy as np
 from ase import Atoms, Atom
 from soprano.properties.linkage import Molecules
 from ase.spacegroup import Spacegroup
+from ase.utils import atoms_to_spglib_cell
 from typing import List
 import warnings
 import random
@@ -239,7 +240,7 @@ def standardise_cell(atoms: Atoms, symprec: float = 1e-3) -> Atoms:
     according to spglib
     """
     cell, scaled_pos, numbers = spglib.standardize_cell(
-        atoms, to_primitive=False, no_idealize=True, symprec=symprec
+        atoms_to_spglib_cell(atoms), to_primitive=False, no_idealize=True, symprec=symprec
     )
     atoms_std = Atoms(numbers=numbers, scaled_positions=scaled_pos, cell=cell, pbc=True)
 

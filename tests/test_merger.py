@@ -35,7 +35,7 @@ groups = merge_structures(
 
 print(f"Found {len(groups)} groups")
 for g in groups:
-    print(f"Spacegroup: {spglib.get_spacegroup(g[0])}\t multiplicity: {g[1]}")
+    print(f"Spacegroup: {get_spacegroup(g[0])}\t multiplicity: {g[1]}")
 
 # Sanity check!
 # note that I have run single point DFT energy calculations on the 16 exhaustive configs and
@@ -54,7 +54,7 @@ assert len(groups) == 5
 
 # print(f'Found {len(groups)} groups')
 # for g in groups:
-#     print(f"Spacegroup: {spglib.get_spacegroup(g[0])}\t multiplicity: {g[1]}")
+#     print(f"Spacegroup: {get_spacegroup(g[0])}\t multiplicity: {g[1]}")
 # assert len(groups) == 5
 
 
@@ -71,5 +71,5 @@ groups = merge_structures(
 
 print(f"Found {len(groups)} groups")
 for g in groups:
-    print(f"Spacegroup: {spglib.get_spacegroup(g[0])}\t multiplicity: {g[1]}")
+    print(f"Spacegroup: {get_spacegroup(g[0])}\t multiplicity: {g[1]}")
 assert len(groups) == 5

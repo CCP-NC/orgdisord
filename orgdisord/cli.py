@@ -12,6 +12,7 @@ import time
 from ase.io import read
 from ase.units import _amu
 from ase.units import kB, kJ, mol  # kB is the Boltzmann constant in eV/K
+from ase.utils import atoms_to_spglib_cell
 import pandas as pd
 import numpy as np
 import logging
@@ -386,7 +387,7 @@ def main(
         stop = time.time()
         duration = stop - start
         logger.info(f"Merging took {duration:8.2f} s and found {len(groups)} groups")
-        unique_spacegroups = [spglib.get_spacegroup(g[0]) for g in groups]
+        unique_spacegroups = [spglib.get_spacegroup(atoms_to_spglib_cell(g[0])) for g in groups]
         for sg, g in zip(unique_spacegroups, groups):
             logger.info(f"Spacegroup: {sg:<20} multiplicity: {g[1]}")
 
