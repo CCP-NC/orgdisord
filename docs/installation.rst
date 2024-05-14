@@ -15,7 +15,7 @@ You can either clone the public repository:
 
 .. code-block:: console
 
-    $ git clone git://github.com/CCP-NC/orgdisord
+    $ git clone git@github.com:CCP-NC/orgdisord.git
 
 Or download the `tarball`_:
 
