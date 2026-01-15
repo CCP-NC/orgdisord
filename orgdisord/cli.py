@@ -1,31 +1,37 @@
 """Console script for orgdisord."""
 import sys
-import os
-import click
+import os 
+import time
+import logging
+from typing import List, Optional, Tuple, Any
+from ase import Atoms
+import pandas as pd
+import numpy as np
+import typer
+from pathlib import Path
+from ase.visualize import view as ase_view
 from orgdisord.disordered_structure import from_disorder_components
 from orgdisord.parse_cif_file import CifParser
 from orgdisord.enumerate import OrderedfromDisordered
 from orgdisord.merge import merge_structures
-from orgdisord.utils import get_new_labels
+from orgdisord.utils import (
+    get_new_labels,
+    get_partition_function,
+    get_probability,
+    get_tau,
+    get_S,
+    get_Elatt,
+    get_deltaA,
+)
 import spglib
-import time
 from ase.io import read
 from ase.units import _amu
-from ase.units import kB, kJ, mol  # kB is the Boltzmann constant in eV/K
-from ase.utils import atoms_to_spglib_cell
-import pandas as pd
-import numpy as np
-import logging
+from ase.units import kB, kJ, mol
 
 logging.captureWarnings(True)
 
-# TODO: sort out DF order/ what info to include
-# TODO sort out DF printing/saving to file
-
 # new log header
 LOGHEADER = """
-
-
 ###############################################################################
 #                          -----  orgdisord  -----                            #
 #                                                          J. Kane Shenton    #
@@ -33,346 +39,260 @@ LOGHEADER = """
 ###############################################################################
 """
 
+app = typer.Typer(help="Tool for handling disordered molecular crystals")
 
-@click.group()
-def cli():
-    pass
+def validate_format(value: str) -> str:
+    """Validate and normalize the format string."""
+    valid_formats = ["xyz", "cif", "poscar", "cell"]
+    value = value.lower()
+    if value not in valid_formats:
+        raise typer.BadParameter(f"Format must be one of {', '.join(valid_formats)}")
+    return value
 
-
-@cli.command("enumerate", context_settings={"show_default": True})
-@click.pass_context
-@click.argument("files", nargs=-1, type=click.Path(exists=True))
-# add option to specify supercell
-@click.option(
-    "--supercell",
-    "-s",
-    nargs=3,
-    type=click.INT,
-    default=[1, 1, 1],
-    help="Supercell size e.g. 2 1 1",
-)
-# add option to specify max number of iterations
-@click.option(
-    "--maxiters",
-    "-N",
-    type=click.INT,
-    default=512,
-    help="Maximum number of configurations generated",
-)
-# add option to include ordered configurations
-@click.option(
-    "--exclude_ordered",
-    is_flag=True,
-    default=False,
-    help="Exclude ordered part of structure in output structures?",
-)
-# add option to generate random configurations
-@click.option(
-    "--random",
-    "-r",
-    is_flag=True,
-    default=False,
-    help="Generate random configurations?",
-)
-# add option to merge structures
-@click.option(
-    "--merge", "-m", is_flag=True, default=False, help="Merge equivalent structures?"
-)
-# add option to specify algorithm
-@click.option(
-    "--algo",
-    "-a",
-    type=click.Choice(["symm", "rematch", "ewald"]),
-    default="symm",
-    help="Algorithm used for merging equivalent structures.",
-)
-# add option to specify use of disordered only in merging
-@click.option(
-    "--use_disordered_only",
-    "-d",
-    is_flag=True,
-    default=True,
-    help="Use only the disordered part of structure in merging?",
-)
-# add option to specify symmetry precision
-@click.option(
-    "--symprec",
-    "-p",
-    type=click.FLOAT,
-    default=1e-4,
-    help="Symmetry precision used for merging equivalent structures.",
-)
-# option to suppress writing out structures
-@click.option(
-    "--no_write", is_flag=True, default=False, help="Suppress writing out structures?"
-)
-# add option to output to specified file
-@click.option(
-    "--prefix",
-    type=click.STRING,
-    default="orgdisord",
-    help="Prefix for output file names.",
-)
-# option format options
-@click.option(
-    "--format",
-    "-f",
-    type=click.Choice(["cif", "xyz", "poscar", "cell"]),
-    default="xyz",
-    help="Format of output strucuture files.",
-)
-
-# add option to specify verbosity
-@click.option("--quiet", "-q", is_flag=True, default=False, help="Suppress output?")
-# add option to specify log file
-@click.option(
-    "--log",
-    "-l",
-    type=click.Path(exists=False),
-    default="orgdisord.log",
-    help="Log file name.",
-)
-
-# add option to view structures using ASE gui
-@click.option(
-    "--view", is_flag=True, default=False, help="View structures using ASE gui?"
-)
-# Add option to specify oxidation states
-@click.option(
-    "--ox",
-    type=click.Tuple([str, int]),
-    multiple=True,
-    default=None,
-    help="Specify oxidation states for each species e.g. --ox H 1 --ox O -2",
-)
-# option to not reload as molecular crystal
-@click.option(
-    "--not_molecular_crystal",
-    is_flag=True,
-    default=False,
-    help="Do not reload as molecular crystal?",
-)
-# correlated assemblies?
-@click.option(
-    "--correlated_assemblies",
-    "-c",
-    is_flag=True,
-    default=False,
-    help="Are the disorder assemblies correlated?"
-    "i.e. are the disorder groups within each assembly to be selected with the same index? "
-    "(The number of disorder groups in each assembly must be the same in such cases.)",
-)
-# fix ratio flag
-@click.option(
-    "--fix-ratio",
-    is_flag=True,
-    default=False,
-    help="Fix the ratio of the disorder groups.",
-)
-# manually specify ratios
-@click.option(
-    "--ratio",
-    nargs=1,
-    type=click.FLOAT,
-    default=None,
-    help="Manually specify the ratio of the disorder groups. "
-    "Must be used with --fix-ratio."
-    "e.g. --ratio 0.75 would constrain the ratios of disorder group 1 and 2 to be 3:1"
-    "NOTE: This is only implemented for 1-assembly, 2-group structures.",
-)
-# ratio tolerance
-@click.option(
-    "--ratio-tol",
-    type=click.FLOAT,
-    default=0.01,
-    help="Tolerance for how close the ratio of disorder groups needs to be. "
-    "See atol in numpy.isclose."
-    "Only used if --fix-ratio is specified.",
-)
-# check species
-@click.option(
-    "--ignore-species",
-    is_flag=True,
-    default=False,
-    help="Ignore species when merging structures?",
-)
-def main(
-    ctx,
-    files,
-    supercell,
-    maxiters,
-    exclude_ordered,
-    random,
-    merge,
-    symprec,
-    quiet,
-    algo,
-    use_disordered_only,
-    no_write,
-    prefix,
-    format,
-    ox,
-    log,
-    view,
-    not_molecular_crystal,
-    correlated_assemblies,
-    fix_ratio,
-    ratio,
-    ratio_tol,
-    ignore_species,
+@app.command(name='enumerate')
+def enumerate_configs(
+    structure_files: List[Path] = typer.Argument(..., help="Structure files to process", exists=True),
+    supercell: Tuple[int, int, int] = typer.Option((1, 1, 1), "--supercell", "-s", help="Supercell size e.g. 2 1 1"),
+    maxiters: int = typer.Option(512, "--maxiters", "-N", help="Maximum number of configurations generated"),
+    exclude_ordered: bool = typer.Option(False, help="Exclude ordered part of structure in output structures?"),
+    random: bool = typer.Option(False, "--random", "-r", help="Generate random configurations?"),
+    merge: bool = typer.Option(False, "--merge", "-m", help="Merge equivalent structures?"),
+    algo: str = typer.Option("symm", "--algo", "-a", help="Algorithm used for merging equivalent structures.",
+                          callback=lambda x: x.lower()),
+    use_disordered_only: bool = typer.Option(True, "--use-disordered-only", "-d", 
+                                          help="Use only the disordered part of structure in merging?"),
+    symprec: float = typer.Option(1e-4, "--symprec", "-p", help="Symmetry precision used for merging equivalent structures."),
+    no_write: bool = typer.Option(False, help="Suppress writing out structures?"),
+    prefix: str = typer.Option("orgdisord", help="Prefix for output file names."),
+    format: str = typer.Option("xyz", "--format", "-f", help="Format of output structure files.",
+                            callback=validate_format),
+    quiet: bool = typer.Option(False, "--quiet", "-q", help="Suppress output?"),
+    log: Path = typer.Option("orgdisord.log", "--log", "-l", help="Log file name."),
+    view_structures: bool = typer.Option(False, "--view", help="View structures using ASE gui?"),
+    ox_species: Optional[List[str]] = typer.Option(None, "--ox-species", help="Species for oxidation states"),
+    ox_values: Optional[List[int]] = typer.Option(None, "--ox-values", help="Oxidation state values"),
+    molecular_crystal: bool = typer.Option(True, help="Treat the system as a molecular crystal."),
+    correlated_assemblies: bool = typer.Option(False, "--correlated-assemblies", "-c", 
+                                           help="Are the disorder assemblies correlated?"),
+    fix_ratio: bool = typer.Option(False, "--fix-ratio", help="Fix the ratio of the disorder groups."),
+    ratio: Optional[float] = typer.Option(None, help="Manually specify the ratio of the disorder groups."),
+    ratio_tol: float = typer.Option(0.01, help="Tolerance for ratio comparison."),
+    ignore_species: bool = typer.Option(False, "--ignore-species", help="Ignore species when merging structures?")
 ):
-    """Command line interface for orgdisord."""
-    # set up logging
+    """Enumerate ordered configurations from a disordered structure."""
+    # Set up logging
     logging.basicConfig(
-        filename=log, level=logging.DEBUG, format="%(asctime)s \t %(message)s"
+        filename=str(log),
+        level=logging.DEBUG,
+        format="%(asctime)s \t %(message)s",
     )
-    # add console handler
     console = logging.StreamHandler()
     if quiet:
         console.setLevel(logging.WARNING)
     else:
-        console.setLevel(logging.INFO)
+        console.setLevel(logging.DEBUG)
 
-    # set a format which is simpler for console use
     consolefmt = logging.Formatter("%(message)s")
     console.setFormatter(consolefmt)
     logger = logging.getLogger("orgdisord")
-    # add the handler to the main logger
+    logger.handlers = []
     logger.addHandler(console)
     logger.info(LOGHEADER)
 
-    # log the Click command line arguments and options used
-    logger.debug("Run with these command line arguments: ")
-    for param, value in ctx.params.items():
-        logger.debug(f"          {param}: {value}")
+    # Validate input files count early - this must be outside any try block
+    nfiles = len(structure_files)
+    if nfiles not in (1, 2):
+        logger.error(f"Expected 1 or 2 input structure files, got {nfiles}.")
+        raise typer.Exit(code=1)
 
-    df = pd.DataFrame()
-    nfiles = len(files)
-    if nfiles == 1:
-        logger.info(f"Parsing disorder in cif file: {files[0]}")
-        # parse cif file containing disordered structure
-        cif = CifParser(
-            files[0],
-            correlated_assemblies=correlated_assemblies,
-            molecular_crystal=not not_molecular_crystal,
+    try:
+        # Load and parse input structures
+        if nfiles == 1:
+            disordered_structure, symops = _load_single_structure(
+                structure_files[0],
+                correlated_assemblies=correlated_assemblies,
+                molecular_crystal=not molecular_crystal,
+                symprec=symprec,
+                logger=logger
+            )
+        else:  # nfiles == 2
+            disordered_structure, symops = _load_two_structures(
+                structure_files[0],
+                structure_files[1],
+                symprec=symprec,
+                ratio=ratio,
+                logger=logger
+            )
+            
+    except Exception as e:
+        logger.error(f"Failed to load structures: {str(e)}")
+        raise typer.Exit(code=1)
+
+    # Generate configurations
+    try:
+        logger.info("Enumerating ordered configurations...")
+        od = OrderedfromDisordered(disordered_structure, quiet=quiet)
+        images, configs = od.get_supercell_configs(
+            supercell=supercell,
+            maxiters=maxiters,
+            exclude_ordered=exclude_ordered,
+            random_configs=random,
+            return_configs=True,
+            fix_ratio=fix_ratio,
+            ratio=ratio,
+            ratio_tolerance=ratio_tol,
         )
+    except Exception as e:
+        logger.error(f"Failed to enumerate configurations: {str(e)}")
+        raise typer.Exit(code=1)
+        
+    if not images:
+        logger.error("No valid configurations were generated.")
+        raise typer.Exit(code=1)
 
-        # get the disordered structure
-        disordered_structure = cif.get_disordered_structure()
+    logger.info(f"Generated {len(images)} configurations.")
 
-    elif nfiles == 2:
-        logger.info(f"Parsing disorder in files: {files[0]} and {files[1]}")
-        logger.info(
-            "Assuming the two files contain two fully ordered structures, one for each disorder group."
-        )
+    # Process configurations
+    try:
+        df = _create_structure_dataframe(images, configs)
+    except Exception as e:
+        logger.error(f"Failed to create structure data: {str(e)}")
+        raise typer.Exit(code=1)
 
-        disorder_components = []
-        for f in files:
-            labels = None
-            if f.endswith(".cif"):
-                # if they are CIF files, parse the extra tags
-                atoms = read(f, store_tags=True)
-            else:
-                atoms = read(f)  ## hope ASE can read it
+    # Merge structures if requested
+    merged_groups = None
+    if merge:
+        try:
+            merged_images, merged_groups = _merge_structures(
+                images,
+                algo=algo,
+                symops=symops,
+                use_disordered_only=use_disordered_only,
+                symprec=symprec,
+                ox_species=ox_species,
+                ox_values=ox_values,
+                quiet=quiet,
+                logger=logger,
+                ignore_species=ignore_species
+            )
+            images = [g[0] for g in merged_images]
+        except Exception as e:
+            logger.error(f"Failed to merge structures: {str(e)}")
+            raise typer.Exit(code=1)
 
-            # -- labels -- #
-            if not atoms.has("labels"):
-                if "_atom_site_label" in atoms.info:
-                    labels = atoms.info["_atom_site_label"]
-                elif "labels" in atoms.info:
-                    labels = atoms.info["labels"]
-                else:
-                    labels = get_new_labels(atoms)
-                atoms.set_array("labels", np.array(labels))
+    # Write output files
+    if not no_write:
+        try:
+            output_path = _get_output_path(prefix, nfiles, merge)
+            output_dir = _write_output_files(
+                images=images,
+                output_path=output_path,
+                format=format,
+                merged_groups=merged_groups,
+                df=df,
+                logger=logger
+            )
+            logger.info(f"Results written to {output_dir}")
+        except Exception as e:
+            logger.error(f"Failed to write output files: {str(e)}")
+            raise typer.Exit(code=1)
 
-            # -- occupanices -- #
-            if not atoms.has("occupancies"):
-                if "_atom_site_occupancy" in atoms.info:
-                    occupancies = atoms.info["_atom_site_occupancy"]
-                elif "occupancies" in atoms.info:
-                    occupancies = atoms.info["occupancies"]
-                else:
-                    occupancies = None
+    # View structures if requested
+    if view_structures:
+        try:
+            view_my_structures(images)
+        except Exception as e:
+            logger.error(f"Failed to view structures: {str(e)}")
+            # Don't exit on view failure, as it's not critical
 
-                if occupancies:
-                    occupancies = np.array(occupancies)
-                    atoms.set_array("occupancies", occupancies)
+    return 0
 
-            disorder_components.append(atoms)
+def _load_single_structure(file_path: Path, correlated_assemblies: bool, 
+                         molecular_crystal: bool, symprec: float, logger) -> Tuple:
+    """Load a single CIF file."""
+    parser = CifParser(str(file_path),
+                      correlated_assemblies=correlated_assemblies,
+                      molecular_crystal=not molecular_crystal,
+                      symprec=symprec)
+    disordered_structure = parser.get_disordered_structure()
+    symops = disordered_structure.spacegroup.get_symop()
+    logger.info("CIF file loaded.")
+    return disordered_structure, symops
+
+def _load_two_structures(file_path1: Path, file_path2: Path, symprec: float, 
+                        ratio: Optional[float], logger) -> Any:
+    """Load two structure files representing major and minor components."""
+    try:
+        logger.debug(f"Loading major component from {file_path1}")
+        atoms_maj = read(str(file_path1))
+        logger.debug(f"Major component loaded with {len(atoms_maj)} atoms")
+        
+        # Ensure arrays are set
+        if not atoms_maj.has('labels'):
+            atoms_maj.set_array('labels', np.array([f"{sym}{i}" for i, sym in enumerate(atoms_maj.get_chemical_symbols())]))
+        if not atoms_maj.has('tags'):
+            atoms_maj.set_array('tags', np.zeros(len(atoms_maj), dtype=int))
+
+        logger.debug(f"Loading minor component from {file_path2}")
+        atoms_min = read(str(file_path2))
+        logger.debug(f"Minor component loaded with {len(atoms_min)} atoms")
+        
+        # Ensure arrays are set
+        if not atoms_min.has('labels'):
+            atoms_min.set_array('labels', np.array([f"{sym}{i}" for i, sym in enumerate(atoms_min.get_chemical_symbols())]))
+        if not atoms_min.has('tags'):
+            atoms_min.set_array('tags', np.zeros(len(atoms_min), dtype=int))
+        
+        logger.debug("Creating disordered structure from components")
         disordered_structure = from_disorder_components(
-            disorder_components[0],
-            disorder_components[1],
-            tolerance=symprec,  # use the same tolerance as for symmetry finder
+            atoms_maj,
+            atoms_min,
+            tolerance=symprec,
             symprec=symprec,
-            ratio=ratio,  # TODO make this more general
+            ratio=ratio,
             group_occupancies=None,
         )
-        logger.info(disordered_structure)
-    else:
-        raise ValueError(f"Expected 1 or 2 files, got {nfiles}.")
 
-    symops = disordered_structure.spacegroup.get_symop()
-    logger.info("Enumerating ordered configurations.")
-    # enumerate ordered configurations
-    od = OrderedfromDisordered(disordered_structure, quiet=quiet)
-    images, configs = od.get_supercell_configs(
-        supercell=supercell,
-        maxiters=maxiters,
-        exclude_ordered=exclude_ordered,
-        random_configs=random,
-        return_configs=True,
-        fix_ratio=fix_ratio,
-        ratio=ratio,
-        ratio_tolerance=ratio_tol,
-    )
-    if len(images) == 0:
-        logger.warning("No ordered configurations found.")
-        return
+        logger.debug("Disordered structure created successfully")
+        logger.info(str(disordered_structure))
+        symops = disordered_structure.spacegroup.get_symop()
+        return disordered_structure, symops
+    except Exception as e:
+        import traceback
+        logger.error(f"Failed to load or process structures: {str(e)}")
+        logger.debug(f"Traceback: {traceback.format_exc()}")
+        raise
 
-    # -- DATA FRAME -- #
-    # store information to dataframe
-    df["Unique index"] = np.arange(len(images))
-    # start out with equal weights
-    df["Multiplicity"] = np.ones(len(images), dtype=int)
-    df["Configuration"] = configs
+def _create_structure_dataframe(images: List, configs: List) -> pd.DataFrame:
+    """Create a DataFrame containing structure information."""
+    df = pd.DataFrame()
+    df["Config_idx"] = list(range(len(images)))
+    df["Config"] = [str(c) for c in configs]
+    df["Volume/A^3"] = [float(image.get_volume()) for image in images]
 
-    # count the number of each group
-    ratios = [np.bincount(config, minlength=np.max(configs) + 1) for config in configs]
-    # ratios = [1-sum(config) / len(config) for config in configs]
-    # TODO should we define this as the reverse?
-    df["Ratio"] = ratios
-
-    df["Supercell"] = "x".join(map(str, supercell))
-    # TODO: units
-    df["Free Energy / kJ/mol"] = np.NaN
-    df["Enthalpy per atom / kJ/mol"] = np.NaN
-    df["Entropy per atom / kJ/mol"] = np.NaN
-    # volume of simulation cell
-    df["Volume/A^3"] = [image.get_volume() for image in images]
-    # number of atoms
-    df["N atoms"] = [len(image) for image in images]
-    # density
+    # Calculate masses and densities
     masses = [sum(image.get_masses()) for image in images]
-    density_units = (_amu / 1e-30) * 1e-3  # > g/cm^3
+    density_units = (_amu / 1e-30) * 1e-3  # Convert to g/cm^3
     density = [
-        (mass / volume) * density_units
+        float((mass / volume) * density_units)
         for mass, volume in zip(masses, df["Volume/A^3"])
     ]
-    df["Density/g/mol^3"] = density
-    # /-- DATA FRAME -- #
+    df["Density/g/cm^3"] = density
+    return df
 
-    # merge symmetrically equivalent configurations?
-    if merge:
-        oxidation_states = {}
-        if algo == "ewald":
-            if ox:
-                for ox_name, ox_val in ox:
-                    oxidation_states[ox_name] = ox_val
-            logger.info(f"Oxidation states used: {oxidation_states}")
+def _merge_structures(images: List, algo: str, symops: Any, use_disordered_only: bool,
+                     symprec: float, ox_species: Optional[List[str]], 
+                     ox_values: Optional[List[int]], quiet: bool, logger, ignore_species: bool = False) -> Tuple[Tuple[List[Atoms], List], List]:
+    """Merge equivalent structures."""
+    oxidation_states = {}
+    if ox_species and ox_values:
+        oxidation_states = dict(zip(ox_species, ox_values))
+        logger.info(f"Oxidation states used: {oxidation_states}")
 
-        logger.info("Merging structures...")
-        start = time.time()
-        groups, group_indices = merge_structures(
+    logger.info("Merging structures...")
+    start = time.time()
+    try:
+        merged_result = merge_structures(
             images,
             algo=algo,
             symops=symops,
@@ -383,181 +303,178 @@ def main(
             quiet=quiet,
             check_species=not ignore_species,
         )
+        logger.info(f"Merged into {len(merged_result[1])} groups.")
+        end = time.time()
+        logger.info(f"Time taken: {end-start:.2f} s")
+        return merged_result
+    except Exception as e:
+        logger.error(f"Failed to merge structures: {str(e)}")
+        raise
 
-        stop = time.time()
-        duration = stop - start
-        logger.info(f"Merging took {duration:8.2f} s and found {len(groups)} groups")
-        unique_spacegroups = [spglib.get_spacegroup(atoms_to_spglib_cell(g[0])) for g in groups]
-        for sg, g in zip(unique_spacegroups, groups):
-            logger.info(f"Spacegroup: {sg:<20} multiplicity: {g[1]}")
+def _get_output_path(prefix: str, nfiles: int, merge: bool) -> str:
+    """Generate the output path based on input parameters."""
+    output_path = prefix
+    if nfiles == 2:
+        output_path += "_from_maj_min"
+    if merge:
+        output_path += "_merged"
+    return output_path
 
-        # overwrite images with merged images
-        images = [g[0] for g in groups]
+def _write_output_files(images: List[Atoms], output_path: str, format: str,
+                       merged_groups: Optional[List], df: pd.DataFrame,
+                       logger) -> str:
+    """Write enumerated structures and associated data to files."""
+    directory = f"{output_path}-results"
+    logger.info(f"Writing structures to directory: {directory}")
 
-        # tag images with group indices in df
-        for ig, group_inds in enumerate(group_indices):
-            for g in group_inds:
-                df.loc[g, "Unique index"] = ig
+    # Handle existing directory
+    if os.path.isdir(directory):
+        backup_suffix = time.strftime('%Y%m%d-%H%M%S')
+        backup_dir = f"{directory}-backup-{backup_suffix}"
+        
+        # Keep trying backups with incrementing numbers if needed
+        backup_num = 1
+        while os.path.isdir(backup_dir):
+            backup_dir = f"{directory}-backup-{backup_suffix}-{backup_num}"
+            backup_num += 1
+            
+        os.rename(directory, backup_dir)
+        logger.info(f"Backed up existing directory to {backup_dir}")
 
-        # Update dataframe with merged information
+    os.makedirs(directory, exist_ok=True)
 
-        # For the Supercell and Ratio columns, we will assume they are the same for each group
-        # so we can just take the first value.
-        # For the Configuration column, we will take the first value since that corresponds to the
-        # configuration of the first image in the group.
-        # For the other columns, we will take the mean
-        agg_rules = {"Supercell": "first", "Ratio": "first", "Configuration": "first"}
-        for col in df.columns:
-            if col not in agg_rules:
-                agg_rules[col] = np.mean
-        # remove 'Unique index' from agg_rules
-        agg_rules.pop("Unique index")
-
-        # merge df by Unique index
-        df = df.groupby("Unique index").agg(agg_rules).reset_index()
-        # add multiplicity to df
-        df["Multiplicity"] = [g[1] for g in groups]
-        # add spacegroup to df
-        df["Spacegroup"] = unique_spacegroups
-        # add groups to df
-        df["Group indices"] = group_indices
-
-    # log the df
-    logging.info("\n\t" + df.to_string().replace("\n", "\n\t"))
-    # save the df to csv
-    df.to_csv(prefix + ".csv", index=False)
-    if not no_write:
-        # write structures to file(s)
-        directory = f"{prefix}-results"
-        logger.info(f"Writing structures to file(s) in directory: {directory}")
-        # check if directory already exists -- if so rename it (backup)
-        if os.path.isdir(directory):
-            logger.warning(
-                f"Directory {directory} already exists. Backing up existing directory."
-            )
-            # backup existing directory
-            backup_dir = f"{directory}-backup-{time.strftime('%Y%m%d-%H%M%S')}"
-            if os.path.isdir(backup_dir):
-                raise ValueError(
-                    f"Backup directory {backup_dir} already exists. Please remove it."
-                )
-            os.rename(directory, backup_dir)
-
-        os.mkdir(directory)
-        nleading_zeros = len(str(len(images)))
-        for i, image in enumerate(images):
-            filename = f"{prefix}-{str(i).zfill(nleading_zeros)}.{format}"
+    # Write structure files
+    n_images = len(images)
+    nleading_zeros = len(str(n_images))
+    format = format.lower()
+    
+    for i, image in enumerate(images):
+        try:
+            filename = f"{output_path}-{str(i).zfill(nleading_zeros)}.{format}"
+            filepath = os.path.join(directory, filename)
+            
             kwargs = {}
-            # cif can save labels if we manually specify them
-            if format == "cif":
-                kwargs["labels"] = [image.get_array("labels")]
+            if format == "cif" and hasattr(image, "arrays") and "labels" in image.arrays:
+                kwargs["labels"] = image.get_array("labels")
+            elif format == "cell" and hasattr(image, "arrays") and "labels" in image.arrays:
+                image.arrays["castep_labels"] = image.get_array("labels")
+            elif format == "xyz" and hasattr(image, "arrays") and "occupancies" in image.arrays:
+                del image.arrays["occupancies"]
+            
+            image.write(filepath, **kwargs)
+            logger.debug(f"Wrote structure {i+1}/{n_images} to {filepath}")
+        except Exception as e:
+            logger.error(f"Failed to write structure {i} to {filepath}: {str(e)}")
+            continue
 
-            elif format == "cell":
-                # castep cell writer looks for the castep_labels array
-                # so let's copy across the labels array
-                image.set_array("castep_labels", image.get_array("labels"))
-            elif format == "xyz":
-                # I had some issues if there are occupancies in the xyz file
-                # so let's remove them
-                image.set_array("occupancies", None)
+    # Write data files
+    try:
+        csv_path = os.path.join(directory, f"{output_path}.csv")
+        df.to_csv(csv_path, index=False)
+        logger.info(f"Wrote configuration data to {csv_path}")
+        
+        if merged_groups:
+            # Create mapping from structure index to group
+            group_map = {}
+            for group_idx, group in enumerate(merged_groups):
+                for struct_idx in group:
+                    group_map[struct_idx] = group_idx
+            
+            # Add group information
+            df["Group"] = [group_map.get(i, -1) for i in range(len(images))]
+            merged_csv_path = os.path.join(directory, f"{output_path}_merged.csv")
+            df.to_csv(merged_csv_path, index=False)
+            logger.info(f"Wrote merged groups data to {merged_csv_path}")
+            
+    except Exception as e:
+        logger.error(f"Failed to write data files: {str(e)}")
+        # Continue even if data files fail, as we still have the structure files
 
-            image.write(f"{directory}/{filename}", **kwargs)
+    return directory
 
-            logger.info(f"Wrote structure to file: {directory}/{filename}")
-
-    # write out pandas dataframe containing the groups and multiplicities
-
-    if view:
-        # view images using ASE gui
-        from ase.visualize import view
-
-        view(images)
-
-    return 0
-
-
-@cli.command(context_settings={"show_default": True})
-@click.pass_context
-@click.argument("csv_file", type=click.Path(exists=True))
-@click.option(
-    "--prefix",
-    type=click.STRING,
-    default="orgdisord",
-    help="Prefix for output file names.",
-)
-# add option to specify verbosity
-@click.option("--quiet", "-q", is_flag=True, default=False, help="Suppress output?")
-# add option to specify log file
-@click.option(
-    "--log",
-    "-l",
-    type=click.Path(exists=False),
-    default="orgdisord.analyse.log",
-    help="Log file name.",
-)
-# specify temperature range and number of steps
-@click.option(
-    "--temperatures",
-    "-t",
-    nargs=2,
-    type=click.FLOAT,
-    default=[10, 300],
-    help="Temperature range in K (inclusive of end points).",
-)
-@click.option(
-    "--steps", "-s", type=click.INT, default=50, help="Number of temperature steps."
-)
-# or set dT
-@click.option(
-    "--dt", type=click.FLOAT, default=None, help="Temperature step size in K."
-)
-def analyse(
-    ctx,
-    csv_file,
-    quiet,
-    prefix,
-    temperatures,
-    steps,
-    dt,
-    log,
-):
-    """Command line interface for orgdisord thermodynamics.
-
-    TODO energy units!
-    TODO: slight numerical inconsistencies wrt to Jonas' code
+def view_my_structures(images, viewer=None):
+    """View structures using ASE GUI or specified viewer.
+    
+    Handles potential XCB/X11 errors gracefully by checking for a valid display
+    and setting appropriate environment variables before attempting visualization.
     """
+    logger = logging.getLogger("orgdisord")
+    
+    # Check if we have a valid display
+    if not os.environ.get('DISPLAY'):
+        logger.error("No display available. Cannot open ASE GUI viewer.")
+        logger.error("Try running with --no-view option if you are in a headless environment")
+        return
+        
+    try:
+        # Set environment variables to avoid XCB threading issues
+        os.environ['ASE_USE_GLIB'] = 'false'  # Disable GLib integration
+        os.environ['XCB_ALLOW_THREADS'] = '0'  # Disable XCB threading
+        os.environ['QT_X11_NO_MITSHM'] = '1'  # Disable MIT-SHM extension
+        
+        if viewer:
+            ase_view(images, viewer=viewer, block=True)
+        else:
+            ase_view(images, block=True)
+            
+    except (AssertionError, IOError) as e:
+        if "xcb" in str(e).lower():
+            logger.error("X11/XCB threading error occurred while trying to open the viewer.")
+            logger.error("This is a known issue with X11 forwarding and threading.")
+            logger.error("Try one of these solutions:")
+            logger.error("1. Run with --no-view option")
+            logger.error("2. Use a different viewer: --viewer 'povray' or 'matplotlib'")
+            logger.error("3. Set XCB_ALLOW_THREADS=0 in your environment")
+        else:
+            logger.error(f"Failed to open viewer: {str(e)}")
+    except Exception as e:
+        logger.error(f"Unexpected error while opening viewer: {str(e)}")
 
+@app.command()
+def analyse(
+    csv_file: Path = typer.Argument(..., help="CSV file to analyze", exists=True),
+    prefix: str = typer.Option("orgdisord", help="Prefix for output file names."),
+    quiet: bool = typer.Option(False, "--quiet", "-q", help="Suppress output?"),
+    log: Path = typer.Option("orgdisord.analyse.log", "--log", "-l", help="Log file name."),
+    temperatures: Tuple[float, float] = typer.Option((10, 300), "--temperatures", "-t", 
+                                                  help="Temperature range in K (inclusive of end points)."),
+    steps: int = typer.Option(50, "--steps", "-s", help="Number of temperature steps."),
+    dt: Optional[float] = typer.Option(None, help="Temperature step size in K.")
+):
+    """Analyse enumeration results.
+    
+    Calculate thermodynamic properties and analyze disorder patterns from
+    enumerated configurations.
+    """
     # set up logging
     logging.basicConfig(
-        filename=log, level=logging.DEBUG, format="%(asctime)s \t %(message)s"
+        filename=str(log),
+        level=logging.DEBUG,
+        format="%(asctime)s \t %(message)s"
     )
-    # add console handler
     console = logging.StreamHandler()
     if quiet:
         console.setLevel(logging.WARNING)
     else:
         console.setLevel(logging.INFO)
 
-    # set a format which is simpler for console use
     consolefmt = logging.Formatter("%(message)s")
     console.setFormatter(consolefmt)
     logger = logging.getLogger("orgdisord.analyse")
-    # add the handler to the main logger
+    logger.handlers = []  # Clear any existing handlers
     logger.addHandler(console)
     logger.info(LOGHEADER)
 
-    # log the Click command line arguments and options used
     logger.debug("Run orgdisord analyse with these command line arguments: ")
-    for param, value in ctx.params.items():
+    kwargs = locals()
+    for param, value in kwargs.items():
         logger.debug(f"          {param}: {value}")
 
     # read in csv file
     df = pd.read_csv(csv_file)
-
-    # log the number of rows and columns
     logger.info(f"Read in {len(df)} rows and {len(df.columns)} columns from {csv_file}")
 
-    # check that the df contains the required columns
+    # check required columns
     required_columns = [
         "Multiplicity",
         "Free Energy / kJ/mol",
@@ -565,27 +482,29 @@ def analyse(
     ]
     for col in required_columns:
         if col not in df.columns:
-            raise ValueError(f"Column {col} not found in {csv_file}")
-    # check that if df doens't contain the ratios it at least contains the configuration
+            logger.error(f"Required column {col} not found in {csv_file}")
+            raise typer.Exit(code=1)
+
+    # check ratios
     if "Ratio of maj:min" not in df.columns:
         if "Configuration" not in df.columns:
-            raise ValueError(f"Neither Ratio nor Configuration found in {csv_file}")
+            logger.error(f"Neither Ratio nor Configuration found in {csv_file}")
+            raise typer.Exit(code=1)
         else:
             logger.debug(
                 "Computing the ratios from the configuration specification in the csv file."
             )
-            # compute the ratio from the configuration
-            # convert to list of ints
             configs = [c.strip("(").strip(")").split(",") for c in df["Configuration"]]
             configs = [[int(c) for c in c] for c in configs]
             ratios = [sum(config) / len(config) for config in configs]
             df["Ratio of maj:min"] = ratios
 
-    # check that there are no missing values
+    # check for missing values
     if df.isnull().values.any():
-        raise ValueError(f"Missing values found in {csv_file}")
+        logger.error(f"Missing values found in {csv_file}")
+        raise typer.Exit(code=1)
 
-    # Make new df for the thermodynamic properties
+    # Make new df for thermodynamic properties
     df_thermo = pd.DataFrame()
     ratios = df["Ratio of maj:min"]
     logger.debug(ratios)
@@ -597,11 +516,13 @@ def analyse(
     rel_energies = energies - minE
 
     # array of temperatures
+    temps_start, temps_end = temperatures
     if dt:
         # (include end points)
-        temperatures = np.arange(temperatures[0], temperatures[1] + dt, dt)
+        temperatures = np.arange(temps_start, temps_end + dt, dt)
     else:
-        temperatures = np.linspace(temperatures[0], temperatures[1], steps)
+        temperatures = np.linspace(temps_start, temps_end, steps)
+
     # loop over temperatures
     Zs = []
     taus = []
@@ -637,7 +558,6 @@ def analyse(
     df_thermo["Z"] = Zs
     df_thermo["tau"] = taus
     df_thermo["S_config (J/mol /K)"] = Ss
-    # df_thermo['E_latt (kJ/mol per f.u.)'] = Elatts # TODO do we need both?
     df_thermo["Delta U (kJ/mol per f.u.)"] = Us
     df_thermo["Delta A (kJ/mol per f.u.)"] = delta_As
 
@@ -646,54 +566,6 @@ def analyse(
     logger.info(df_thermo)
     df_thermo.to_csv(prefix + "_thermo.csv", index=False)
 
-
-def get_boltzmann_weight(multiplicity, energy, temperature):
-    """Calculate the Boltzmann weight for a given temperature."""
-    return multiplicity * np.exp(-energy / (kB * temperature))
-
-
-def get_partition_function(temperature, multiplicities, energies):
-    """Calculate the partition function for a given temperature.
-    Args:
-        temperature: temperature in K
-        multiplicities: array/list of multiplicities (e.g. [2,2,8,2])
-        energies: array/list of energies in kJ/mol
-
-    """
-    return np.sum(get_boltzmann_weight(multiplicities, energies, temperature))
-
-
-def get_probability(multiplicity, energy, temperature, Z):
-    """Calculate the probability of a configuration
-    for a given temperature and partition function, Z."""
-    return get_boltzmann_weight(multiplicity, energy, temperature) / Z
-
-
-def get_tau(ratios, probabilities):
-    """Calculate the tau factor for a given temperature."""
-    return np.sum(np.array(ratios) * np.array(probabilities))
-
-
-def get_S(probabilities):
-    """Calculate the entropy S factor for
-    a given temperature (implicit in probabilities)."""
-    return -kB * np.sum(np.array(probabilities) * np.log(probabilities))
-
-
-def get_Elatt(probabilities, energies, n_formula_units):
-    """Calculate the lattice energy Elatt for a given temperature."""
-    return np.sum(np.array(probabilities) * np.array(energies))
-
-
-def get_deltaA(U, T, S):
-    """Calculate the change in free energy deltaA for a given temperature.
-    Args:
-        U: lattice energy in kJ/mol
-        T: temperature in K
-        S: entropy in kJ/mol/K
-    """
-    return U - (T * S)
-
-
-if __name__ == "__main__":
-    sys.exit(main())  # pragma: no cover
+def cli():
+    """Entry point for the CLI."""
+    app()

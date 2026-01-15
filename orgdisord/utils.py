@@ -1,5 +1,6 @@
 import numpy as np
 from ase import Atoms, Atom
+from ase.units import kB
 from soprano.properties.linkage import Molecules
 from ase.spacegroup import Spacegroup
 from ase.utils import atoms_to_spglib_cell
@@ -7,6 +8,7 @@ from typing import List
 import warnings
 import random
 import spglib
+from ase.geometry import find_mic
 
 
 def get_molecules(atoms: Atoms, use_cell_indices: bool = True):
@@ -127,55 +129,55 @@ def wrap_molecule(atoms: Atoms, max_dist: float = 0.5):
     return atoms
 
 
+# Van der Waals radii in Angstroms
+vdw_radius = {
+    'H': 1.20,
+    'C': 1.70,
+    'N': 1.55,
+    'O': 1.52,
+    'F': 1.47,
+    'P': 1.80,
+    'S': 1.80,
+    'Cl': 1.75,
+    'Br': 1.85,
+    'I': 1.98
+}
+
 def molecule_collide(
     atom: Atom, atoms: Atoms, vdw_scale: float = 1.0, tolerance: float = 0.0
 ):
     """
-    Checks if an atom is colliding with a group of atoms defined by the
-    initial_fractional_positions.
+    Check if an atom would collide with any atom in the given structure.
 
+    Args:
+        atom (Atom): The atom to check for collisions.
+        atoms (Atoms): The structure to check for collisions with.
+        vdw_scale (float): Scale factor for van der Waals radii.
+        tolerance (float): Additional distance to add to collision cutoff.
+                         Higher values make collisions more likely.
 
-    We could naiively see if fractional position is within
-    the bounding box of initial_fractional_positions, but that would
-    not work in cases where the 'molecule' corresponding to initial_fractional_positions
-    spans the cell boundary.
+    Returns:
+        bool: True if there would be a collision, False otherwise.
     """
-    # fractional_position = np.array(fractional_position)
-    # cell = atoms.cell
-    mols = Molecules.get(atoms, vdw_scale=vdw_scale)
-    while len(mols) < 1:
-        # we need to increase vdw_scale until we get a single molecule
-        vdw_scale *= 1.1
-        mols = Molecules.get(atoms, vdw_scale=vdw_scale)
-    assert len(mols) == 1
-
-    # now check that if we run the molecule finder with the same parameters, we get the same number of molecules
-    atoms_plus = atoms.copy()
-    atoms_plus.append(atom)
-    mols_new = Molecules.get(atoms_plus, vdw_scale=vdw_scale)
-
-    return len(mols_new) == len(mols)
-
-    # # bounding box:
-    # atoms_new = mols[0].subset(atoms, use_cell_indices=False)
-    # box_positions = atoms_new.positions
-    # min_pos = np.min(box_positions, axis=0)
-    # max_pos = np.max(box_positions, axis=0)
-
-    # # check the normalised fractional position
-    # # against the bounding box
-    # pos = cell.T.dot(fractional_position % 1)
-    # if np.all(pos >= (min_pos-tolerance)) and np.all(pos <= (max_pos + tolerance)):
-    #         return True
-
-    # # if that wasn't a match, we still need to check its the periodic images
-    # for i in range(-1,2):
-    #     for j in range(-1,2):
-    #         for k in range(-1,2):
-    #             pos = cell.T.dot(fractional_position + np.array([i, j, k]))
-    #             if np.all(pos >= (min_pos-tolerance)) and np.all(pos <= (max_pos + tolerance)):
-    #                 return True
-    # return False
+    # Get positions
+    pos = atom.position
+    all_pos = atoms.get_positions()
+    
+    # Get van der Waals radii
+    vdw_radii = [vdw_radius[a.symbol] * vdw_scale for a in atoms]
+    test_vdw = vdw_radius[atom.symbol] * vdw_scale
+    
+    # Calculate cutoff distances for each pair
+    cutoffs = [r1 + test_vdw + tolerance for r1 in vdw_radii]
+    
+    # Get distances between test atom and all atoms
+    cell = atoms.cell
+    rel_pos = pos - all_pos
+    distances, _ = find_mic(rel_pos, cell)
+    distances = np.linalg.norm(distances, axis=1)
+    
+    # Check if any distance is less than cutoff
+    return np.any(distances < cutoffs)
 
 
 def get_unique_atoms(atoms: Atoms, sg: Spacegroup, symprec: float = 1e-3):
@@ -254,3 +256,33 @@ def standardise_cell(atoms: Atoms, symprec: float = 1e-3) -> Atoms:
         if k not in ["positions", "velocities", "forces", "numbers"]:
             atoms_std.arrays[k] = atoms.arrays[k]
     return atoms_std
+
+
+def get_partition_function(T, multiplicities, energies):
+    """Calculate partition function Z at temperature T."""
+    Z = 0
+    for m, e in zip(multiplicities, energies):
+        Z += m * np.exp(-e / (kB * T))
+    return Z
+
+def get_probability(multiplicity, energy, T, Z):
+    """Calculate probability of a state given its multiplicity and energy."""
+    return multiplicity * np.exp(-energy / (kB * T)) / Z
+
+def get_tau(ratios, probabilities):
+    """Calculate tau (ratio of major to minor component) from probabilities."""
+    return np.sum(ratios * probabilities)
+
+def get_S(probabilities):
+    """Calculate configurational entropy from probabilities."""
+    # Remove zero probabilities to avoid log(0)
+    nonzero_probs = probabilities[probabilities > 0]
+    return -kB * np.sum(nonzero_probs * np.log(nonzero_probs))
+
+def get_Elatt(probabilities, energies, n_formula_units):
+    """Calculate lattice energy from probabilities and energies."""
+    return np.sum(probabilities * energies) * n_formula_units
+
+def get_deltaA(U, T, S):
+    """Calculate Helmholtz free energy difference."""
+    return U - T * S

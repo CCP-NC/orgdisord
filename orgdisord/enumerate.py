@@ -13,6 +13,8 @@ from orgdisord.utils import reload_as_molecular_crystal, random_product
 
 logger = logging.getLogger("orgdisord.enumerate")
 
+LARGE_NUMBER_OF_CONFIGS = 1e4
+
 
 def binary_to_idx(config, maxgroups):
     return sum([j * (maxgroups**i) for i, j in list(enumerate(reversed(config)))])
@@ -205,143 +207,27 @@ class OrderedfromDisordered:
 
     def get_all_configs(self, exclude_ordered=False):
         """Generate all possible configs for the primitive cell."""
+        self.logger.debug("Generating all possible configurations...")
+        configs = self._generate_configs(exclude_ordered=exclude_ordered, mode="all")
+        self.logger.debug(f"Generated a total of {len(configs)} primitive configs")
+        return configs
 
-        # TODO this could be made more efficient!
-
-        # a few aliases
-        cell = self.disordered_structure.cell
-        Z = self.disordered_structure.Z
-        # Zprime = self.cif.Zprime
-        nops_all = self.disordered_structure.spacegroup.nsymop
-        nassemblies = self.disordered_structure.get_number_of_assemblies()
-        correlated_assemblies = self.disordered_structure.correlated_assemblies
-
-        max_spacegroup_kinds = 0
-        # set up base atoms object to which sites will be
-        # added.
-        if exclude_ordered:
-            # just an empty box
-            atoms = Atoms(cell=cell, pbc=True)
-        else:
-            atoms = self.disordered_structure.ordered_atoms.copy()
-            if len(atoms) > 0:
-                sg = self.disordered_structure.spacegroup
-                max_spacegroup_kinds = sg.tag_sites(atoms.get_scaled_positions()).max()
-                # give ordered sites a tag of 0
-                atoms.set_tags(0)
-
-        # what's the final number of configs we will generate?
-        # TODO generalise!
-        ngroups_per_assembly = (
-            self.disordered_structure.get_number_of_disorder_groups_per_assembly()
-        )
-        nconfigs_per_assembly = [N**Z for N in ngroups_per_assembly]
-        nconfigs = nconfigs_per_assembly[0]  # defaults to first ngroups
-
-        if correlated_assemblies:
-            if nassemblies > 1:
-                self.logger.debug(
-                    "Treating the assemblies as correlated. \n"
-                    "This means that the same index from each assembly is chosen for each configuration."
-                )
-                if len(set(nconfigs_per_assembly)) != 1:
-                    raise ValueError(
-                        "Error: the number of configurations per assembly is not the same for all assemblies.\n"
-                        "Please set correlated_assemblies to False."
-                    )
-        else:
-            if nassemblies > 1:
-                self.logger.debug(
-                    "Treating the assemblies as uncorrelated "
-                    "(i.e. the assemblies are independent) and we will therefore generate lots of structures!"
-                )
-                nconfigs = np.product(nconfigs_per_assembly)
-        self.logger.debug(f"Generating {nconfigs} configs in primitive cell.")
-        if nconfigs > 1e4:
-            self.logger.warn(
-                f"Warning: {nconfigs} is a large number of configs. "
-                "This may take a while!"
-            )
-
-        all_configs = []
-        for assembly in self.disordered_structure.disorder_assemblies:
-            asslabel = assembly.label
-            # the disorder groups for this assembly
-            disorder_groups = assembly.disorder_groups
-            # normally ngroups = ndisorder groups
-            ngroups = len(disorder_groups)
-            group_nops = [len(group.symmetry_operations) for group in disorder_groups]
-            self.logger.debug(f"Group n ops {group_nops}")
-
-            if len(set(group_nops)) != 1:
-                raise ValueError(
-                    "Error: the number of symmetry operations per group "
-                    f" is not the same for all groups in assembly {asslabel}:\n"
-                    f"{group_nops}"
-                )
-
-            # but when Zprime is less than 1, we need to be more careful!
-            # if Zprime < 1: # means more symmetry operations than we have Z
-            #     # in this case the actual number of groups (1/Zprime) will be larger than the number of disorder groups
-            #     assert 1/Zprime >= ngroups
-
-            #     ngroups = int(1 / Zprime)
-            #     self.logger.warn(f'Special case for nops != Z. (i.e. Zprime < 1)'
-            #         f'nops = {nops_all} '
-            #         f'Z = {Z}, '
-            #         f'Zprime = {Zprime}\n'
-            #         'This is less well-tested so proceed with caution.'
-            #         'If you encounter any issues, please contact the developers.')
-
-            self.logger.debug(f"Assembly {asslabel} has {ngroups} groups")
-
-            if ngroups == 1:
-                # Special disorder site case with only one group
-                # -> each symmetry operation generated a new config.
-                config_max = group_nops[0]
-            else:
-                config_max = ngroups
-
-            # generate all possible configs for this assembly
-            config_indices = itertools.product(list(range(config_max)), repeat=Z)
-            assembly_configs = [
-                self.get_config(config_idx, asslabel) for config_idx in config_indices
-            ]
-            # update max_spacegroup_kinds tags
-            for config in assembly_configs:
-                labels = config.get_array("labels")
-                u, spacegroup_kinds = np.unique(labels, return_inverse=True)
-                config.set_array(
-                    "spacegroup_kinds", spacegroup_kinds + max_spacegroup_kinds + 1
-                )
-            self.logger.debug(
-                f"Assembly {asslabel} has {len(assembly_configs)} configs"
-            )
-            if all_configs:
-                if correlated_assemblies:
-                    # then just add the config atoms to the existing ones!
-                    assert len(assembly_configs) == len(all_configs)
-                    for iconfig in range(len(assembly_configs)):
-                        temp = all_configs[iconfig].copy()
-                        temp.extend(assembly_configs[iconfig])
-                        all_configs[iconfig] = temp
-                else:
-                    ref_configs = [config.copy() for config in all_configs]
-                    all_configs = []
-                    for iconfig in range(len(ref_configs)):
-                        for jconfig in range(len(assembly_configs)):
-                            temp = ref_configs[iconfig].copy()
-                            temp.extend(assembly_configs[jconfig])
-                            all_configs.append(temp)
-            else:
-                # must the be first assembly -- all_configs is empty so let's start from scratch
-                for config in assembly_configs:
-                    temp = atoms.copy()
-                    temp.extend(config)
-                    all_configs.append(temp)
-
-        self.logger.debug(f"Generated a total of {len(all_configs)} primitive configs")
-        return all_configs
+    def split_major_minor(self, exclude_ordered=False):
+        """
+        Split the structure into just the disordered groups fully occupied.
+        For each assembly, generates one structure per group where that group
+        is fully occupied.
+        
+        Args:
+            exclude_ordered (bool): if True, exclude the ordered part of structure
+            
+        Returns:
+            list: List of Atoms objects, one for each fully occupied configuration
+        """
+        self.logger.debug("Splitting into major and minor components...")
+        configs = self._generate_configs(exclude_ordered=exclude_ordered, mode="components")
+        self.logger.debug(f"Generated {len(configs)} fully occupied configurations")
+        return configs
 
     def get_supercell_configs(
         self,
@@ -389,8 +275,8 @@ class OrderedfromDisordered:
         # pre-compute all primitive cells
         self.logger.debug("Pre-computing all primitive configurations...")
         self.ratio_tolerance = ratio_tolerance
-        if ratio and not fix_ratio:
-            self.logger.warn(
+        if not fix_ratio and ratio:
+            self.logger.warning(
                 "Warning! ratio is specified but fix_ratio is False. Ignoring ratio."
             )
 
@@ -405,11 +291,8 @@ class OrderedfromDisordered:
                 # this seems to be get pretty slow for large numbers of images
                 self.logger.warn(
                     "Warning: reloading molecular crystals is slow for this many images.\n"
-                    "Consider skipping this step with the --not_molecular_crystal flag!\n"
-                    "We will use a cheaper method to reload the images as molecular crystals instead\n"
-                    " -- assuming the connectivity is the same for each image"
+                    "Consider not loading as molecular crystals if you don't need to."
                 )
-                cheap_method = True
 
             self.images = reload_as_molecular_crystal(self.images, cheap=cheap_method)
         ########################################
@@ -465,11 +348,9 @@ class OrderedfromDisordered:
             # maxiters and ncombinations
             n_configs = min([maxiters, ncombinations])
             if n_configs < ncombinations:
-                self.logger.warn(
-                    f"""
-                Warning: maxiters ({maxiters}) is smaller than the total number of configs ({ncombinations})
-                We will only generate {n_configs} configs.
-                You might want to consider increasing maxiters or using the --random flag"""
+                self.logger.warning(
+                    f"""Warning: maxiters ({maxiters}) is smaller than the total number of configs ({ncombinations})
+                    Selection will be random and may miss some important configurations."""
                 )
 
         all_supercells = []
@@ -490,7 +371,7 @@ class OrderedfromDisordered:
                 break
             # make ncells copies of the relevant config
             self.logger.debug(f"         {config}")
-            all_supercells.append(self.get_supercell_config(config))
+            all_supercells.append(self._get_supercell_config(config))
             # TODO
             # check for overlapping atoms
             # cutoff = 0.25
@@ -570,9 +451,10 @@ class OrderedfromDisordered:
 
         # return filtered_combination
 
-    def get_supercell_config(self, config) -> Atoms:
+    def _get_supercell_config(self, config) -> Atoms:
         """
-        get a supercell config
+        get a supercell config. Note this relies on being called in the right 
+        place in get_supercell_configs - this could be improved!
 
         Args:
             config (np.array): array of integers of length Z*na*nb*nc
@@ -600,3 +482,76 @@ class OrderedfromDisordered:
             # add this block into the supercell
             supercell_atoms.extend(temp)
         return supercell_atoms
+
+    def _generate_configs(self, exclude_ordered=False, mode="all"):
+        """
+        Internal helper method to generate configurations.
+        
+        Args:
+            exclude_ordered (bool): if True, exclude the ordered part of structure
+            mode (str): Either "all" to generate all possible configurations or 
+                       "components" to generate only the major/minor components
+        
+        Returns:
+            list: List of Atoms objects for each configuration
+        """
+        # Set up base atoms object
+        if exclude_ordered:
+            atoms = Atoms(cell=self.disordered_structure.cell, pbc=True)
+        else:
+            atoms = self.disordered_structure.ordered_atoms.copy()
+            if len(atoms) > 0:
+                sg = self.disordered_structure.spacegroup
+                max_spacegroup_kinds = sg.tag_sites(atoms.get_scaled_positions()).max()
+                atoms.set_tags(0)
+
+        Z = self.disordered_structure.Z
+        correlated_assemblies = self.disordered_structure.correlated_assemblies
+        all_configs = []
+
+        for assembly in self.disordered_structure.disorder_assemblies:
+            asslabel = assembly.label
+            disorder_groups = assembly.disorder_groups
+            ngroups = len(disorder_groups)
+            
+            # Generate config indices based on mode
+            if mode == "all":
+                config_indices = itertools.product(range(ngroups), repeat=Z)
+            else:  # components mode
+                config_indices = ([i] * Z for i in range(ngroups))
+                
+            # Generate assembly configurations
+            assembly_configs = []
+            for config_idx in config_indices:
+                config_atoms = self.get_config(config_idx, asslabel)
+                labels = config_atoms.get_array("labels")
+                u, spacegroup_kinds = np.unique(labels, return_inverse=True)
+                config_atoms.set_array("spacegroup_kinds", spacegroup_kinds + 1)
+                assembly_configs.append(config_atoms)
+                
+            # Combine with previous assemblies
+            if all_configs:
+                if correlated_assemblies:
+                    # Add atoms from this assembly to existing configs
+                    assert len(assembly_configs) == len(all_configs)
+                    for i in range(len(assembly_configs)):
+                        temp = all_configs[i].copy()
+                        temp.extend(assembly_configs[i])
+                        all_configs[i] = temp
+                else:
+                    # Generate all combinations of assemblies
+                    ref_configs = [config.copy() for config in all_configs]
+                    all_configs = []
+                    for config1 in ref_configs:
+                        for config2 in assembly_configs:
+                            temp = config1.copy()
+                            temp.extend(config2)
+                            all_configs.append(temp)
+            else:
+                # First assembly
+                for config in assembly_configs:
+                    temp = atoms.copy()
+                    temp.extend(config)
+                    all_configs.append(temp)
+
+        return all_configs

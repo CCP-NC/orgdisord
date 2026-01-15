@@ -163,14 +163,14 @@ Constrained ratios of disorder components
     This feature is currently limited to simple cases where only 1 disorder assembly and 2 disorder groups are present.
 
 The code can also be used to generate structures with a specified ratio of disorder components.
-If the ``--fix_ratio`` flag is present, the code will only generate structures with a fixed ratio of disorder components.
+If the ``--fix-ratio`` flag is present, the code will only generate structures with a fixed ratio of disorder components.
 By default this ratio comes from the occupancies specified in the CIF file, but they can be overridden using the ``--ratios`` flag.
 For example, to generate only structures with 0.75 disorder group 1 and 0.25 disorder group 2:
 
 
 .. code-block:: console
 
-    orgdisord enumerate ABABUB.cif --prefix ababub --fix_ratio --ratio 0.75
+    orgdisord enumerate ABABUB.cif --prefix ababub --fix-ratio --ratio 0.75
 
 
 .. tip::

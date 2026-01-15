@@ -1,25 +1,48 @@
-"""
-Contains the class DisorderedStructure, which is used to represent a
-disordered structure.
+"""Module for representing disordered crystal structures.
+
+This module provides classes to represent and manipulate disordered crystal structures,
+with support for multiple disorder assemblies and groups. It handles both molecular
+and non-molecular crystals, tracking atomic positions, symmetry operations, and
+occupancies.
+
+Classes:
+    DisorderGroup: Represents a group of disordered atoms sharing occupancy
+    DisorderAssembly: Collection of related disorder groups
+    DisorderedStructure: Complete representation of a disordered crystal structure
 """
 from logging import warning
-from orgdisord.utils import molecule_collide, get_unique_atoms, standardise_cell
+from orgdisord.utils import get_unique_atoms, standardise_cell
 from dataclasses import dataclass
-from typing import List, Tuple, Union
-from ase import Atoms, Atom
-from ase.cell import Cell
+from typing import List, Tuple, Optional
 from ase.spacegroup import Spacegroup, get_spacegroup
 from ase.geometry import find_mic
+from ase import Atoms
 import numpy as np
 import warnings
 
 
 @dataclass
 class DisorderGroup:
-    """
-    A class for representing a disorder group.
-    This contains the fractional coordinates of the atoms in the group,
-    their symbols and their symmetry operations.
+    """A group of atoms that represent one possible arrangement in a disorder.
+    
+    This class represents a set of atoms that share the same occupancy in a
+    disordered structure. The atoms in a group are related by symmetry operations
+    and together represent one possible configuration of the disorder.
+    
+    Attributes:
+        label (str): Unique identifier for this disorder group
+        atoms (Atoms): ASE Atoms object containing the atomic positions and properties
+        symmetry_operations (List[Tuple[np.ndarray, np.ndarray]]): Symmetry operations 
+            defining equivalent positions
+        occupancy (Optional[float]): Site occupancy factor for this group
+        special_disorder_symmetry (bool): Whether this group has special symmetry handling
+        tag (Optional[int]): Numeric identifier used in visualization/analysis
+    
+    Requirements:
+        The atoms object must have:
+            - A defined unit cell
+            - A "labels" array containing atom labels
+            - Optional "occupancies" array if occupancy not specified
     """
 
     label: str
@@ -27,34 +50,24 @@ class DisorderGroup:
     #       cell
     #       positions
     #       symbols
-    #       occupancies array
     #       labels array
     atoms: Atoms
-    # list of symmetry operations
     symmetry_operations: List[Tuple[np.ndarray, np.ndarray]]
-    occupancy: float = None
+    occupancy: Optional[float] = None
     special_disorder_symmetry: bool = False
-    tag: int = None
+    tag: Optional[int] = None
 
-    def __post_init__(self):
-        # check that atoms object has some custom attributes
-        assert hasattr(self.atoms, "cell")
-        assert self.atoms.has("labels")
+    def __post_init__(self) -> None:
+        """Validate and initialize the disorder group."""
+        if not hasattr(self.atoms, "cell"):
+            raise ValueError("Atoms object must have a defined unit cell")
+        if not self.atoms.has("labels"):
+            raise ValueError("Atoms object must have a 'labels' array")
 
         self._process_occupancies()
-        # if self.occupancy:
-        #     if not self.atoms.has('occupancies'):
-        #         self.atoms.new_array('occupancies', [self.occupancy] * len(self.atoms))
-        # else:
-        #     assert self.atoms.has('occupancies')
-        #     self.occupancy = self.atoms.get_array('occupancies').mean()
-        # Get subset of group symmetry operations
-        # self.symmetry_operations = self.get_group_symmetry_operations()
-        # if label has a - in it, then it's a special disorder group
-        if "-" in self.label:
-            self.special_disorder_symmetry = True
-        else:
-            self.special_disorder_symmetry = False
+        
+        # Set special symmetry flag based on label format
+        self.special_disorder_symmetry = "-" in self.label
 
     def _process_occupancies(self) -> None:
         """
@@ -102,10 +115,12 @@ class DisorderGroup:
         if self.special_disorder_symmetry:
             # assert Z != len(all_symmetry_operations)
             nsubgroups = len(all_symmetry_operations) // Z
+            print(f"Found {nsubgroups} subgroups")
             ## chunk into subgroups
             group_symmetry_operations = [
                 all_symmetry_operations[i::nsubgroups] for i in range(nsubgroups)
             ]
+            print(f"Group symmetry operations: {group_symmetry_operations}")
         else:
             ## otherwise use all symmetry operations
             group_symmetry_operations = all_symmetry_operations
@@ -137,15 +152,20 @@ class DisorderGroup:
 
 @dataclass
 class DisorderAssembly:
-    """
-    A class for representing a disorder assembly.
-    An assembly is a list of DisorderGroups
+    """A collection of disorder groups that together represent a specific 
+    arrangement of a disordered structure.
+
+    Attributes:
+        label (str): Unique identifier for this disorder assembly
+        disorder_groups (List[DisorderGroup]): List of disorder groups in this assembly
+        ngroups (int): Number of disorder groups in the assembly
+        tag (Optional[int]): Numeric identifier used in visualization/analysis
     """
 
     label: str
     disorder_groups: List[DisorderGroup]
     ngroups: int = None
-    tag: int = None
+    tag: Optional[int] = None
 
     def __post_init__(self):
         """
@@ -174,8 +194,21 @@ class DisorderAssembly:
 
 @dataclass
 class DisorderedStructure:
-    """
-    A class for representing a disordered structure.
+    """A disordered structure consisting of multiple disorder assemblies.
+
+    This class represents a crystal structure that exhibits disorder, which can
+    be due to the presence of different atomic or molecular species at certain
+    positions.
+
+    Attributes:
+        ordered_atoms (Atoms): The atoms in the structure, in a standard orientation
+        Z (int): Number of molecular units in the primitive cell
+        spacegroup (Spacegroup): The spacegroup of the structure
+        disorder_assemblies (List[DisorderAssembly]): List of disorder assemblies in 
+            the structure
+        molecular_crystal (bool): Should the system be treated as a molecular crystal?
+        correlated_assemblies (bool): Are the assemblies in the structure correlated 
+            with each other?
     """
 
     # The list of atoms in the structure.
@@ -254,40 +287,33 @@ class DisorderedStructure:
 def from_disorder_components(
     atoms_maj,
     atoms_min,
-    tolerance=1e-2,
-    symprec=1e-3,
+    tolerance=1e-4,
+    symprec=1e-4,
     ratio=None,
     group_occupancies=None,
 ):
-    """
-    Given the major and minor components of a disordered structure,
-    (i.e. two fully ordered structures representing the two disordered structures)
-    return a DisorderedStructure object.
-
-    Limitations: At the moment it only works for 1 assembly and two groups.
-
-    We also need to generalise the choice of symmetry operation subset!
+    """Create a disordered structure from two components.
 
     Args:
-        atoms_maj (Atoms): The P1, ordered major component of the disordered structure.
-        atoms_min (Atoms): The P1, ordered minor component of the disordered structure.
-        tolerance (float): The tolerance for determining if two atoms in the same position. (Å)
-        symprec   (float): Tolerance used for finding the spacegroup using spglib).
-        ratio     (float): The ratio of the occupancies of the two groups.
-                           For example 0.75 means that the major component
-                           has an occupancy of 0.75.
-                           If None, then the ratio is determined from the
-                           occupancies of the atoms in the two structures
-                           or the ``group_occupancies``.
-        group_occupancies (list): The occupancies of the two groups.
-                                  If None, then the occupancies are
-                                  determined from the occupancies of
-                                  the atoms in the two structures.
+        atoms_maj (Atoms): ASE Atoms object representing the major component
+        atoms_min (Atoms): ASE Atoms object representing the minor component
+        tolerance (float, optional): Tolerance for comparing coordinates. Defaults to 1e-4.
+        symprec (float, optional): Tolerance for symmetry operations. Defaults to 1e-4.
+        ratio (float, optional): Ratio of major to minor components. Defaults to None.
+        group_occupancies (list, optional): List of occupancies for each disorder group.
+            Defaults to None.
 
     Returns:
-        DisorderedStructure: The disordered structure.
+        DisorderedStructure: A disordered structure object
     """
-    # convert the structures to the standardised cell for this spacegroup
+    # # Add labels array if not present
+    # if not atoms_maj.has('labels'):
+    #     atoms_maj.set_array('labels', [f"{sym}{i}" for i, sym in enumerate(atoms_maj.get_chemical_symbols())])
+    # if not atoms_min.has('labels'):
+    #     atoms_min.set_array('labels', [f"{sym}{i}" for i, sym in enumerate(atoms_min.get_chemical_symbols())])
+
+    # # Get spacegroup and standardise cell
+    # sg = get_spacegroup(atoms_maj, symprec=symprec)
     atoms_maj = standardise_cell(atoms_maj, symprec=symprec)
     atoms_min = standardise_cell(atoms_min, symprec=symprec)
 
@@ -334,11 +360,21 @@ def from_disorder_components(
         [i for i in range(len(atoms_maj)) if i not in diff_idx]
     ].copy()
 
+    print(
+        f"""
+    The major and minor components have {len(atoms_maj)} and {len(atoms_min)} atoms respectively.
+    The number of atoms that are different is {len(diff_idx)}.
+    The number of atoms that are the same is {len(ordered_atoms)}.
+    The number of atoms in the ordered structure is {len(ordered_atoms)}.
+    The number of atoms in the major component is {len(maj_atoms)}.
+    The number of atoms in the minor component is {len(min_atoms)}.
+    """    )    
+
     sg = get_spacegroup(ordered_atoms, symprec=symprec)
 
     # get just the asymmetric cell atoms
-    maj_atoms, maj_Z = get_unique_atoms(maj_atoms, sg, symprec=symprec)
-    min_atoms, min_Z = get_unique_atoms(min_atoms, sg, symprec=symprec)
+    maj_atoms, maj_Z = get_unique_atoms(maj_atoms, get_spacegroup(atoms_maj, symprec=symprec), symprec=symprec)
+    min_atoms, min_Z = get_unique_atoms(min_atoms, get_spacegroup(atoms_min, symprec=symprec), symprec=symprec)
 
     if maj_Z != min_Z:
         raise ValueError(
@@ -397,5 +433,4 @@ def from_disorder_components(
         molecular_crystal=True,
     )
 
-    # return disordered structure
     return ds

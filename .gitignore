@@ -34,9 +34,14 @@ wheels/
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
+# Various temporary files
 scrap/
 examples/*-results/
 examples/orgdisord*.log
+*-results/
+orgdisord.csv
+orgdisord_thermo.csv
+
 # Unit test / coverage reports
 htmlcov/
 .tox/
@@ -107,3 +112,6 @@ ENV/
 # IDE settings
 .vscode/
 .idea/
+
+# pip wheel cache
+pip-wheel-metadata/

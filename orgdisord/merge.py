@@ -1,11 +1,8 @@
 """This module implements several structure merging strategies 
 to reduce a list of ASE atoms objects to the symmetry inequivalent ones."""
 
-
-# import modules
 import numpy as np
 from typing import List, Tuple
-
 import logging
 from multiprocessing import Pool, cpu_count
 
@@ -13,10 +10,8 @@ from multiprocessing import Pool, cpu_count
 try:
     from tqdm import tqdm
 except ImportError:
-
     def tqdm(x, **kwargs):
         return x
-
 
 logger = logging.getLogger("orgdisord.merge")
 
@@ -251,6 +246,7 @@ def merge_symm(
     pbar = tqdm(
         desc="Checking symmetry-equivalence", total=len(unmatched), disable=quiet
     )
+
     # loop over unmatched images
     while len(unmatched) > 0:
         ref = unmatched.pop(0)
@@ -294,19 +290,18 @@ def rematcher(re, features1, features2, eps):
 def merge_rematch(supercell_images, eps=1e-3, quiet=False, parallel=True):
     """
     This merging algorithm creates a fingerprint for each structure
-    bases on the SOAP representation and then used the
-    ReMatch kernel  to try to find equivalences.
+    based on the SOAP representation and then uses the
+    ReMatch kernel to try to find equivalences.
 
-    It contains a number of parameters that would need to be fine tuned
-    In my testing, it works pretty well for small systems, but
-    it overzealous at merging larger systems...
+    Args:
+        supercell_images (list): A list of ASE atoms objects
+        eps (float): Tolerance for structure similarity
+        quiet (bool): If True, suppress progress output
+        parallel (bool): If True, use parallel processing
 
-    More work is necessary!
-
+    Returns:
+        list: Groups of symmetry-equivalent structures
     """
-    # try to import dscribe
-    # if it's not available, raise an error, and suggest installing orgdisord with the
-    # ML option
     try:
         from dscribe.descriptors import SOAP
         from dscribe.kernels import REMatchKernel
@@ -319,28 +314,24 @@ def merge_rematch(supercell_images, eps=1e-3, quiet=False, parallel=True):
 
     ncores = 1
     if parallel:
-        # we can only run efficiently on about 100 structures per core
-        # fewer than that and we'll just use serial
         ncores = min([cpu_count(), len(supercell_images) // 100 + 1])
     logger.info(f"Running ReMatch algo using {ncores} cores")
     nimages = len(supercell_images)
-    # assumes supercells [0] and [-1] will cover all unique species
-    disordered_species_set = set(
-        [
-            [atom.symbol for atom in atoms if atom.tag != 0]
-            for atoms in [supercell_images[0], supercell_images[-1]]
-        ]
-    )
+    
+    # Get unique species from disordered sites
+    disordered_species = set()
+    for atoms in [supercell_images[0], supercell_images[-1]]:
+        species = frozenset(atom.symbol for atom in atoms if atom.tag != 0)
+        disordered_species.update(species)
 
     desc = SOAP(
-        species=disordered_species_set,
-        rcut=7.5,
-        nmax=2,
-        lmax=1,
+        species=list(disordered_species),
+        r_cut=7.5,  # Changed from rcut to r_cut
+        n_max=2,    # Changed from nmax to n_max
+        l_max=1,    # Changed from lmax to l_max
         sigma=0.5,
         periodic=True,
-        crossover=True,
-        sparse=False,
+        sparse=False
     )
     logger.info(f"generating descriptors for {nimages} atoms objects")
     features = desc.create(supercell_images, n_jobs=ncores, verbose=not quiet)
@@ -416,7 +407,7 @@ def merge_ewald(
 
     # check if oxidation states are provided
     if oxidation_states is None:
-        raise ValueError("Oxidation states must be provided")
+        raise ValueError("oxidation_states must be provided")
 
     logger.info("Adding oxidation states")
     # convert to pymatgen structure
