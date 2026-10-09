@@ -28,6 +28,7 @@ dependencies = [
     "tqdm>=4.63.0",
     "pandas>=1.3",
     "scipy",
+    "spglib",
 ]
 
 [tool.setuptools.dynamic]

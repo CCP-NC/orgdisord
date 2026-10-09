@@ -1,13 +1,11 @@
 """This module implements several structure merging strategies 
 to reduce a list of ASE atoms objects to the symmetry inequivalent ones."""
 
-
-# import modules
 import numpy as np
-from typing import List, Tuple
-
 import logging
 from multiprocessing import Pool, cpu_count
+from scipy.spatial import cKDTree
+from ase.build.supercells import lattice_points_in_supercell
 
 # try to import tqdm if not define dummy version
 try:
@@ -21,10 +19,110 @@ except ImportError:
 logger = logging.getLogger("orgdisord.merge")
 
 
+class NonDiscreteSitesError(ValueError):
+    """The atoms do not sit on a discrete set of sites closed under the symmetry
+    operations, so canonical labelling cannot be used."""
+
+
+def _wrap(x):
+    """Wrap fractional coordinates into [0, 1).
+
+    A plain ``np.mod(x, 1.0)`` returns exactly 1.0 for tiny negative inputs
+    (e.g. -1e-17), which a periodic ``cKDTree`` rejects.
+    """
+    x = np.mod(x, 1.0)
+    return np.where(x >= 1.0, 0.0, x)
+
+
+def supercell_symops(symops, supercell=(1, 1, 1)):
+    """Convert unit-cell symmetry operations to the supercell frame.
+
+    The supercell lattice is P @ (unit-cell lattice). A unit-cell operation
+    ``u' = u R^T + t`` becomes ``x' = x (P R^T P^-1) + t P^-1`` in supercell
+    fractional coordinates x = u P^-1. Only operations that map the supercell
+    lattice onto itself (``P R^T P^-1`` integer) are symmetries of the supercell
+    as a periodic crystal, so the others are dropped. The pure unit-cell
+    translations that are distinct modulo the supercell are then composed with
+    the remaining operations, which makes the set a closed group.
+
+    Args:
+        symops (list): List of (rotation_matrix, translation_vector) tuples in
+            unit-cell fractional coordinates.
+        supercell (None, length-3 sequence or 3x3 array): the diagonal repeat
+            (na, nb, nc) or the integer transformation matrix P.
+
+    Returns:
+        list: List of (rotation_sc, translation_sc) tuples in supercell
+        fractional coordinates.
+    """
+    if supercell is None:
+        supercell = (1, 1, 1)
+    arr = np.asarray(supercell)
+    if arr.shape not in [(3,), (3, 3)]:
+        raise ValueError(f"supercell must be length 3 or 3x3, got shape {arr.shape}")
+    if not np.allclose(arr, np.round(arr)):
+        raise ValueError(f"Supercell must contain integers only, got {supercell}")
+    P = np.round(arr).astype(int)
+    if P.ndim == 1:
+        P = np.diag(P)
+    det = int(round(np.linalg.det(P)))
+    if det == 0:
+        raise ValueError(f"Supercell matrix has zero determinant: {supercell}")
+    if det < 0:
+        P = -P
+    if np.array_equal(P, np.eye(3, dtype=int)):
+        return list(symops)
+
+    Pinv = np.linalg.inv(P)
+    shifts = lattice_points_in_supercell(P)
+
+    out = []
+    dropped = 0
+    for rot, trans in symops:
+        rot_sc = (P @ np.asarray(rot, dtype=float).T @ Pinv).T
+        if not np.allclose(rot_sc, np.round(rot_sc), atol=1e-8):
+            dropped += 1
+            continue
+        trans_sc = np.asarray(trans, dtype=float) @ Pinv
+        for s in shifts:
+            out.append((rot_sc, _wrap(trans_sc + s)))
+    if dropped:
+        logger.warning(
+            f"{dropped} of {len(symops)} symmetry operations do not map the "
+            "supercell lattice onto itself and were ignored: configurations "
+            "related only by these are treated as distinct."
+        )
+    return out
+
+
+def _extract_positions_and_symbols(images, use_disordered_only=True):
+    """Return wrapped fractional positions and symbols for each image.
+
+    If ``use_disordered_only`` is True but an image has no tagged (tag != 0)
+    atoms, all of its atoms are used.
+    """
+    frac_positions = []
+    symbols = []
+    for atoms in images:
+        current_symbols = np.array(atoms.get_chemical_symbols())
+        current_positions = atoms.get_scaled_positions()
+        if use_disordered_only:
+            disordered_idx = np.where(atoms.get_tags() != 0)[0]
+            if len(disordered_idx) == 0:
+                disordered_idx = np.arange(len(atoms))
+            frac_positions.append(_wrap(current_positions[disordered_idx]))
+            symbols.append(current_symbols[disordered_idx])
+        else:
+            frac_positions.append(_wrap(current_positions))
+            symbols.append(current_symbols)
+    return frac_positions, symbols
+
+
 def merge_structures(
     images,
     algo="symm",
     symops=None,
+    supercell=None,
     use_disordered_only=True,
     symprec=1e-3,
     oxidation_states=None,
@@ -36,9 +134,19 @@ def merge_structures(
 
     Args:
         images (list): A list of ASE atoms objects.
-        algo (str): The merging algorithm. Default is 'symm'.
-        symops (list): A list of tuples: (rotation, translation).
-                          Note: we skip the first one assuming it's the identity.
+        algo (str): The merging algorithm. Default is 'symm': canonical labelling,
+                    falling back (with a warning) to the much slower pairwise
+                    comparison if the atoms are not on a discrete symmetric set of
+                    sites. 'canonical' is the same without the fallback (raises
+                    NonDiscreteSitesError); 'pairwise' always compares pairs.
+                    Other options are 'rematch' and 'ewald'.
+        symops (list): A list of tuples: (rotation, translation) in unit-cell coordinates.
+        supercell (None, length-3 sequence or 3x3 integer matrix): The supercell the
+                    images were built in: the diagonal repeat (na, nb, nc) or the
+                    transformation matrix P (supercell lattice = P @ unit-cell
+                    lattice). Used to convert symmetry operations to the supercell
+                    frame; must match how the images were generated. Translations by
+                    unit-cell lattice vectors are treated as equivalences.
         use_disordered_only (bool): If True, use the disordered atoms (tag != 0)
                                     instead of the full structure when comparing.
         symprec (float): The tolerance for symmetry equivalence.
@@ -53,9 +161,7 @@ def merge_structures(
     Returns:
         Tuple of one structure per group and the group multiplicity. If return_group_indices is True,
         the indices of the merged structures in the original list are also returned.
-
     """
-
     logger.debug("\n\n")
     logger.debug("-----------------------------")
     logger.debug("---  MERGING STRUCTURES  ---")
@@ -65,38 +171,45 @@ def merge_structures(
     if not check_species:
         logger.warning("WARNING: not checking species before comparing coordinates")
 
-    # get the number of atoms in each structure
-    natoms = [len(atoms) for atoms in images]
+    if len(images) == 0:
+        return ([], []) if return_group_indices else []
 
-    # TODO does this help?
-    # sort the structures by the number of atoms
-    # images = [images[i]
-    #           for i in sorted(range(len(natoms)),
-    #                           key=natoms.__getitem__,
-    #                           reverse=True)]
-
-    # call the merging algorithm
-    if algo == "symm":
-        # if symops is not provided, raise an error
+    if algo in ("symm", "canonical", "pairwise"):
         if symops is None:
-            raise ValueError(
-                "symops must be provided for the symmetric merging algorithm"
+            raise ValueError(f"symops must be provided for the '{algo}' merge algorithm")
+        sc_symops = supercell_symops(symops, supercell)
+        groups = None
+        if algo in ("symm", "canonical"):
+            try:
+                groups = merge_canonical(
+                    images,
+                    sc_symops,
+                    symprec=symprec,
+                    use_disordered_only=use_disordered_only,
+                    check_species=check_species,
+                )
+            except NonDiscreteSitesError as e:
+                if algo == "canonical":
+                    raise
+                logger.warning(
+                    f"Canonical merge not applicable ({e}); falling back to the "
+                    "much slower pairwise symmetry merge."
+                )
+        if groups is None:
+            groups = merge_symm(
+                images,
+                sc_symops,
+                use_disordered_only=use_disordered_only,
+                symprec=symprec,
+                quiet=quiet,
+                check_species=check_species,
             )
-        groups = merge_symm(
-            images,
-            symops,
-            use_disordered_only=use_disordered_only,
-            symprec=symprec,
-            quiet=quiet,
-            check_species=check_species,
-        )
     elif algo == "rematch":
         groups = merge_rematch(images, eps=symprec, quiet=quiet)
     elif algo == "ewald":
         groups = merge_ewald(
             images, oxidation_states, eps=symprec, parallel=True, quiet=quiet
         )
-
     else:
         raise ValueError("Unknown merging algorithm: {}".format(algo))
 
@@ -111,115 +224,125 @@ def merge_structures(
         return merged_images
 
 
-def coords_match_symmops(
-    ref: Tuple[int, np.ndarray, List],
-    to_match: Tuple[int, np.ndarray, List],
+def merge_canonical(
+    supercell_images,
     symops,
     symprec=1e-4,
+    use_disordered_only=True,
     check_species=True,
 ):
-    """
-    Check if two sets of coordinates match under any of the
-    symmetry operations of the crystal
-    and under permutations of the order of the atoms.
+    """Group structures into symmetry-inequivalent orbits using canonical labelling.
+
+    Builds a shared discrete site template across all images, closes it under the
+    symmetry operations, and maps each image to an occupancy vector over the template.
+    The canonical key for each image is the lexicographical minimum of the occupancy
+    vector across all symmetry operations in the group.
 
     Args:
-        ref ((int, np.array, list)): A reference tuple of (index, coords, symbols) .
-        to_match ((int, np.array, list)): A tuple of (index, coords, symbols) to check against the ref.
-        symops (list): A list of tuples: (rotation, translation).
-                       Note: we skip the first one assuming it's the identity.
-        symprec (float): The tolerance for the similarity.
+        supercell_images (list): List of ASE Atoms objects.
+        symops (list): List of (rotation, translation) symmetry operations in
+            supercell fractional coordinates (see ``supercell_symops``).
+        symprec (float): Tolerance for site mapping, in fractional coordinates
+            of the supercell.
+        use_disordered_only (bool): If True, compare only disordered atoms (tag != 0).
+        check_species (bool): If True, differentiate atom species.
 
     Returns:
-        bool: True if the coordinates match, else False
+        list of list of int: Grouped indices of equivalent images.
 
-
+    Raises:
+        NonDiscreteSitesError: if the atoms are not on a discrete set of sites
+            closed under ``symops``.
     """
-    thesame = False
-    _, coords_ref, symbols_ref = ref
-    _, coords_to_match, symbols_to_match = to_match
+    if not supercell_images:
+        return []
 
-    # check the species match
-    if check_species:
-        # Set of species must be the same (ignoring number and order)
-        if set(symbols_ref) != set(symbols_to_match):
-            return False
-        else:
-            # check that the number of each species matches
-            # Note that this still allows for different orderings
-            # of the species. Later we will check that the orderings
-            # match, but we can't do that until we've checked the
-            # symmetry operations to see which positions map to which
-            # positions
-            for symbol in set(symbols_ref):
-                if symbols_ref.count(symbol) != symbols_to_match.count(symbol):
-                    return False
+    pos, sym = _extract_positions_and_symbols(
+        supercell_images, use_disordered_only=use_disordered_only
+    )
 
-    # loop over all symmetry operations
-    a1 = np.mod(coords_ref, 1.0)
-    for symop in symops:
-        rot, trans = symop
-        a2 = np.mod((np.dot(rot, coords_to_match.T).T + trans), 1.0)
-        matching_coords, mapping = coords_match(
-            a1, a2, symprec=symprec, return_indices=True
-        )
-        if matching_coords:
-            if check_species:
-                # make sure the species match when reordered
-                # according to the positions
-                if not all(
-                    [
-                        symbols_ref[mapping[i]] == symbols_to_match[i]
-                        for i in range(len(symbols_ref))
-                    ]
-                ):
-                    logger.debug("species don't match despite coords matching")
-                    logger.debug("mapping: {}".format(mapping))
-                    continue
-            thesame = True
+    # 1. Build unique site template from all images
+    sites_list = []
+    tree = None
+    for p in pos:
+        for pt in p:
+            if tree is None:
+                sites_list.append(pt)
+                tree = cKDTree(np.array(sites_list), boxsize=1.0)
+            else:
+                d, _ = tree.query(pt, p=np.inf, distance_upper_bound=symprec)
+                if not np.isfinite(d):
+                    sites_list.append(pt)
+                    tree = cKDTree(np.array(sites_list), boxsize=1.0)
 
-            # break out of trying all the symmetry
-            # operations, we're done...
+    sites = np.array(sites_list)
+
+    # 2. Close template under all symmetry operations
+    max_sites = 25 * max(len(p) for p in pos)
+    iterations = 0
+    while True:
+        iterations += 1
+        if iterations > 30 or len(sites) > max_sites:
+            raise NonDiscreteSitesError(
+                f"Template closure did not converge (sites={len(sites)}, iter={iterations}). "
+                "Symmetry operations may not form a closed group on this lattice."
+            )
+        added = 0
+        for r, t in symops:
+            cand = _wrap(sites @ r.T + t)
+            for pt in cand:
+                d, _ = tree.query(pt, p=np.inf, distance_upper_bound=symprec)
+                if not np.isfinite(d):
+                    sites = np.vstack([sites, pt])
+                    tree = cKDTree(sites, boxsize=1.0)
+                    added += 1
+        if added == 0:
             break
 
-    return thesame
+    tree = cKDTree(sites, boxsize=1.0)
+    nsites = len(sites)
 
+    # 3. Permutation of template sites under each symmetry operation
+    perms = []
+    for r, t in symops:
+        trans_sites = _wrap(sites @ r.T + t)
+        d, idx = tree.query(trans_sites, p=np.inf, distance_upper_bound=symprec)
+        if not np.all(np.isfinite(d)) or len(np.unique(idx)) != len(idx):
+            raise NonDiscreteSitesError(
+                "Template sites do not permute bijectively under symops."
+            )
+        perms.append(idx)
+    perms = np.array(perms)  # shape: (n_symops, nsites)
 
-def compare_ref_unmatched(
-    ref, unmatched, symops, symprec=1e-4, parallel=True, check_species=True
-):
-    """
-    compare lists of fractional coordinates with reference
-    return the indices of the unmatched atoms
+    # 4. Map chemical symbols to integer codes
+    all_species = sorted({s for s_list in sym for s in s_list})
+    codes = {s: k + 1 for k, s in enumerate(all_species)}
 
-    """
+    # 5. Compute canonical key for each image
+    keys = []
+    for p, s in zip(pos, sym):
+        d, idx = tree.query(p, p=np.inf, distance_upper_bound=symprec)
+        if not np.all(np.isfinite(d)) or len(np.unique(idx)) != len(idx):
+            raise NonDiscreteSitesError(
+                "Image atoms do not map uniquely onto template sites."
+            )
 
-    if parallel:
-        # we can only run efficiently on about 100 structures per core
-        # fewer than that and we'll just use serial
-        ncores = min([cpu_count(), len(unmatched) // 100])
-    if parallel and ncores > 1:
-        pool = Pool(processes=ncores)
-        argument_list = [
-            (ref, unmatched_i, symops, symprec, check_species)
-            for unmatched_i in unmatched
-        ]
-        jobs = [
-            pool.apply_async(func=coords_match_symmops, args=(*argument,))
-            for argument in argument_list
-        ]
-        pool.close()
-        mask = []
-        for job in jobs:
-            mask.append(job.get())
-    else:
-        mask = [
-            coords_match_symmops(ref, unmatched_i, symops, symprec, check_species)
-            for unmatched_i in unmatched
-        ]
-    matching_inds = np.where(mask)[0]
+        labels = np.zeros(nsites, dtype=np.int16)
+        if check_species:
+            labels[idx] = [codes[x] for x in s]
+        else:
+            labels[idx] = 1
 
-    return matching_inds
+        permuted = labels[perms]
+        min_key = min(row.tobytes() for row in permuted)
+        keys.append(min_key)
+
+    # 6. Group indices by canonical key
+    groups_dict = {}
+    for i, key in enumerate(keys):
+        groups_dict.setdefault(key, []).append(i)
+
+    return list(groups_dict.values())
 
 
 def merge_symm(
@@ -230,43 +353,75 @@ def merge_symm(
     quiet=False,
     check_species=True,
 ):
-    frac_positions = []
-    symbols = []
-    for atoms in supercell_images:
-        current_symbols = atoms.get_chemical_symbols()
-        current_positions = atoms.get_scaled_positions()
-        if use_disordered_only:
-            disordered_idx = np.where(atoms.get_tags() != 0)[0]
-            frac_positions.append(current_positions[disordered_idx])
-            symbols.append([current_symbols[i] for i in disordered_idx])
-        else:
-            frac_positions.append(current_positions)
-            symbols.append(current_symbols)
+    """Pairwise symmetry merge using periodic KD-tree matching.
 
+    Args:
+        supercell_images (list): List of ASE Atoms objects.
+        symops (list): List of (rotation, translation) symmetry operations.
+        symprec (float): Tolerance in fractional coordinates.
+        use_disordered_only (bool): If True, use only disordered atoms.
+        quiet (bool): If True, suppress progress bar.
+        check_species (bool): If True, check species.
+
+    Returns:
+        list of list of int: Grouped indices of equivalent images.
+    """
+    pos, sym = _extract_positions_and_symbols(
+        supercell_images, use_disordered_only=use_disordered_only
+    )
+
+    unmatched = list(range(len(pos)))
     all_groups = []
-    # create a list of (index, frac_positions, symbols) tuples
-    unmatched = [(i, frac_positions[i], symbols[i]) for i in range(len(symbols))]
 
-    # set up progress bar
     pbar = tqdm(
         desc="Checking symmetry-equivalence", total=len(unmatched), disable=quiet
     )
-    # loop over unmatched images
-    while len(unmatched) > 0:
-        ref = unmatched.pop(0)
-        matches = [ref[0]]
-        inds = compare_ref_unmatched(
-            ref, unmatched, symops, symprec=symprec, check_species=check_species
-        )
-        matches.extend([unmatched[i][0] for i in inds])
-        unmatched = [unmatched[i] for i in range(len(unmatched)) if i not in inds]
-        all_groups.append(matches)
-        # update the progress bar
-        for match in matches:
-            pbar.update(1)
-    pbar.close()
 
-    # return groups
+    while len(unmatched) > 0:
+        ref_idx = unmatched.pop(0)
+        matches = [ref_idx]
+        tree_ref = cKDTree(pos[ref_idx], boxsize=1.0)
+        ref_sym = sym[ref_idx]
+        n_ref = len(ref_sym)
+
+        remaining_unmatched = []
+        for other_idx in unmatched:
+            oth_p = pos[other_idx]
+            oth_s = sym[other_idx]
+            if len(oth_s) != n_ref:
+                remaining_unmatched.append(other_idx)
+                continue
+
+            if check_species and sorted(ref_sym) != sorted(oth_s):
+                remaining_unmatched.append(other_idx)
+                continue
+
+            is_match = False
+            for rot, trans in symops:
+                a2 = np.mod(oth_p @ rot.T + trans, 1.0)
+                d, mapping = tree_ref.query(
+                    a2, p=np.inf, distance_upper_bound=symprec
+                )
+                if not np.all(np.isfinite(d)):
+                    continue
+                if len(np.unique(mapping)) != len(mapping):
+                    continue
+                if check_species and not np.array_equal(oth_s, ref_sym[mapping]):
+                    continue
+                is_match = True
+                break
+
+            if is_match:
+                matches.append(other_idx)
+            else:
+                remaining_unmatched.append(other_idx)
+
+        unmatched = remaining_unmatched
+        all_groups.append(matches)
+        for _ in matches:
+            pbar.update(1)
+
+    pbar.close()
     return all_groups
 
 
@@ -363,35 +518,6 @@ def merge_rematch(supercell_images, eps=1e-3, quiet=False, parallel=True):
         all_groups.append(matches)
     # return groups
     return all_groups
-
-
-def coords_match(a1, a2, symprec=1e-4, return_indices=False):
-    """
-    Returns True if a1 and a2
-    are equal apart from a reordering of the
-    rows.
-
-    Args:
-        a1 (np.array): An array of coordinates.
-        a2 (np.array): An array of coordinates.
-        symprec (float): The tolerance for the similarity.
-        return_indices (bool): If True, return the mapping indices of the matching atoms.
-                               i.e. an array of indices such that a1[indices] == a2
-
-    """
-
-    # Normalise a1 and a2 to the unit cell
-    a1 = np.mod(a1, 1.0)
-    a2 = np.mod(a2, 1.0)
-
-    cmp = np.abs(a1[:, None] - a2) < symprec
-    eq = np.all(cmp, axis=-1)
-    number_of_matches = np.argwhere(eq).shape[0]
-    is_match = number_of_matches == a1.shape[0]
-    if return_indices:
-        indices = np.argwhere(eq)[:, 1]
-        return is_match, indices
-    return is_match
 
 
 def merge_ewald(

@@ -109,15 +109,19 @@ def cli():
 @click.option(
     "--algo",
     "-a",
-    type=click.Choice(["symm", "rematch", "ewald"]),
+    type=click.Choice(["symm", "canonical", "pairwise", "rematch", "ewald"]),
     default="symm",
-    help="Algorithm used for merging equivalent structures.",
+    help=(
+        "Algorithm used for merging equivalent structures. 'symm' uses fast "
+        "canonical labelling and falls back to slower pairwise comparison if the "
+        "atoms are not on symmetric sites; 'canonical' never falls back; "
+        "'pairwise' always compares pairs."
+    ),
 )
 # add option to specify use of disordered only in merging
 @click.option(
-    "--use_disordered_only",
+    "--use_disordered_only/--use_all_atoms",
     "-d",
-    is_flag=True,
     default=True,
     help="Use only the disordered part of structure in merging?",
 )
@@ -428,6 +432,7 @@ def main(
             images,
             algo=algo,
             symops=symops,
+            supercell=od.transformation_matrix,
             use_disordered_only=use_disordered_only,
             symprec=symprec,
             oxidation_states=oxidation_states,
