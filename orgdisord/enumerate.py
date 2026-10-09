@@ -10,6 +10,7 @@ from collections import Counter
 import itertools
 from tqdm import tqdm
 from scipy.spatial.distance import pdist
+from scipy.optimize import linear_sum_assignment
 import logging
 from orgdisord.utils import reload_as_molecular_crystal, random_product
 
@@ -81,76 +82,66 @@ def component_centroids(atoms, comps, mass_weighted=False):
         centroids.append(c)
     return np.array(centroids)
 
-def find_best_integer_shift_for_centroid(centroid, ref_centroid, cell, max_offset=1):
+def _nearest_image_vectors(centroids, ref_centroids, cell, search=1):
     """
-    Search integer offsets in [-max_offset..max_offset]^3 and return the offset vector
-    (integer triple) that makes centroid + offset@cell closest to ref_centroid.
+    For every (centroid, reference) pair return the integer lattice shift n that
+    minimises |ref - (centroid + n @ cell)|, and that minimal distance.
+
+    The search is centred on the rounded fractional difference, so it is exact
+    however many cells apart the two points are (`search` only covers the
+    residual error for strongly skewed cells).
+
+    Returns:
+        shifts (C, R, 3) int array, dist (C, R) float array
     """
-    best_off = np.array([0,0,0], dtype=int)
-    best_dist = np.linalg.norm(centroid - ref_centroid)
-    # iterate offsets (small cube). Increase max_offset if molecules can shift >1 cell
-    rng = range(-max_offset, max_offset+1)
-    for ox in rng:
-        for oy in rng:
-            for oz in rng:
-                off = np.array([ox, oy, oz], dtype=int)
-                cand = centroid + off @ cell
-                d = np.linalg.norm(cand - ref_centroid)
-                if d < best_dist - 1e-12:
-                    best_dist = d
-                    best_off = off.copy()
-    return best_off
+    cell = np.asarray(cell)
+    inv_cell = np.linalg.inv(cell)
+    diff = ref_centroids[None, :, :] - centroids[:, None, :]  # (C, R, 3)
+    base = np.round(diff @ inv_cell).astype(int)
+    rng = range(-search, search + 1)
+    window = np.array(list(itertools.product(rng, rng, rng)), dtype=int)  # (W, 3)
+    cand = base[:, :, None, :] + window[None, None, :, :]  # (C, R, W, 3)
+    resid = diff[:, :, None, :] - cand @ cell
+    dist = np.linalg.norm(resid, axis=-1)  # (C, R, W)
+    best = dist.argmin(axis=-1)  # (C, R)
+    ic, ir = np.indices(best.shape)
+    return cand[ic, ir, best], dist[ic, ir, best]
 
 
 def align_components_to_reference(atoms, reference_centroids, cell,
-                                  cutoff_scale=1.25, max_offset=1,
+                                  cutoff_scale=1.25, search=1,
                                   mass_weighted=False):
     """
     Align connected components (molecules) from `atoms` to reference_centroids by
     integer-cell translations. Returns a new ASE Atoms copy.
 
-    Matching is geometric and greedy (first come, first served): each component is
-    matched to the closest unused reference centroid. Components only ever move by
-    whole cell vectors, so the periodic structure is unchanged.
+    Each component is matched to a distinct reference centroid by minimising the
+    total nearest-image distance (optimal assignment), then shifted by the whole
+    lattice vector that puts its centroid in the same lattice image as its
+    reference. Components only ever move by whole cell vectors, so the periodic
+    structure is unchanged.
 
-    - max_offset: search range [-max_offset..max_offset] for each axis (default 1).
+    The result deliberately is NOT re-wrapped afterwards: the same physical
+    molecular site must sit in the same lattice image in every config, which is
+    what makes configs safe to mix tile by tile in a supercell.
+
+    Components left unmatched (more components than references) are not moved.
     """
     A = atoms.copy()
     comps = connected_components_indices(A, cutoff_scale=cutoff_scale)
+    if len(comps) == 0:
+        return A
     centroids = component_centroids(A, comps, mass_weighted=mass_weighted)
     ref = np.asarray(reference_centroids)
+    shifts, dist = _nearest_image_vectors(centroids, ref, cell, search=search)
+
+    rows, cols = linear_sum_assignment(dist)
     new_positions = A.get_positions().copy()
-
-    # Build mapping from components -> reference index
-    used_ref = np.zeros(len(ref), dtype=bool)
-
-    # create distance matrix considering integer shifts
-    for ic, comp in enumerate(comps):
-        ccent = centroids[ic]
-        # find best reference index and shift
-        best_ridx = None
-        best_off = None
-        best_d = 1e9
-        for ridx in range(len(ref)):
-            if used_ref[ridx]:
-                continue
-            off = find_best_integer_shift_for_centroid(ccent, ref[ridx], cell, max_offset=max_offset)
-            cand = ccent + off @ cell
-            d = np.linalg.norm(cand - ref[ridx])
-            if d < best_d:
-                best_d = d
-                best_ridx = ridx
-                best_off = off
-        if best_ridx is None:
-            continue
-        used_ref[best_ridx] = True
-        # apply shift immediately
-        new_positions[comp] += best_off @ cell
-
-    # Write positions back before computing "after" centroids
+    for ic, ir in zip(rows, cols):
+        new_positions[comps[ic]] += shifts[ic, ir] @ np.asarray(cell)
     A.set_positions(new_positions)
-
     return A
+
 
 def make_whole_molecule(atoms, cutoff_scale=1.25, preserve_pbc=False, exclude_hh=True):
     """
@@ -169,13 +160,19 @@ def make_whole_molecule(atoms, cutoff_scale=1.25, preserve_pbc=False, exclude_hh
 
     A = atoms.copy()
     cell = np.asarray(A.get_cell())    # 3x3 array
-    pos = A.get_positions().copy()
+    orig = A.get_positions().copy()
     numbers = A.get_atomic_numbers().astype(int)
     N = len(A)
 
     # Build neighborlist (per-atom cutoffs)
     nl = _build_neighborlist_for_atoms(A, cutoff_scale=cutoff_scale)
 
+    # shifts[i] is the accumulated integer lattice shift applied to atom i.
+    # The neighbour list returns, for each bond i-j, the exact image offset o
+    # such that orig[j] + o @ cell is bonded to orig[i], so a bonded neighbour
+    # simply inherits shifts[i] + o. This is exact however far a molecule
+    # extends from its seed atom (even over several cells).
+    shifts = np.zeros((N, 3), dtype=int)
     visited = np.zeros(N, dtype=bool)
     for start in range(N):
         if visited[start]:
@@ -186,37 +183,19 @@ def make_whole_molecule(atoms, cutoff_scale=1.25, preserve_pbc=False, exclude_hh
         visited[start] = True
         while queue:
             i = queue.pop(0)
-            pi = pos[i]
-
-            neighs, _ = nl.get_neighbors(i)
-            for j in neighs:
+            neighs, offsets = nl.get_neighbors(i)
+            for j, off in zip(neighs, offsets):
                 # Skip H-H pairs if configured
                 if exclude_hh and numbers[i] == 1 and numbers[j] == 1:
                     continue
-
                 if visited[j]:
                     continue
-
-                # For neighbor j try integer offsets in -1..1 in each cell direction
-                best_pos = None
-                best_dist = 1e9
-                for ox in (-1, 0, 1):
-                    for oy in (-1, 0, 1):
-                        for oz in (-1, 0, 1):
-                            off = np.array([ox, oy, oz], dtype=float)
-                            cand = pos[j] + off @ cell   # candidate Cartesian position
-                            d = np.linalg.norm(cand - pi)
-                            if d < best_dist:
-                                best_dist = d
-                                best_pos = cand
-
-                # place j at the chosen image position
-                pos[j] = best_pos
+                shifts[j] = shifts[i] + off
                 visited[j] = True
                 queue.append(j)
 
     # write back positions and clear PBC (unless preserve_pbc is True)
-    A.set_positions(pos)
+    A.set_positions(orig + shifts @ cell)
     if not preserve_pbc:
         A.set_pbc([False, False, False])
 
@@ -228,6 +207,9 @@ def wrap_components_into_cell(atoms):
     Shift each connected component (molecule) by whole cell vectors so that its
     centroid lies inside the cell. Molecules are kept whole; atoms of molecules
     larger than (or straddling) the cell may still lie outside [0, 1).
+
+    Only use this on a single reference structure: wrapping several configs
+    independently is discontinuous for molecules whose centroid is near a cell face.
 
     Returns a copy of `atoms`.
     """
@@ -435,8 +417,9 @@ class OrderedfromDisordered:
 
     def get_all_configs(self, exclude_ordered=False):
         """Generate all possible configs for the primitive cell and return them as
-        ASE Atoms objects with whole molecules, aligned to the first config's
-        layout and with each molecule wrapped into the cell.
+        ASE Atoms objects (pbc=False) with whole molecules, each in the same lattice
+        image as the corresponding molecule of the first config (whose molecules are
+        wrapped into the cell by centroid). Atoms may lie outside the cell.
         """
         cell = self.disordered_structure.cell
         Z = self.disordered_structure.Z
@@ -484,7 +467,7 @@ class OrderedfromDisordered:
                     "Treating the assemblies as uncorrelated "
                     "(i.e. the assemblies are independent) and we will therefore generate lots of structures!"
                 )
-                nconfigs = np.product(nconfigs_per_assembly)
+                nconfigs = np.prod(nconfigs_per_assembly)
         self.logger.debug(f"Generating {nconfigs} configs in primitive cell.")
         if nconfigs > 1e4:
             self.logger.warn(
@@ -569,10 +552,18 @@ class OrderedfromDisordered:
                     temp.extend(config)
                     all_configs.append(temp)
 
-        # Make molecules whole, align every config to the first one (so equivalent
-        # molecules sit in the same place), and wrap each molecule into the cell.
-        # This is done once per config here so get_supercell_config can simply
-        # copy, translate and tile these images.
+        # Make molecules whole and put every config's molecules in the same lattice
+        # image as the first config's. Only the reference is wrapped (by centroid);
+        # the others are aligned to it by nearest image and NOT re-wrapped. Wrapping
+        # each config by its own centroid would put a disordered molecule whose
+        # centroid sits near a cell face one lattice vector away in different
+        # configs, so mixed supercells would overlap that molecule with itself.
+        # Done once per config here so get_supercell_config can simply copy,
+        # translate and tile these images. Note the images are non-periodic
+        # (pbc=False): reload_as_molecular_crystal relies on that so its
+        # atoms.wrap() does not tear the molecules apart again.
+        if not all_configs:
+            return all_configs
         reference = wrap_components_into_cell(make_whole_molecule(all_configs[0]))
         cell = np.asarray(reference.get_cell())
         ref_comps = connected_components_indices(reference)
@@ -581,9 +572,8 @@ class OrderedfromDisordered:
         aligned_configs = []
         for cfg in all_configs:
             cfg = make_whole_molecule(cfg)
-            cfg = align_components_to_reference(cfg, ref_centroids, cell,
-                                                max_offset=1, mass_weighted=False)
-            aligned_configs.append(wrap_components_into_cell(cfg))
+            cfg = align_components_to_reference(cfg, ref_centroids, cell)
+            aligned_configs.append(cfg)
         all_configs = aligned_configs
 
         self.logger.debug(f"Generated {len(all_configs)} primitive configs")
@@ -841,8 +831,9 @@ class OrderedfromDisordered:
             # (primitive images are already whole and wrapped by get_all_configs)
             temp = self.images[c].copy()
 
-            # work out what the translation vector should be:
-            # amended to be consistant with select
+            # work out what the translation vector should be.
+            # The tile order is a convention (c varies fastest, like the config
+            # chunks read left to right); any bijection onto the tiles is valid.
             ic = icell % nc
             ib = (icell // nc) % nb
             ia = icell // (nc * nb)
