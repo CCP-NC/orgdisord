@@ -2,6 +2,7 @@
 import sys
 import os
 import click
+from click.core import ParameterSource
 from orgdisord.disordered_structure import from_disorder_components
 from orgdisord.parse_cif_file import CifParser
 from orgdisord.enumerate import OrderedfromDisordered
@@ -50,6 +51,32 @@ def cli():
     type=click.INT,
     default=[1, 1, 1],
     help="Supercell size e.g. 2 1 1",
+)
+@click.option(
+    "--matrix",
+    "-M",
+    nargs=9,
+    type=click.INT,
+    default=None,
+    help="3x3 supercell transformation matrix (9 integers: P00 P01 P02 P10 P11 P12 P20 P21 P22)",
+)
+@click.option(
+    "--target-size",
+    type=click.INT,
+    default=None,
+    help="Find the supercell of N unit cells whose shape is closest to --target-shape",
+)
+@click.option(
+    "--target-shape",
+    type=click.Choice(["sc", "fcc"]),
+    default="sc",
+    help="Target supercell shape used with --target-size ('sc' or 'fcc')",
+)
+@click.option(
+    "--score-key",
+    type=click.Choice(["length", "metric"]),
+    default="length",
+    help="Score used to rank supercells with --target-size ('length' or 'metric')",
 )
 # add option to specify max number of iterations
 @click.option(
@@ -200,6 +227,10 @@ def main(
     ctx,
     files,
     supercell,
+    matrix,
+    target_size,
+    target_shape,
+    score_key,
     maxiters,
     exclude_ordered,
     random,
@@ -222,6 +253,17 @@ def main(
     ignore_species,
 ):
     """Command line interface for orgdisord."""
+    supercell_given = (
+        ctx.get_parameter_source("supercell") == ParameterSource.COMMANDLINE
+    )
+    if sum([supercell_given, matrix is not None, target_size is not None]) > 1:
+        raise click.UsageError(
+            "Use only one of --supercell, --matrix or --target-size."
+        )
+    nfiles = len(files)
+    if nfiles not in (1, 2):
+        raise click.UsageError(f"Expected 1 or 2 CIF files, got {nfiles}.")
+
     # set up logging
     logging.basicConfig(
         filename=log, level=logging.DEBUG, format="%(asctime)s \t %(message)s"
@@ -247,7 +289,6 @@ def main(
         logger.debug(f"          {param}: {value}")
 
     df = pd.DataFrame()
-    nfiles = len(files)
     if nfiles == 1:
         logger.info(f"Parsing disorder in cif file: {files[0]}")
         # parse cif file containing disordered structure
@@ -260,7 +301,7 @@ def main(
         # get the disordered structure
         disordered_structure = cif.get_disordered_structure()
 
-    elif nfiles == 2:
+    else:
         logger.info(f"Parsing disorder in files: {files[0]} and {files[1]}")
         logger.info(
             "Assuming the two files contain two fully ordered structures, one for each disorder group."
@@ -308,15 +349,22 @@ def main(
             group_occupancies=None,
         )
         logger.info(disordered_structure)
-    else:
-        raise ValueError(f"Expected 1 or 2 files, got {nfiles}.")
 
     symops = disordered_structure.spacegroup.get_symop()
     logger.info("Enumerating ordered configurations.")
     # enumerate ordered configurations
+    if target_size is not None:
+        supercell_arg = target_size
+    elif matrix is not None:
+        supercell_arg = np.array(matrix, dtype=int).reshape((3, 3))
+    else:
+        supercell_arg = supercell
+
     od = OrderedfromDisordered(disordered_structure, quiet=quiet)
     images, configs = od.get_supercell_configs(
-        supercell=supercell,
+        supercell=supercell_arg,
+        target_shape=target_shape,
+        score_key=score_key,
         maxiters=maxiters,
         exclude_ordered=exclude_ordered,
         random_configs=random,
@@ -342,7 +390,11 @@ def main(
     # TODO should we define this as the reverse?
     df["Ratio"] = ratios
 
-    df["Supercell"] = "x".join(map(str, supercell))
+    P = od.transformation_matrix
+    if np.all(P == np.diag(np.diag(P))):
+        df["Supercell"] = "x".join(map(str, np.diag(P)))
+    else:
+        df["Supercell"] = ";".join(",".join(map(str, row)) for row in P)
     # TODO: units
     df["Free Energy / kJ/mol"] = np.nan
     df["Enthalpy per atom / kJ/mol"] = np.nan

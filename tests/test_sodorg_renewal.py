@@ -52,12 +52,21 @@ def test_enumerator(cif):
     return images
 
 
-def test_command_line_interface():
+def test_command_line_interface(tmp_path):
     """Test the CLI."""
     runner = CliRunner()
-    result = runner.invoke(cli.main)
-    assert result.exit_code == 0
-    assert "orgdisord.cli.main" in result.output
-    help_result = runner.invoke(cli.main, ["--help"])
-    assert help_result.exit_code == 0
-    assert "--help  Show this message and exit." in help_result.output
+    with runner.isolated_filesystem(temp_dir=tmp_path):
+        help_result = runner.invoke(cli.cli, ["--help"])
+        assert help_result.exit_code == 0
+        assert "enumerate" in help_result.output
+        assert "analyse" in help_result.output
+        assert "--help  Show this message and exit." in help_result.output
+
+        enum_help = runner.invoke(cli.cli, ["enumerate", "--help"])
+        assert enum_help.exit_code == 0
+        for option in ["--supercell", "--matrix", "--target-size"]:
+            assert option in enum_help.output
+
+        result = runner.invoke(cli.cli, ["enumerate"])
+        assert result.exit_code == 2
+        assert "Expected 1 or 2 CIF files" in result.output

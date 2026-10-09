@@ -21,8 +21,8 @@ classifiers = [
 ]
 requires-python = ">=3.6"
 dependencies = [
-    "Click>=7.0",
-    "ASE>=3.22",
+    "Click>=8.0",
+    "ASE>=3.26",
     "Soprano>=0.8",
     "pymatgen>=2022.3.7",
     "tqdm>=4.63.0",

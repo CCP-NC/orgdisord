@@ -81,6 +81,16 @@ The examples below assume you have installed the package as per the :doc:`instal
                 
         $ orgdisord enumerate ABABUB.cif --supercell 4 6 4 --random -N 3 --no_write --view
 
+#. Generate all possible ordered configurations in a non-diagonal supercell given by a 3x3 integer matrix (row-major, the supercell cell is the matrix times the primitive cell): ::
+
+        $ orgdisord enumerate ABABUB.cif --matrix 1 0 -1 0 2 0 1 0 1 --no_write --view
+
+#. Generate all possible ordered configurations in the supercell of 4 primitive cells that is closest to a simple cubic shape: ::
+
+        $ orgdisord enumerate ABABUB.cif --target-size 4 --target-shape sc --no_write --view
+
+The supercell is set with one of ``--supercell``, ``--matrix`` or ``--target-size``, and only one of them may be given. ``--target-size N`` searches for the supercell of N primitive cells whose shape is closest to ``--target-shape`` (``sc``, the default, or ``fcc``). ``--score-key`` sets how candidates are ranked. ``length`` (the default) compares only the three cell-vector lengths with the ideal length for the target shape and ignores angles. ``metric`` also compares the cell angles, using the full metric tensor.
+
 
 Notice that a `orgdisord.log` file is generated in the current directory. This file contains the full command line options used to generate the output, as well as information about how the CIF file was parsed, the enumeration was done and, if applicable, how the merging was done. This can be useful for debugging and reproducing results.
 
