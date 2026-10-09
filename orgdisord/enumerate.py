@@ -1,7 +1,6 @@
 """Module to enumerate ordered structures given a cif object containing disorder information."""
 import numpy as np
-import os
-from ase.neighborlist import natural_cutoffs, NeighborList
+from ase.neighborlist import NeighborList
 from ase.spacegroup.spacegroup import SpacegroupValueError
 from ase import Atoms, Atom
 from ase.data import covalent_radii
@@ -59,7 +58,7 @@ def connected_components_indices(atoms, cutoff_scale=1.25, exclude_hh=True):
                     visited[nb] = True
                     queue.append(nb)
         comps.append(comp)
-        
+
     return comps
 
 
@@ -105,13 +104,16 @@ def find_best_integer_shift_for_centroid(centroid, ref_centroid, cell, max_offse
 
 def align_components_to_reference(atoms, reference_centroids, cell,
                                   cutoff_scale=1.25, max_offset=1,
-                                  mass_weighted=False, use_labels=True):
+                                  mass_weighted=False):
     """
     Align connected components (molecules) from `atoms` to reference_centroids by
     integer-cell translations. Returns a new ASE Atoms copy.
 
+    Matching is geometric and greedy (first come, first served): each component is
+    matched to the closest unused reference centroid. Components only ever move by
+    whole cell vectors, so the periodic structure is unchanged.
+
     - max_offset: search range [-max_offset..max_offset] for each axis (default 1).
-    - use_labels: if True and atoms have 'labels' array, map components by label match.
     """
     A = atoms.copy()
     comps = connected_components_indices(A, cutoff_scale=cutoff_scale)
@@ -120,20 +122,8 @@ def align_components_to_reference(atoms, reference_centroids, cell,
     new_positions = A.get_positions().copy()
 
     # Build mapping from components -> reference index
-    comp_to_ref = [-1] * len(comps)
     used_ref = np.zeros(len(ref), dtype=bool)
 
-    # Try label-based mapping if requested and labels exist
-    if use_labels and A.has("labels"):
-        labels = A.get_array("labels")
-        # for each component find the majority label (string) if any
-        comp_labels = []
-        for comp in comps:
-            lab = labels[comp]
-            # pick the most common label in the component
-            unique, counts = np.unique(lab, return_counts=True)
-            comp_labels.append(unique[np.argmax(counts)])
-    
     # create distance matrix considering integer shifts
     for ic, comp in enumerate(comps):
         ccent = centroids[ic]
@@ -153,7 +143,6 @@ def align_components_to_reference(atoms, reference_centroids, cell,
                 best_off = off
         if best_ridx is None:
             continue
-        comp_to_ref[ic] = best_ridx
         used_ref[best_ridx] = True
         # apply shift immediately
         new_positions[comp] += best_off @ cell
@@ -232,22 +221,25 @@ def make_whole_molecule(atoms, cutoff_scale=1.25, preserve_pbc=False, exclude_hh
         A.set_pbc([False, False, False])
 
     return A
-              
-def save_as_xyz_raw(atoms_object, filename, debug_name=""):
-    """
-    Saves the structure to XYZ without any wrapping or COM-shift.
-    Writes the coordinates exactly as they are in the Atoms object.
-    """
-    symbols = atoms_object.get_chemical_symbols()
-    positions = atoms_object.positions # Cartesian coordinates
-    total_atoms = len(symbols)
 
-    with open(filename, 'w') as f:
-        f.write(f"{total_atoms}\n")
-        f.write(f"RAW State ({debug_name})\n")
-        for symbol, pos in zip(symbols, positions):
-            f.write(f"{symbol} {pos[0]:.6f} {pos[1]:.6f} {pos[2]:.6f}\n")
-    # print(f"WROTE: {os.path.abspath(filename)}")
+
+def wrap_components_into_cell(atoms):
+    """
+    Shift each connected component (molecule) by whole cell vectors so that its
+    centroid lies inside the cell. Molecules are kept whole; atoms of molecules
+    larger than (or straddling) the cell may still lie outside [0, 1).
+
+    Returns a copy of `atoms`.
+    """
+    A = atoms.copy()
+    cell = np.asarray(A.get_cell())
+    inv_cell = np.linalg.inv(cell)
+    pos = A.get_positions()
+    for comp in connected_components_indices(A):
+        frac = pos[comp].mean(axis=0) @ inv_cell
+        pos[comp] += -np.floor(frac) @ cell
+    A.set_positions(pos)
+    return A
 
 
 def binary_to_idx(config, maxgroups):
@@ -422,8 +414,9 @@ class OrderedfromDisordered:
     def get_config(self, config, asslabel):
         """
         Return a fully ordered atoms object for the specified config.
-        Output atoms are provided in Cartesian coordinates (absolute relative to the
-        primitive cell origin) and are unwrapped by connectivity (so molecules are whole).
+        Sites are placed by the selected symmetry operations and wrapped into the
+        primitive cell, so molecules may be split across periodic boundaries here.
+        get_all_configs() makes the final structures whole again.
         """
         # set up base atoms object to which sites will be
         # added (just an empty box).
@@ -438,22 +431,13 @@ class OrderedfromDisordered:
             atoms.append(atom)
         atoms.set_array("labels", np.array(labels))
 
-        # Unwrap the molecule based on bonding graph so bonded atoms are contiguous.
-        # The returned atoms will have Cartesian positions possibly outside the unit cell.
-        atoms = make_whole_molecule(atoms, preserve_pbc=False)
-
         return atoms
 
     def get_all_configs(self, exclude_ordered=False):
         """Generate all possible configs for the primitive cell and return them as
-        absolute-cartesian, unwrapped ASE Atoms objects (NOT wrapped into [0,1)).
+        ASE Atoms objects with whole molecules, aligned to the first config's
+        layout and with each molecule wrapped into the cell.
         """
-        # Create a folder for debug output (unchanged)
-        debug_dir = "debug_configs"
-        os.makedirs(debug_dir, exist_ok=True)
-        
-        print(debug_dir)
-
         cell = self.disordered_structure.cell
         Z = self.disordered_structure.Z
         # Zprime = self.cif.Zprime
@@ -583,40 +567,24 @@ class OrderedfromDisordered:
                 for config in assembly_configs:
                     temp = atoms.copy()
                     temp.extend(config)
-                    # Ensure molecule connectivity is preserved and positions are absolute
-                    temp = make_whole_molecule(temp, preserve_pbc=False)
                     all_configs.append(temp)
 
-        # # Save debug xyzs of the resulting primitive configs for debugging
-        # for i_config, tmp in enumerate(all_configs):
-        #     filename = os.path.join(debug_dir, f"primitive_config_{i_config}.xyz")
-        #     save_as_xyz_raw(tmp, filename, debug_name=f"Config {i_config} (raw, unwrapped)")
+        # Make molecules whole, align every config to the first one (so equivalent
+        # molecules sit in the same place), and wrap each molecule into the cell.
+        # This is done once per config here so get_supercell_config can simply
+        # copy, translate and tile these images.
+        reference = wrap_components_into_cell(make_whole_molecule(all_configs[0]))
+        cell = np.asarray(reference.get_cell())
+        ref_comps = connected_components_indices(reference)
+        ref_centroids = component_centroids(reference, ref_comps, mass_weighted=False)
 
-
-        # Decide reference: either an explicit reference or the first config
-        reference_atoms = all_configs[0]  # choose first config as canonical layout
-        cell = np.asarray(reference_atoms.get_cell())
-        cutoff_scale=1.5
-
-        # compute reference components and centroids (use same cutoff_scale as make_whole_molecule)
-        ref_comps = connected_components_indices(reference_atoms, cutoff_scale=cutoff_scale)
-        ref_centroids = component_centroids(reference_atoms, ref_comps, mass_weighted=False)
-
-        # Now align every config to reference
         aligned_configs = []
         for cfg in all_configs:
-            # make_whole_molecule(cfg) should already have been applied; but do it again if unsure:
-            cfg_unwrapped = make_whole_molecule(cfg, cutoff_scale=cutoff_scale, preserve_pbc=False)
-            cfg_aligned = align_components_to_reference(cfg_unwrapped, ref_centroids, cell,
-                                                        cutoff_scale=cutoff_scale, max_offset=1, mass_weighted=False)
-            aligned_configs.append(cfg_aligned)
-
+            cfg = make_whole_molecule(cfg)
+            cfg = align_components_to_reference(cfg, ref_centroids, cell,
+                                                max_offset=1, mass_weighted=False)
+            aligned_configs.append(wrap_components_into_cell(cfg))
         all_configs = aligned_configs
-        
-        # # Save debug xyzs of the resulting primitive configs for debugging
-        # for i_config, tmp in enumerate(all_configs):
-        #     filename = os.path.join(debug_dir, f"primitive_config_{i_config}_aligned.xyz")
-        #     save_as_xyz_raw(tmp, filename, debug_name=f"Config_{i_config}_aligned.xyz")
 
         self.logger.debug(f"Generated {len(all_configs)} primitive configs")
         return all_configs
@@ -861,7 +829,7 @@ class OrderedfromDisordered:
         na, nb, nc = self.supercell
         cell = self.cell
         ndisordergroups = self.ndisordergroups
-        
+
         transformation_matrix = np.diag([na, nb, nc])
         supercell_matrix = transformation_matrix @ cell
 
@@ -870,12 +838,9 @@ class OrderedfromDisordered:
             select_configs(config, supercell=self.supercell, maxgroups=ndisordergroups)
         ):
             # make a copy of prim config c
+            # (primitive images are already whole and wrapped by get_all_configs)
             temp = self.images[c].copy()
-            
-            # ensure wrapped into primitive cell first
-            temp.wrap() 
-            temp = make_whole_molecule(temp, preserve_pbc=True)
-            
+
             # work out what the translation vector should be:
             # amended to be consistant with select
             ic = icell % nc
