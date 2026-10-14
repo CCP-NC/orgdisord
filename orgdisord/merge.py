@@ -83,6 +83,7 @@ def supercell_symops(symops, supercell=(1, 1, 1)):
         if not np.allclose(rot_sc, np.round(rot_sc), atol=1e-8):
             dropped += 1
             continue
+        rot_sc = np.round(rot_sc)
         trans_sc = np.asarray(trans, dtype=float) @ Pinv
         for s in shifts:
             out.append((rot_sc, _wrap(trans_sc + s)))
@@ -300,6 +301,10 @@ def merge_canonical(
             break
 
     tree = cKDTree(sites, boxsize=1.0)
+    if tree.query_pairs(2 * symprec, p=np.inf):
+        raise NonDiscreteSitesError(
+            "Template sites are closer than 2 * symprec; site assignment is ambiguous."
+        )
     nsites = len(sites)
 
     # 3. Permutation of template sites under each symmetry operation
@@ -398,7 +403,7 @@ def merge_symm(
 
             is_match = False
             for rot, trans in symops:
-                a2 = np.mod(oth_p @ rot.T + trans, 1.0)
+                a2 = _wrap(oth_p @ rot.T + trans)
                 d, mapping = tree_ref.query(
                     a2, p=np.inf, distance_upper_bound=symprec
                 )
@@ -558,15 +563,14 @@ def merge_ewald(
         ncores = cpu_count()
         logger.info(f"using {ncores} cores")
 
-        pool = Pool(processes=ncores)
-
-        energies = []
-        for energy in tqdm(
-            pool.imap(func=ewald_energy, iterable=ewalds),
-            total=len(ewalds),
-            disable=quiet,
-        ):
-            energies.append(energy)
+        with Pool(processes=ncores) as pool:
+            energies = []
+            for energy in tqdm(
+                pool.imap(func=ewald_energy, iterable=ewalds),
+                total=len(ewalds),
+                disable=quiet,
+            ):
+                energies.append(energy)
     else:
         logger.info("Serial calculation")
         logger.info(f"Calculating Ewald energies for {len(ewalds)} structures")

@@ -35,7 +35,7 @@ Features
 * Enumerate all possible ordered configurations from a disordered CIF file, given a supercell size.
 * Merge symmetry equivalent ordered configurations using a variety of strategies: 
 
-   * Using symmetry operations defined in the CIF file
+   * Using crystal symmetry operations (canonical orbit labelling in the supercell frame, with a pairwise fallback when sites are not discrete)
    * Computing and comparing Ewald energies
    * Computing a SOAP descriptor and comparing using the REMatch kernel
 
@@ -90,6 +90,8 @@ The examples below assume you have installed the package as per the :doc:`instal
         $ orgdisord enumerate ABABUB.cif --target-size 4 --target-shape sc --no_write --view
 
 The supercell is set with one of ``--supercell``, ``--matrix`` or ``--target-size``, and only one of them may be given. ``--target-size N`` searches for the supercell of N primitive cells whose shape is closest to ``--target-shape`` (``sc``, the default, or ``fcc``). ``--score-key`` sets how candidates are ranked. ``length`` (the default) compares only the three cell-vector lengths with the ideal length for the target shape and ignores angles. ``metric`` also compares the cell angles, using the full metric tensor.
+
+Passing ``-m`` (``--merge``) groups symmetry-equivalent configurations in the supercell frame, including primitive-cell lattice translations. The default algorithm (``--algo symm``) labels each configuration on a shared discrete site template and falls back to pairwise coordinate matching if the sites are not discrete. ``--algo canonical`` disables the fallback, and ``--algo pairwise`` always compares pairs. By default only the disordered atoms are compared; pass ``--use_all_atoms`` to include the ordered framework.
 
 
 Notice that a `orgdisord.log` file is generated in the current directory. This file contains the full command line options used to generate the output, as well as information about how the CIF file was parsed, the enumeration was done and, if applicable, how the merging was done. This can be useful for debugging and reproducing results.

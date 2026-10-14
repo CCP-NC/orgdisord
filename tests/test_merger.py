@@ -130,6 +130,28 @@ def test_canonical_is_strict_and_symm_falls_back(caplog):
     assert _partition(groups) == _partition(pairwise)
     assert len(groups) == 6
 
+    # Three images with sites at 0, 0.8*symprec, 1.5*symprec: the middle atom
+    # lies within symprec of two template sites, so canonical must reject it.
+    symprec = 1e-3
+    identity = [(np.eye(3), np.zeros(3))]
+    quasi_continuous = [
+        Atoms("C", scaled_positions=[[dx, 0.0, 0.0]], cell=[10, 10, 10], pbc=True, tags=[1])
+        for dx in (0.0, 0.8 * symprec, 1.5 * symprec)
+    ]
+    with pytest.raises(NonDiscreteSitesError):
+        merge_structures(
+            quasi_continuous, algo="canonical", symops=identity, symprec=symprec, quiet=True
+        )
+    fallback = merge_structures(
+        quasi_continuous,
+        algo="symm",
+        symops=identity,
+        symprec=symprec,
+        quiet=True,
+        return_group_indices=True,
+    )[1]
+    assert _partition(fallback) == [[0, 1], [2]]
+
 
 @pytest.mark.parametrize(
     "supercell, n_ops",
