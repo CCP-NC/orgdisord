@@ -1,6 +1,3 @@
-.. highlight:: shell
-
-
 ==============
 orgdisord
 ==============
@@ -52,7 +49,7 @@ or as a command-line tool in its own isolated environment::
 
     $ uv tool install orgdisord
 
-Some machine-learning features need the optional ``ML`` extra (``pip install "orgdisord[ML]"``). See the :doc:`installation` page for full details, including installing from source.
+Some machine-learning features need the optional ``ML`` extra (``pip install "orgdisord[ML]"``). See the `installation <https://ccp-nc.github.io/orgdisord/installation.html>`_ page for full details, including installing from source.
 
 
 Features
@@ -81,8 +78,8 @@ Limitations
 Quick start examples
 ---------------------
 
-The examples below assume you have installed the package as per the :doc:`installation` instructions and have the example CIF file in the current directory. You can download the example CIF file here:
-:download:`ABABUB.cif <../examples/ABABUB.cif>`
+The examples below assume you have installed the package as per the `installation <https://ccp-nc.github.io/orgdisord/installation.html>`_ instructions and have the example CIF file in the current directory. You can download the example CIF file here:
+`ABABUB.cif <https://github.com/CCP-NC/orgdisord/raw/main/examples/ABABUB.cif>`_
 
 #. Generate all possible ordered configurations in the primitive cell: ::
 
@@ -124,7 +121,7 @@ Passing ``-m`` (``--merge``) groups symmetry-equivalent configurations in the su
 Notice that a `orgdisord.log` file is generated in the current directory. This file contains the full command line options used to generate the output, as well as information about how the CIF file was parsed, the enumeration was done and, if applicable, how the merging was done. This can be useful for debugging and reproducing results.
 
 
-The :doc:`command line interface documentation <cli>` has full details of the available commands and options. Alternatively you can run ``orgdisord --help`` to see the available commands and e.g. ``orgdisord enumerate --help`` to see the available options for the ``enumerate`` command.
+The `command line interface documentation <https://ccp-nc.github.io/orgdisord/cli.html>`_ has full details of the available commands and options. Alternatively you can run ``orgdisord --help`` to see the available commands and e.g. ``orgdisord enumerate --help`` to see the available options for the ``enumerate`` command.
 
 
 .. note::
@@ -134,4 +131,4 @@ The :doc:`command line interface documentation <cli>` has full details of the av
         We also included the ``--view`` option to visualise the merged configurations using ASE. In the ASE GUI, you can click View→Colors and select color By Tag to easily see the different disorder assemblies and groups. You can also click View→Show Tags to see the tags associated with each atom.
 
 
-For more examples and case studies, see the :doc:`case_studies` page.
+For more examples and case studies, see the `case studies <https://ccp-nc.github.io/orgdisord/case_studies.html>`_ page.
