@@ -1,21 +1,21 @@
 """Module to enumerate ordered structures given a cif object containing disorder information."""
+
+import itertools
+import logging
+
 import numpy as np
+from ase import Atom, Atoms
+from ase.build.supercells import find_optimal_cell_shape, lattice_points_in_supercell
+from ase.data import covalent_radii
 from ase.neighborlist import NeighborList
 from ase.spacegroup.spacegroup import SpacegroupValueError
-from ase import Atoms, Atom
-from ase.data import covalent_radii
-from ase.geometry import get_duplicate_atoms
-from soprano.properties.linkage import Molecules
-from collections import Counter
-import itertools
-from tqdm import tqdm
-from scipy.spatial.distance import pdist
 from scipy.optimize import linear_sum_assignment
-import logging
-from ase.build.supercells import find_optimal_cell_shape, lattice_points_in_supercell
-from orgdisord.utils import reload_as_molecular_crystal, random_product
+from tqdm import tqdm
+
+from orgdisord.utils import random_product, reload_as_molecular_crystal
 
 logger = logging.getLogger("orgdisord.enumerate")
+
 
 def _build_neighborlist_for_atoms(atoms, cutoff_scale=1.25):
     """
@@ -25,11 +25,16 @@ def _build_neighborlist_for_atoms(atoms, cutoff_scale=1.25):
     """
     numbers = atoms.get_atomic_numbers().astype(int)
     # safe fallback handled by covalent_radii from ASE
-    radii = np.array([float(covalent_radii[z]) if z < len(covalent_radii) else 0.7 for z in numbers])
+    radii = np.array(
+        [float(covalent_radii[z]) if z < len(covalent_radii) else 0.7 for z in numbers]
+    )
     per_atom_cutoffs = radii * cutoff_scale
-    nl = NeighborList(per_atom_cutoffs.tolist(), self_interaction=False, bothways=True, skin=0.0)
+    nl = NeighborList(
+        per_atom_cutoffs.tolist(), self_interaction=False, bothways=True, skin=0.0
+    )
     nl.update(atoms)
     return nl
+
 
 def connected_components_indices(atoms, cutoff_scale=1.25, exclude_hh=True):
     """
@@ -52,7 +57,7 @@ def connected_components_indices(atoms, cutoff_scale=1.25, exclude_hh=True):
             idx = queue.pop(0)
             comp.append(idx)
             neighs, offsets = nl.get_neighbors(idx)
-            for nb_i, nb in enumerate(neighs):
+            for nb in neighs:
                 # Skip H-H edges if requested
                 if exclude_hh and numbers[idx] == 1 and numbers[nb] == 1:
                     continue
@@ -83,6 +88,7 @@ def component_centroids(atoms, comps, mass_weighted=False):
         centroids.append(c)
     return np.array(centroids)
 
+
 def _nearest_image_vectors(centroids, ref_centroids, cell, search=1):
     """
     For every (centroid, reference) pair return the integer lattice shift n that
@@ -109,9 +115,9 @@ def _nearest_image_vectors(centroids, ref_centroids, cell, search=1):
     return cand[ic, ir, best], dist[ic, ir, best]
 
 
-def align_components_to_reference(atoms, reference_centroids, cell,
-                                  cutoff_scale=1.25, search=1,
-                                  mass_weighted=False):
+def align_components_to_reference(
+    atoms, reference_centroids, cell, cutoff_scale=1.25, search=1, mass_weighted=False
+):
     """
     Align connected components (molecules) from `atoms` to reference_centroids by
     integer-cell translations. Returns a new ASE Atoms copy.
@@ -160,7 +166,7 @@ def make_whole_molecule(atoms, cutoff_scale=1.25, preserve_pbc=False, exclude_hh
         return atoms.copy()
 
     A = atoms.copy()
-    cell = np.asarray(A.get_cell())    # 3x3 array
+    cell = np.asarray(A.get_cell())  # 3x3 array
     orig = A.get_positions().copy()
     numbers = A.get_atomic_numbers().astype(int)
     N = len(A)
@@ -348,7 +354,7 @@ class OrderedfromDisordered:
         tags = []
         labels = []
         # loop over selected symmetry operations -- apply them to the group
-        for iops, op in enumerate(group_config_symmops):
+        for op in group_config_symmops:
             # g = config[iops]
             # # Which group should we pick?
             # # if Zprime <1 or disorder_group_labels[igroup] < 0:
@@ -359,7 +365,6 @@ class OrderedfromDisordered:
             unique_positions = group.atoms.get_scaled_positions()
             unique_symbols = group.atoms.get_chemical_symbols()
             unique_labels = group.atoms.get_array("labels")
-            kinds = range(len(unique_symbols))
             # loop over site in each disorder group:
             for kind, pos in enumerate(unique_positions):
                 # apply symmetry operation
@@ -422,7 +427,6 @@ class OrderedfromDisordered:
         cell = self.disordered_structure.cell
         Z = self.disordered_structure.Z
         # Zprime = self.cif.Zprime
-        nops_all = self.disordered_structure.spacegroup.nsymop
         nassemblies = self.disordered_structure.get_number_of_assemblies()
         correlated_assemblies = self.disordered_structure.correlated_assemblies
 
@@ -468,7 +472,7 @@ class OrderedfromDisordered:
                 nconfigs = np.prod(nconfigs_per_assembly)
         self.logger.debug(f"Generating {nconfigs} configs in primitive cell.")
         if nconfigs > 1e4:
-            self.logger.warn(
+            self.logger.warning(
                 f"Warning: {nconfigs} is a large number of configs. "
                 "This may take a while!"
             )
@@ -496,7 +500,7 @@ class OrderedfromDisordered:
             #     assert 1/Zprime >= ngroups
 
             #     ngroups = int(1 / Zprime)
-            #     self.logger.warn(f'Special case for nops != Z. (i.e. Zprime < 1)'
+            #     self.logger.warning(f'Special case for nops != Z. (i.e. Zprime < 1)'
             #         f'nops = {nops_all} '
             #         f'Z = {Z}, '
             #         f'Zprime = {Zprime}\n'
@@ -634,7 +638,7 @@ class OrderedfromDisordered:
         self.logger.debug("Pre-computing all primitive configurations...")
         self.ratio_tolerance = ratio_tolerance
         if ratio and not fix_ratio:
-            self.logger.warn(
+            self.logger.warning(
                 "Warning! ratio is specified but fix_ratio is False. Ignoring ratio."
             )
 
@@ -647,7 +651,7 @@ class OrderedfromDisordered:
             cheap_method = False
             if nimages_prim > 256:
                 # this seems to be get pretty slow for large numbers of images
-                self.logger.warn(
+                self.logger.warning(
                     "Warning: reloading molecular crystals is slow for this many images.\n"
                     "Consider skipping this step with the --not_molecular_crystal flag!\n"
                     "We will use a cheaper method to reload the images as molecular crystals instead\n"
@@ -760,7 +764,7 @@ class OrderedfromDisordered:
             # maxiters and ncombinations
             n_configs = min([maxiters, ncombinations])
             if n_configs < ncombinations:
-                self.logger.warn(
+                self.logger.warning(
                     f"""
                 Warning: maxiters ({maxiters}) is smaller than the total number of configs ({ncombinations})
                 We will only generate {n_configs} configs.
@@ -778,7 +782,7 @@ class OrderedfromDisordered:
                 f"Generating {n_configs} out of the {ncombinations} possible configurations in the {spec} supercell:"
             )
 
-        for i in tqdm(range(n_configs), disable=self.quiet):
+        for _ in tqdm(range(n_configs), disable=self.quiet):
             config = next(all_combinations, False)
             if not config:
                 self.logger.debug("No more configs left!")

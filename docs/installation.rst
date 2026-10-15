@@ -4,97 +4,79 @@
 Installation
 ============
 
-
-
-From sources
-------------
-
-The sources for orgdisord can be downloaded from the `Github repo`_.
-
-You can either clone the public repository:
-
-.. code-block:: console
-
-    $ git clone git@github.com:CCP-NC/orgdisord.git
-
-Or download the `tarball`_:
-
-.. code-block:: console
-
-    $ curl -OJL https://github.com/CCP-NC/orgdisord/tarball/main
-
-Once you have a copy of the source, you can install it with:
-
-.. code-block:: console
-
-    $ python setup.py install
-
-or 
-
-.. code-block:: console
-
-    $ pip install .
-
-
-.. tip::
-    
-    It is recommended to use a new `virtual environment`_ or new `conda environment`_ rather than installing orgdisord system wide.
-
-    From the root of the source directory, you can create a new virtual environment with:
-
-    With ``venv`` the procedure is something like: 
-
-    .. code-block:: console
-
-        $ python -m venv orgdisord_env
-        $ source orgdisord_env/bin/activate
-        $ pip install .
-
-    With ``conda`` the procedure is something like:
-
-    .. code-block:: console
-
-        $ conda create -n orgdisord_env
-        $ conda activate orgdisord_env
-        $ conda install pip
-        $ pip install .
-
-    The package has not been tested on the Windows operating system. It's recommended to use the WSL (Windows Subsystem for Linux) if you are using Windows.
-    Though in that case you may need to `set up an X11 server`_ to (optionally) view the generated structures in the ASE GUI.
-
-
-.. _Github repo: https://github.com/CCP-NC/orgdisord
-.. _tarball: https://github.com/CCP-NC/orgdisord/tarball/main
-.. _virtual environment: http://docs.python-guide.org/en/latest/dev/virtualenvs/
-.. _conda environment: https://conda.io/docs/user-guide/tasks/manage-environments.html
-.. _set up an X11 server: https://stackoverflow.com/a/61110604
-
-
-
-
+orgdisord requires Python 3.11 or newer.
 
 Stable release
 --------------
 
-We will eventually publish a PyPi package such that you can install it with:
+Install the latest release from `PyPI <https://pypi.org/project/orgdisord/>`_ with pip:
 
 .. code-block:: console
 
     $ pip install orgdisord
 
+If you use `uv <https://docs.astral.sh/uv/>`_, you can add it to a project:
 
-**but this is not yet available**. See above for how to build it from source. 
+.. code-block:: console
 
-.. To install orgdisord, run this command in your terminal:
+    $ uv add orgdisord
 
-.. .. code-block:: console
+or install the command-line tool into its own isolated environment:
 
-..     $ pip install orgdisord
+.. code-block:: console
 
-.. This is the preferred method to install orgdisord, as it will always install the most recent stable release.
+    $ uv tool install orgdisord
 
-.. If you don't have `pip`_ installed, this `Python installation guide`_ can guide
-.. you through the process.
+Optional extras
+^^^^^^^^^^^^^^^
 
-.. .. _pip: https://pip.pypa.io
-.. .. _Python installation guide: http://docs.python-guide.org/en/latest/starting/installation/
+Machine-learning related features need the optional ``ML`` extra:
+
+.. code-block:: console
+
+    $ pip install "orgdisord[ML]"
+
+From source
+-----------
+
+The sources for orgdisord can be found on the `GitHub repository`_. Clone it with:
+
+.. code-block:: console
+
+    $ git clone https://github.com/CCP-NC/orgdisord.git
+    $ cd orgdisord
+
+For development, we use `uv <https://docs.astral.sh/uv/>`_ to manage the environment.
+From the root of the repository, running:
+
+.. code-block:: console
+
+    $ uv sync
+
+creates a virtual environment in ``.venv`` with orgdisord installed in editable mode,
+together with the development dependency groups (tests, linting, type checking and documentation).
+To work on the documentation only, use:
+
+.. code-block:: console
+
+    $ uv sync --group docs
+
+and then build the HTML documentation with:
+
+.. code-block:: console
+
+    $ uv run --group docs sphinx-build -W --keep-going -b html docs docs/_build/html
+
+The output is written to ``docs/_build/html``; open ``docs/_build/html/index.html`` in a browser.
+
+.. tip::
+
+    Using a virtual environment or conda environment rather than installing orgdisord system wide is recommended.
+    If you prefer plain pip, the equivalent is ``python -m venv .venv``, activating it, and then ``pip install -e .``.
+
+The package has not been tested on the Windows operating system. It's recommended to use the WSL (Windows Subsystem for Linux) if you are using Windows.
+Though in that case you may need to `set up an X11 server`_ to (optionally) view the generated structures in the ASE GUI.
+
+
+.. _GitHub repository: https://github.com/CCP-NC/orgdisord
+.. _set up an X11 server: https://stackoverflow.com/a/61110604

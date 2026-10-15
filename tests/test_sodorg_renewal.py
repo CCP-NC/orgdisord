@@ -2,13 +2,14 @@
 
 """Tests for `orgdisord` package."""
 
-import pytest
+import contextlib
 
+import numpy as np
+import pytest
 from click.testing import CliRunner
 
 # from orgdisord import orgdisord
 from orgdisord import cli
-import numpy as np
 
 
 @pytest.fixture
@@ -55,7 +56,7 @@ def test_enumerator(cif):
 def test_command_line_interface(tmp_path):
     """Test the CLI."""
     runner = CliRunner()
-    with runner.isolated_filesystem(temp_dir=tmp_path):
+    with contextlib.chdir(tmp_path):
         help_result = runner.invoke(cli.cli, ["--help"])
         assert help_result.exit_code == 0
         assert "enumerate" in help_result.output

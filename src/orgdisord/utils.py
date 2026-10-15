@@ -1,12 +1,12 @@
+import random
+import warnings
+
 import numpy as np
-from ase import Atoms, Atom
-from soprano.properties.linkage import Molecules
+import spglib
+from ase import Atom, Atoms
 from ase.spacegroup import Spacegroup
 from ase.utils import atoms_to_spglib_cell
-from typing import List
-import warnings
-import random
-import spglib
+from soprano.properties.linkage import Molecules
 
 
 def get_molecules(atoms: Atoms, use_cell_indices: bool = True):
@@ -28,7 +28,7 @@ def get_molecules(atoms: Atoms, use_cell_indices: bool = True):
 
 
 def reload_as_molecular_crystal(
-    images: List[Atoms], parallel: bool = True, cheap: bool = False, wrap: bool = False
+    images: list[Atoms], parallel: bool = True, cheap: bool = False, wrap: bool = False
 ):
     """
     takes in a list of atoms,
@@ -187,7 +187,8 @@ def get_unique_atoms(atoms: Atoms, sg: Spacegroup, symprec: float = 1e-3):
 
     if len(set(counts)) != 1:
         warnings.warn(
-            "We have some groups of atoms that are of different lengths -- check!"
+            "We have some groups of atoms that are of different lengths -- check!",
+            stacklevel=2,
         )
 
     return atoms.copy()[idx], max(counts)
@@ -211,7 +212,7 @@ def get_unique_atoms(atoms: Atoms, sg: Spacegroup, symprec: float = 1e-3):
 
 def random_product(*args, repeat=1):
     """
-    Random selection from itertools.product(*args, **kwds)
+    Random selection from ``itertools.product(*args, **kwds)``
     From https://docs.python.org/3/library/itertools.html#itertools-recipes
     """
     while True:
@@ -230,7 +231,7 @@ def get_new_labels(atoms):
     for e in elems:
         e_i = np.where(symbs == e)[0]
         for i, j in enumerate(e_i):
-            labels[j] = "{0}_{1}".format(e, i + 1)
+            labels[j] = f"{e}_{i + 1}"
     return labels
 
 
@@ -240,7 +241,10 @@ def standardise_cell(atoms: Atoms, symprec: float = 1e-3) -> Atoms:
     according to spglib
     """
     cell, scaled_pos, numbers = spglib.standardize_cell(
-        atoms_to_spglib_cell(atoms), to_primitive=False, no_idealize=True, symprec=symprec
+        atoms_to_spglib_cell(atoms),
+        to_primitive=False,
+        no_idealize=True,
+        symprec=symprec,
     )
     atoms_std = Atoms(numbers=numbers, scaled_positions=scaled_pos, cell=cell, pbc=True)
 

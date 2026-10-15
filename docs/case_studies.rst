@@ -12,7 +12,7 @@ Straightforward case (ABABUB)
 --------------------------------
 
 
-This is a relatively straightforward system consisting of one disorder assembly and two disorder groups. 
+This is a relatively straightforward system consisting of one disorder assembly and two disorder groups.
 
 * :download:`ABABUB CIF file <../examples/ABABUB.cif>`
 
@@ -26,17 +26,17 @@ Parsing the CIF file
 We get the following output:
 
 .. code-block:: console
-    
+
     Parsing disorder in cif file: ABABUB.cif
-    Warning: Site 0  (O1)   in assembly A has no disorder group. This site will be considered *ordered*. 
-    Warning: Site 1  (O2)   in assembly A has no disorder group. This site will be considered *ordered*. 
-    Warning: Site 2  (N1)   in assembly A has no disorder group. This site will be considered *ordered*. 
-    Warning: Site 29 (C6)   in assembly A has no disorder group. This site will be considered *ordered*. 
-    Warning: Site 32 (H8A)  in assembly A has no disorder group. This site will be considered *ordered*. 
-    Warning: Site 34 (C9)   in assembly A has no disorder group. This site will be considered *ordered*. 
-    Warning: Site 38 (H10A) in assembly A has no disorder group. This site will be considered *ordered*. 
-    Warning: Site 40 (C11)  in assembly A has no disorder group. This site will be considered *ordered*. 
-    
+    Warning: Site 0  (O1)   in assembly A has no disorder group. This site will be considered *ordered*.
+    Warning: Site 1  (O2)   in assembly A has no disorder group. This site will be considered *ordered*.
+    Warning: Site 2  (N1)   in assembly A has no disorder group. This site will be considered *ordered*.
+    Warning: Site 29 (C6)   in assembly A has no disorder group. This site will be considered *ordered*.
+    Warning: Site 32 (H8A)  in assembly A has no disorder group. This site will be considered *ordered*.
+    Warning: Site 34 (C9)   in assembly A has no disorder group. This site will be considered *ordered*.
+    Warning: Site 38 (H10A) in assembly A has no disorder group. This site will be considered *ordered*.
+    Warning: Site 40 (C11)  in assembly A has no disorder group. This site will be considered *ordered*.
+
     Disordered structure:
     Disorder assembly: A
     Contains the following groups:
@@ -83,7 +83,7 @@ The code correctly generates a total of 16 (2\ :sup:`4` ) ordered structures and
    :header-rows: 1
 
 
-Where columns for the (free) energies have been added in anticipation of next steps. 
+Where columns for the (free) energies have been added in anticipation of next steps.
 Once these energies have been and added to the table, the code can then be used to analyse the results.
 See the :doc:`command line interface documentation <cli>` for the analysis options.
 
@@ -92,7 +92,7 @@ The code will also make a directory (<prefix>-results) in which the structure fi
 .. tip::
     By default the code will output the structures in the `extended .xyz format <https://github.com/libAtoms/extxyz>`_.
     This has the advantage of being able to store artibrary additional information site-specific and structure-specific information.
-    For example, tags specfying the disorder group/assembly and the original CIF labels are preserved. 
+    For example, tags specfying the disorder group/assembly and the original CIF labels are preserved.
 
     For CIF and CASTEP .cell files, the code will also preserve the CIF-labels, but these may be harder to post-process using `ASE <https://wiki.fysik.dtu.dk/ase/>`_ should you wish to do so.
 
@@ -147,15 +147,15 @@ This can be done with the ``-r`` flag:
 
     orgdisord enumerate ABABUB.cif --prefix ababub -r -N 1024 --supercell 2 2 1
 
-.. tip:: 
-    To visualise the generated structures, you can add the ``--view`` flag. 
+.. tip::
+    To visualise the generated structures, you can add the ``--view`` flag.
     This will open the structures in `ASE's GUI viewer <https://wiki.fysik.dtu.dk/ase/ase/gui/gui.html>`_.
-    
+
     The ordered sites are tagged with 0 and the disordered sites are tagged according to the disorder group/assembly.
-    It's useful to color-by tag to see the disorder groups/assembly in the GUI viewer. 
+    It's useful to color-by tag to see the disorder groups/assembly in the GUI viewer.
     You can do this by clicking on ``View->Colors`` button and selecting ``By tag``.
     You can then choose the range of tags you're interested in and also change the color map (cmap).
-    
+
 Constrained ratios of disorder components
 -----------------------------------------
 
@@ -186,15 +186,15 @@ For example, to generate only structures with 0.75 disorder group 1 and 0.25 dis
 Another straightforward case (AXURIX)
 -------------------------------------
 
-This is another relatively straightforward system consisting of one disorder assembly and two disorder groups. 
+This is another relatively straightforward system consisting of one disorder assembly and two disorder groups.
 The main difference is that here Z=8 and so the code generates 256 (2\ :sup:`8` ) ordered structures.
-This takes significantly longer than the previous example, but the code still completes in a reasonable time. 
-The main additional cost is in reloading this configurations as molecular crystals (i.e. making sure molecular units are connected together in a reasonable way.). 
+This takes significantly longer than the previous example, but the code still completes in a reasonable time.
+The main additional cost is in reloading this configurations as molecular crystals (i.e. making sure molecular units are connected together in a reasonable way.).
 You can disable this check using the ``--not_molecular_crystal`` flag, though the results of this are not well-tested!
 
 * :download:`AXURIX CIF file <../examples/AXURIX.cif>`
 
-We can run the code and merge the structures as before: 
+We can run the code and merge the structures as before:
 
 .. code-block:: console
 
@@ -305,15 +305,15 @@ Z' < 1 and multiple disorder groups (EROHEA)
 
 
 
-This system contains a caffeine molecule that is disordered at a special symmetry site.  
-i.e. it is "disordered by symmetry" where the structure is described by a small unit cell in which the caffeine is disordered over a symmetry axis. 
+This system contains a caffeine molecule that is disordered at a special symmetry site.
+i.e. it is "disordered by symmetry" where the structure is described by a small unit cell in which the caffeine is disordered over a symmetry axis.
 Unpicking this into two separate orientations is a difficult challenge for the current version of orgdisord.
 It currently requires some manual intervention on the CIF file as described below.
 
-This system has one disorder assembly (A) with two groups ("-1" and "-2"). 
+This system has one disorder assembly (A) with two groups ("-1" and "-2").
 The "-" sign in the group label indicates that these sites are at special symmetry positions.
 Indeed, although there are 8 symmetry operations, Z = 4.
-To generate all of the ordered structures, the code must therefore apply a subset of symmetry operations to 
+To generate all of the ordered structures, the code must therefore apply a subset of symmetry operations to
 each group, with the configuration (e.g. (0,0,1,0)) indicating which subgroup of symmetry operations to apply.
 
 Note that the original EROHEA CIF file had to be modified by manually moving the O10 site to another symmetry equivalent position in the CIF file.
@@ -324,7 +324,7 @@ Note that the original EROHEA CIF file had to be modified by manually moving the
     -O10 O 0.3754(5) 0.4007(5) 0.6805(5) 0.0223(11)
     +O10 O 0.62460(5) 0.4007(5) 0.81950(5) 0.0223(11)
 
-In addition, the C12, H12A, H12B and H12C sites were manually moved to disorder group -2. 
+In addition, the C12, H12A, H12B and H12C sites were manually moved to disorder group -2.
 
 In the future, we might be able to deal with original CIF file without these manual interventions.
 
@@ -346,7 +346,7 @@ Parsing the CIF file
     :caption: parse_cif output for EROHEA
 
     Parsing disorder in cif file: EROHEA_modified.cif
-    Warning: Site 21 (C9) in assembly A has no disorder group. This site will be considered *ordered*. 
+    Warning: Site 21 (C9) in assembly A has no disorder group. This site will be considered *ordered*.
     Double check the CIF file.
     Disordered structure:
     Disorder assembly: A
@@ -408,7 +408,7 @@ Z'< 1 and only one disorder group (DASRAU)
 -------------------------------------------
 
 
-This is a Ruddlesden-Popper phase with a disordered butylammonium cation. 
+This is a Ruddlesden-Popper phase with a disordered butylammonium cation.
 The cation is disordered at a special symmetry position such that each of the 32 symmetry operations generates another configuration.
 Assuming only one cation per unit cell, the code will generate, by default, 32 ordered structures.
 
@@ -457,13 +457,13 @@ The code correctly generates a total of 32 (32\ :sup:`1` ) ordered structures an
 
     Another serious limitation in these cases is that generated supercells may have overlapping sites.
 
-    We're working to make the code more robust for these cases. 
+    We're working to make the code more robust for these cases.
 
 
 Specifying the disorder components using two ordered structures
 ----------------------------------------------------------------
 
-Rather than working with CIF files tagged with disorder information, 
+Rather than working with CIF files tagged with disorder information,
 it's sometimes easier to work with two ordered structures, one for the major disorder component and one for the minor.
 The code can use the difference between the two structures to determine the disorder structure and enumerate based on that.
 
@@ -477,7 +477,7 @@ Taking the previous ABABUB example, I manually split the structure into two P1 o
 Note that you can provide the P1 crystal structures in any format that ASE can read; here I've used the extended .xyz format.
 
 If you pass two files to the command-line-interface, it will assume these are the two disorder components ::
-    
+
         orgdisord enumerate ABABUB_maj.xyz ABABUB_min.xyz --prefix ababub_from_maj_min -m
 
 
@@ -493,15 +493,15 @@ Multiple assemblies, each with same number of groups (HAXPIH)
 Correlated assemblies
 ^^^^^^^^^^^^^^^^^^^^^
 
-This structure (Z=6) has three disorder assemblies, each with two disorder groups. 
+This structure (Z=6) has three disorder assemblies, each with two disorder groups.
 If we consider these assemblies to be independent, we can generate 2\ :sup:`6` x 2\ :sup:`6` x 2\ :sup:`6` = 264 144 ordered structures.
-This would crash the code and is outside our scope anyway. 
+This would crash the code and is outside our scope anyway.
 However, there may be cases in which we might want to consider the assemblies as correlated, i.e. we pick from the same disorder group index in each assembly.
 
 * :download:`HAXPIH CIF file <../examples/HAXPIH.cif>`
 
 You can do this by specifying the ``-c`` flag. ::
-    
+
         orgdisord enumerate HAXPIH.cif --prefix haxpih -c
 
 Parsing the CIF file
@@ -663,8 +663,8 @@ We get the following table: :download:`HAXPIH results table <../examples/haxpih_
 
 
 We can see that the 64 ordered configurations have been merged into 16 groups of equivalent structures.
-The first group has a spacegroup of P3_221 (154) and a multiplicity of 1, 
-the second group has a spacegroup of P1 (1) and a multiplicity of 6, and so on. 
+The first group has a spacegroup of P3_221 (154) and a multiplicity of 1,
+the second group has a spacegroup of P1 (1) and a multiplicity of 6, and so on.
 
 
 
@@ -674,8 +674,8 @@ Manually/programmatically specifying disorder
 
 You can manually create a DisorderedStructure object and pass that to the enumerator to generate the ordered configurations.
 
-As a basic example, let's put a thiophene (C4H4S) molecule in a cubic cell with no symmetry. 
-We can then generate several disorder groups that each contains a different configuration of the molecule -- in this case let's just rotate the molecule by 360/5 degrees to move the S atom around the ring. 
+As a basic example, let's put a thiophene (C4H4S) molecule in a cubic cell with no symmetry.
+We can then generate several disorder groups that each contains a different configuration of the molecule -- in this case let's just rotate the molecule by 360/5 degrees to move the S atom around the ring.
 
 Using ASE we can do this as follows:
 
@@ -687,19 +687,19 @@ Using ASE we can do this as follows:
 
     # Spacegroup 1 == P1
     sg_number = 1
-    # Unit cell. If 3 numbers are given, 
+    # Unit cell. If 3 numbers are given,
     # they are interpreted as the lengths of the unit cell vectors.
-    # If a 3x3 list or array is given, 
+    # If a 3x3 list or array is given,
     # they are interpreted as the three vectors.
     cell = [6.5, 6.5, 6.5]
     # Create the main atoms object
     atoms = molecule('C4H4S', cell = cell, pbc = True)
     # Good to always have useful labels to help keep track of things
     atoms.set_array('labels', np.array(get_new_labels(atoms)))
-    
+
     # where is the centre of ring:
     ring_c = atoms.positions[:5].mean(axis=0)
-    
+
     # place the ring in the centre of the cell
     atoms.translate(np.array(cell)*0.5 - ring_c)
 
@@ -711,7 +711,7 @@ Using ASE we can do this as follows:
         # rotate the ring by 360/5 degrees
         atoms_temp.rotate(i*360/5.0, 'x', center='COU')
         images.append(atoms_temp)
-    
+
 
 
 Now we can create a DisorderedStructure object to later be passed to the enumerator:
@@ -749,7 +749,7 @@ Now we can create a DisorderedStructure object to later be passed to the enumera
         disorder_groups = disorder_groups,
         tag = 0,
         )
-        
+
     # create disordered structure
     ds = DisorderedStructure(
         ordered_atoms= ordered_atoms,
@@ -765,11 +765,11 @@ Now we can create a DisorderedStructure object to later be passed to the enumera
     # Let's generate 20 random configurations in a 1x5x5 supercell:
     supercell = [1, 5, 5]
     images = od.get_supercell_configs(
-                    supercell = supercell, 
+                    supercell = supercell,
                     maxiters = 20,
-                    exclude_ordered = False, 
+                    exclude_ordered = False,
                     random_configs=True)
-    
+
     # Now we could write them to disk
     # in lots of different formats. E.g.:
     for i, image in enumerate(images):

@@ -1,25 +1,26 @@
 [build-system]
-requires = ["setuptools>=61.2"]
-build-backend = "setuptools.build_meta"
+requires = ["uv_build>=0.11.21,<0.12.0"]
+build-backend = "uv_build"
 
 [project]
 name = "orgdisord"
+version = "0.2.0"
 authors = [{ name = "Kane Shenton", email = "jkshenton@gmail.com" }]
-license = { text = "MIT license" }
+license = "MIT"
+license-files = ["LICENSE"]
+readme = "README.rst"
 description = "Python code to handle disordered molecular crystals."
 keywords = ["orgdisord"]
-dynamic = ["version", "readme"]
 classifiers = [
-    "Development Status :: 2 - Pre-Alpha",
+    "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
     "Natural Language :: English",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.6",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
 ]
-requires-python = ">=3.6"
+requires-python = ">=3.11"
 dependencies = [
     "Click>=8.0",
     "ASE>=3.26",
@@ -31,46 +32,61 @@ dependencies = [
     "spglib",
 ]
 
-[tool.setuptools.dynamic]
-version = { attr = "orgdisord.__version__" }
-readme = { file = "README.rst" }
-
 [project.urls]
 Homepage = "https://github.com/CCP-NC/orgdisord"
+Repository = "https://github.com/CCP-NC/orgdisord"
+Issues = "https://github.com/CCP-NC/orgdisord/issues"
+Documentation = "https://ccp-nc.github.io/orgdisord/"
 
 [project.scripts]
 orgdisord = "orgdisord.cli:cli"
 
 [project.optional-dependencies]
-testing = ["pytest>=3"]
 ML = ["dscribe>=1.2"]
 
-[tool.bumpversion]
-current_version = "0.2.0"
-commit = "True"
-tag = "True"
+[dependency-groups]
+test = ["pytest>=8", "pytest-cov"]
+docs = ["sphinx>=7", "sphinx-book-theme", "sphinx-click", "sphinx-copybutton"]
+lint = ["ruff", "pre-commit"]
+typing = ["ty"]
+dev = [
+    { include-group = "test" },
+    { include-group = "lint" },
+    { include-group = "typing" },
+    { include-group = "docs" },
+]
 
-[tool.bumpversion.file.setup.py]
-search = "version='{current_version}'"
-replace = "version='{new_version}'"
+[tool.uv]
+default-groups = ["dev"]
 
-[tool.bumpversion.file."orgdisord/__init__".py]
-search = "__version__ = '{current_version}'"
-replace = "__version__ = '{new_version}'"
+[tool.uv.build-backend]
+module-name = "orgdisord"
+module-root = "src"
 
-[tool.setuptools]
-zip-safe = false
-include-package-data = true
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+src = ["src", "tests"]
 
-[tool.setuptools.packages.find]
-include = ["orgdisord"] # orgdisord.*
-namespaces = false
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+# E501: left to the formatter. B905: zip(strict=) is not added mechanically.
+ignore = ["E501", "B905"]
 
-[tool.distutils.bdist_wheel]
-universal = 1
-
-[tool.flake8]
-exclude = "docs"
+[tool.ty.environment]
+root = ["src"]
 
 [tool.pytest.ini_options]
-collect_ignore = "['setup.py']"
+testpaths = ["tests"]
+addopts = ["--strict-markers"]
+filterwarnings = [
+    # Emitted inside ASE 3.29 with NumPy >= 2.5; remove once ASE is fixed upstream.
+    "ignore:Setting the shape on a NumPy array:DeprecationWarning",
+]
+
+[tool.coverage.run]
+source = ["orgdisord"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true

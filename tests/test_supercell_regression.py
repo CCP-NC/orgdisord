@@ -26,9 +26,10 @@ by hand: the source data tagged all four alternative O atoms of FADFIZ01 as one
 group (-> a 8**8 enumeration) and DOVCEX had no disorder markup at all. Here
 O15/O16 vs O1/O2 (FADFIZ01) and H1N vs H2N (DOVCEX) are groups 1 and 2.
 """
+
 import ast
 import random
-from functools import lru_cache
+from functools import cache
 from pathlib import Path
 
 import numpy as np
@@ -68,7 +69,7 @@ def cif_path(name):
     return CIFDIR / CASES[name]
 
 
-@lru_cache(maxsize=None)
+@cache
 def disordered(name, molecular_crystal=True):
     parser = CifParser(cif_path(name), molecular_crystal=molecular_crystal)
     return parser.get_disordered_structure()
@@ -99,9 +100,7 @@ def molecule_labels(atoms):
 
 def molecule_formulas(atoms, labels):
     symbols = np.array(atoms.get_chemical_symbols())
-    return {
-        "".join(sorted(symbols[labels == label])) for label in np.unique(labels)
-    }
+    return {"".join(sorted(symbols[labels == label])) for label in np.unique(labels)}
 
 
 def min_intermolecular_distance(atoms, labels):
@@ -194,9 +193,7 @@ def test_primitive_images(name):
         assert len(atoms) == natoms
         assert torn_bonds(atoms) == 0
         assert len(connected_components_indices(atoms)) == len(ref_comps)
-        for centroid in component_centroids(
-            atoms, connected_components_indices(atoms)
-        ):
+        for centroid in component_centroids(atoms, connected_components_indices(atoms)):
             # nearest reference molecule in plain Cartesian space must be the
             # nearest one under the minimum image convention too, i.e. the same
             # molecular site is in the same lattice image in every config
@@ -222,10 +219,7 @@ SUPERCELLS = [
     pytest.param(name, sc, mc, id=f"{name}-{'x'.join(map(str, sc))}-mc{int(mc)}")
     for name in CASES
     for sc, mc in (([2, 1, 1], True), ([2, 1, 1], False), ([1, 1, 4], True))
-] + [
-    pytest.param(name, [2, 2, 2], True, id=f"{name}-2x2x2-mc1")
-    for name in SMALL
-]
+] + [pytest.param(name, [2, 2, 2], True, id=f"{name}-2x2x2-mc1") for name in SMALL]
 
 
 @pytest.mark.parametrize("name,supercell,molecular_crystal", SUPERCELLS)
@@ -233,7 +227,7 @@ def test_mixed_supercells(name, supercell, molecular_crystal):
     """Mixed-config supercells: right cell, whole and non-overlapping molecules."""
     od, supercells, configs = make_supercells(name, supercell, molecular_crystal)
     assert len(supercells) == NCONFIGS
-    for atoms, config in zip(supercells, configs):
+    for atoms, _config in zip(supercells, configs):
         assert supercell_problems(atoms, od.images, supercell) == []
     # the sample must really mix disorder groups between tiles
     assert any(len(set(config)) > 1 for config in configs)
