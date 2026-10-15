@@ -344,9 +344,9 @@ def main(
 
     df["Supercell"] = "x".join(map(str, supercell))
     # TODO: units
-    df["Free Energy / kJ/mol"] = np.NaN
-    df["Enthalpy per atom / kJ/mol"] = np.NaN
-    df["Entropy per atom / kJ/mol"] = np.NaN
+    df["Free Energy / kJ/mol"] = np.nan
+    df["Enthalpy per atom / kJ/mol"] = np.nan
+    df["Entropy per atom / kJ/mol"] = np.nan
     # volume of simulation cell
     df["Volume/A^3"] = [image.get_volume() for image in images]
     # number of atoms
@@ -424,7 +424,10 @@ def main(
 
     # log the df
     logging.info("\n\t" + df.to_string().replace("\n", "\n\t"))
-    # save the df to csv
+    # save the df to csv (the prefix may include directories)
+    prefix_dir = os.path.dirname(prefix)
+    if prefix_dir:
+        os.makedirs(prefix_dir, exist_ok=True)
     df.to_csv(prefix + ".csv", index=False)
     if not no_write:
         # write structures to file(s)
@@ -446,7 +449,8 @@ def main(
         os.mkdir(directory)
         nleading_zeros = len(str(len(images)))
         for i, image in enumerate(images):
-            filename = f"{prefix}-{str(i).zfill(nleading_zeros)}.{format}"
+            # the directory already contains the path part of the prefix
+            filename = f"{os.path.basename(prefix)}-{str(i).zfill(nleading_zeros)}.{format}"
             kwargs = {}
             # cif can save labels if we manually specify them
             if format == "cif":

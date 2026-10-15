@@ -1,0 +1,62 @@
+# Reduced test fixture: cell, symmetry operations and atomic sites only.
+data_fixture
+_space_group_IT_number 61
+_symmetry_space_group_name_H-M 'P b c a'
+_cell_length_a 7.6502
+_cell_length_b 11.0598
+_cell_length_c 24.2489
+_cell_angle_alpha 90
+_cell_angle_beta 90
+_cell_angle_gamma 90
+_cell_formula_units_Z 8
+
+loop_
+_space_group_symop_operation_xyz
+'x, y, z'
+'-x+1/2, -y, z+1/2'
+'x+1/2, -y+1/2, -z'
+'-x, y+1/2, -z+1/2'
+'-x, -y, -z'
+'x-1/2, y, -z-1/2'
+'-x-1/2, y-1/2, z'
+'x, -y-1/2, z-1/2'
+
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_occupancy
+_atom_site_disorder_assembly
+_atom_site_disorder_group
+N1 N 0.0611 0.636 0.13417 1 . .
+C2 C -0.0847 0.6559 0.0988 1 . .
+O3 O -0.1169 0.5919 0.21351 1 . .
+N4 N -0.1798 0.8285 0.15559 1 . .
+C5 C -0.2042 0.7483 0.10986 1 . .
+O6 O -0.0928 0.7103 0.23582 1 . .
+C7 C -0.3498 0.7619 0.07618 1 . .
+C8 C -0.0589 0.9261 0.14917 1 . .
+C9 C -0.1123 0.5819 0.05345 1 . .
+C10 C 0.0366 0.5626 0.18149 1 . .
+C11 C -0.255 0.5969 0.0197 1 . .
+C12 C -0.3756 0.6864 0.03146 1 . .
+C13 C 0.2126 0.7079 0.12862 1 . .
+C14 C -0.2252 0.7874 0.20906 1 . .
+O15 O 0.2011 0.8244 0.1587 0.579 A 1
+O16 O 0.1007 0.903 0.121 0.579 A 1
+O1 O 0.1912 0.8301 0.1148 0.433 A 2
+O2 O 0.1211 0.885 0.1651 0.433 A 2
+H9 H -0.022 0.519 0.0468 1 . .
+H7 H -0.431 0.827 0.0856 1 . .
+H13A H 0.294 0.684 0.1513 1 . .
+H10A H 0.152 0.558 0.205 1 . .
+H10B H -0.001 0.478 0.1739 1 . .
+H11 H -0.272 0.539 -0.0123 1 . .
+H14A H -0.215 0.858 0.2339 1 . .
+H8A H -0.084 0.976 0.1163 1 . .
+H8B H -0.053 0.974 0.1836 1 . .
+H14B H -0.3 0.71 0.2115 1 . .
+H12 H -0.461 0.697 0.0094 1 . .
+H13B H 0.246 0.708 0.0939 1 . .
