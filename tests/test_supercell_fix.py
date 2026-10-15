@@ -9,6 +9,7 @@ molecules are unwrapped correctly however far they extend.
 from pathlib import Path
 
 import numpy as np
+import pandas as pd
 import pytest
 from ase import Atoms
 from ase.data import covalent_radii
@@ -23,6 +24,7 @@ from orgdisord.enumerate import (
 from orgdisord.parse_cif_file import CifParser
 
 TESTDIR = Path(__file__).parent
+MATRIX_ARGS = ["1", "0", "-1", "0", "2", "0", "1", "0", "1"]
 
 
 def _od(cif, **kwargs):
@@ -75,7 +77,7 @@ def test_supercell_generation(molecular_crystal):
             for icomp, comp in enumerate(connected_components_indices(atoms)):
                 comp_of[comp] = icomp
             for itile, img_idx in enumerate(
-                select_configs(config, supercell, od.ndisordergroups)
+                select_configs(config, int(np.prod(supercell)), od.ndisordergroups)
             ):
                 offset = itile * natoms_prim
                 for mol in connected_components_indices(od.images[img_idx]):
@@ -136,7 +138,7 @@ def test_tile_mapping_is_bijective():
     cell = np.asarray(od.cell)
     shifts = set()
     for itile, img_idx in enumerate(
-        select_configs(config, supercell, od.ndisordergroups)
+        select_configs(config, nsuper, od.ndisordergroups)
     ):
         tile = atoms[itile * natoms_prim : (itile + 1) * natoms_prim]
         shift = tile.get_positions() - od.images[img_idx].get_positions()
@@ -198,3 +200,131 @@ def test_make_whole_molecule_long_molecule(ax, cx):
     assert bonded.sum() > 0
     assert np.allclose(d0[bonded], d1[bonded], atol=1e-6)
     assert len(connected_components_indices(whole)) == 1
+
+
+def test_optimal_supercell_generation():
+    """Target size integer generates the supercell closest to the target shape."""
+    disordered_structure, od = _od("EROHEA_modified.cif", molecular_crystal=False)
+    prim_cell = np.asarray(disordered_structure.cell)
+
+    images, configs = od.get_supercell_configs(
+        supercell=4, maxiters=16, return_configs=True
+    )
+    assert len(images) == 16
+    assert od.nsuper == 4
+    # transformation matrix should be 3x3 with det == 4
+    assert np.shape(od.transformation_matrix) == (3, 3)
+    assert int(round(abs(np.linalg.det(od.transformation_matrix)))) == 4
+
+    expected_cell = od.transformation_matrix @ prim_cell
+    for atoms in images:
+        assert np.allclose(np.asarray(atoms.cell), expected_cell)
+        assert len(atoms) == len(od.images[0]) * 4
+        assert _min_heavy_distance(atoms) > 1.0
+
+
+def test_explicit_non_diagonal_matrix():
+    """Explicit 3x3 integer matrix generates expected non-diagonal supercell."""
+    disordered_structure, od = _od("EROHEA_modified.cif", molecular_crystal=False)
+    prim_cell = np.asarray(disordered_structure.cell)
+    P = np.array([[1, 0, -1], [0, 2, 0], [1, 0, 1]], dtype=int)
+
+    images, configs = od.get_supercell_configs(
+        supercell=P, maxiters=8, return_configs=True
+    )
+    assert len(images) == 8
+    assert od.nsuper == 4
+    assert np.array_equal(od.transformation_matrix, P)
+
+    expected_cell = P @ prim_cell
+    for atoms in images:
+        assert np.allclose(np.asarray(atoms.cell), expected_cell)
+        assert len(atoms) == len(od.images[0]) * 4
+        assert _min_heavy_distance(atoms) > 1.0
+
+
+def _parse_supercell(text):
+    """Parse the 'Supercell' column: either 'axbxc' or 'r00,r01,r02;r10,...'."""
+    if ";" in text:
+        return np.array([[int(v) for v in row.split(",")] for row in text.split(";")])
+    return np.diag([int(v) for v in text.split("x")])
+
+
+def test_cli_non_diagonal_options(tmp_path):
+    """CLI supports --target-size and --matrix and records the supercell matrix."""
+    from click.testing import CliRunner
+    from orgdisord.cli import cli
+
+    runner = CliRunner()
+    cif_path = str(TESTDIR / "EROHEA_modified.cif")
+    with runner.isolated_filesystem(temp_dir=tmp_path):
+        res = runner.invoke(
+            cli,
+            ["enumerate", cif_path, "--target-size", "2", "-N", "2", "--no_write", "-q"],
+        )
+        assert res.exception is None, res.output
+        assert res.exit_code == 0, res.output
+        P = _parse_supercell(pd.read_csv("orgdisord.csv")["Supercell"].iloc[0])
+        assert int(round(abs(np.linalg.det(P)))) == 2
+
+        res = runner.invoke(
+            cli,
+            [
+                "enumerate",
+                cif_path,
+                "--matrix",
+                *MATRIX_ARGS,
+                "-N",
+                "2",
+                "--no_write",
+                "-q",
+            ],
+        )
+        assert res.exception is None, res.output
+        assert res.exit_code == 0, res.output
+        supercell = pd.read_csv("orgdisord.csv")["Supercell"].iloc[0]
+        assert supercell == "1,0,-1;0,2,0;1,0,1"
+
+
+@pytest.mark.parametrize(
+    "extra",
+    [
+        ["-s", "2", "1", "1", "--target-size", "2"],
+        ["--matrix", *MATRIX_ARGS, "--target-size", "2"],
+    ],
+)
+def test_cli_conflicting_size_options(extra):
+    from click.testing import CliRunner
+    from orgdisord.cli import cli
+
+    runner = CliRunner()
+    cif_path = str(TESTDIR / "EROHEA_modified.cif")
+    res = runner.invoke(cli, ["enumerate", cif_path, *extra, "--no_write", "-q"])
+    assert res.exit_code != 0
+    assert "Use only one of" in res.output
+
+
+def test_supercell_argument_validation():
+    _, od = _od("EROHEA_modified.cif", molecular_crystal=False)
+    with pytest.raises(ValueError):
+        od.get_supercell_configs(supercell=[1, 1, 1], target_size=2)
+    with pytest.raises(ValueError):
+        od.get_supercell_configs(supercell=np.eye(3) * 1.5)
+    with pytest.raises(ValueError):
+        od.get_supercell_configs(supercell=True)
+
+
+@pytest.mark.parametrize("result", [ValueError("matmul failed"), None])
+def test_no_optimal_supercell_found(monkeypatch, result):
+    import orgdisord.enumerate as enumerate_mod
+
+    def fake_find(*args, **kwargs):
+        if isinstance(result, Exception):
+            raise result
+        return result
+
+    monkeypatch.setattr(enumerate_mod, "find_optimal_cell_shape", fake_find)
+    _, od = _od("EROHEA_modified.cif", molecular_crystal=False)
+    with pytest.raises(ValueError, match="Could not find a supercell"):
+        od.get_supercell_configs(supercell=4, maxiters=8)
+

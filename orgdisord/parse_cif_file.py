@@ -2,7 +2,6 @@
 Module containing class to help parsing cif file containing marked up disorder.
 
 """
-from turtle import position
 from ase.io import read
 from ase import Atoms, Atom
 from ase.spacegroup import get_spacegroup, crystal

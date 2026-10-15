@@ -12,6 +12,7 @@ from tqdm import tqdm
 from scipy.spatial.distance import pdist
 from scipy.optimize import linear_sum_assignment
 import logging
+from ase.build.supercells import find_optimal_cell_shape, lattice_points_in_supercell
 from orgdisord.utils import reload_as_molecular_crystal, random_product
 
 logger = logging.getLogger("orgdisord.enumerate")
@@ -228,24 +229,21 @@ def binary_to_idx(config, maxgroups):
     return sum([j * (maxgroups**i) for i, j in list(enumerate(reversed(config)))])
 
 
-def select_configs(config, supercell, maxgroups):
+def select_configs(config, nsuper, maxgroups):
     """
     from the supercell config, return indices of each
     component primitive cell
     e.g.
-    a 2x2x1 supercell of a Z=4 system
+    a 2x2x1 supercell of a Z=4 system (nsuper=4)
     would have configs of length 16.
     This function chunks them into 4
     sets of 4 and returns the integer representation
     (0-15) of each 'binary' number.
     So for example:
-    [1,1,1,1, 0,0,0,0, 1,1,0,0, 0,0,0,1]
-    would return
+    >>> select_configs([1,1,1,1, 0,0,0,0, 1,1,0,0, 0,0,0,1], nsuper=4, maxgroups=2)
     [15, 0, 12, 1]
 
     """
-    na, nb, nc = supercell
-    nsuper = na * nb * nc
     chunk = len(config) // nsuper
     # should equal Z
     return [binary_to_idx(c, maxgroups) for c in chunks(config, chunk)]
@@ -581,7 +579,10 @@ class OrderedfromDisordered:
 
     def get_supercell_configs(
         self,
-        supercell,
+        supercell=None,
+        target_size=None,
+        target_shape="sc",
+        score_key="length",
         maxiters=5000,
         exclude_ordered=False,
         random_configs=False,
@@ -598,7 +599,14 @@ class OrderedfromDisordered:
              -- trying to keep the pieces in tact
 
         Args:
-            supercell (list/tuple): supercell dimensions e.g. [2,2,2]
+            supercell (int, list, tuple, or 3x3 array): supercell dimensions e.g. [2,2,2],
+                            or 3x3 integer transformation matrix P (supercell cell = P @ primitive cell),
+                            or an integer number of unit cells (same as target_size).
+                            Only one of supercell and target_size may be given.
+            target_size (int): number of primitive cells. The supercell whose shape is closest to
+                            target_shape is used.
+            target_shape (str): 'sc' (simple cubic) or 'fcc'. Shape used when searching for a target_size supercell.
+            score_key (str): 'length' or 'metric'. Score used when searching for a target_size supercell.
             maxiters (int): maximum number of structures to generate. If random_configs is True,
                             then this is the number of random configs to generate.
                             If random_configs is False and the total number of configs is less than maxiters,
@@ -653,27 +661,78 @@ class OrderedfromDisordered:
         # some aliases
         Z = self.disordered_structure.Z
         self.cell = self.disordered_structure.cell
-        na, nb, nc = supercell
-        self.supercell = supercell
+
+        if target_size is not None and supercell is not None:
+            raise ValueError("Only one of supercell and target_size may be given.")
+        if target_size is not None:
+            spec = target_size
+        elif supercell is not None:
+            spec = supercell
+        else:
+            spec = [1, 1, 1]
+
+        # Determine transformation_matrix P
+        if isinstance(spec, (int, np.integer)) and not isinstance(spec, bool):
+            if spec < 1:
+                raise ValueError(f"target_size must be >= 1. Got: {spec}")
+            msg = (
+                f"Could not find a supercell of {spec} primitive cells with "
+                f"target_shape={target_shape!r}; try a different target size or shape."
+            )
+            try:
+                P = find_optimal_cell_shape(
+                    self.cell,
+                    target_size=int(spec),
+                    target_shape=target_shape,
+                    score_key=score_key,
+                )
+            except ValueError as err:
+                raise ValueError(msg) from err
+            if P is None:
+                raise ValueError(msg)
+            P = np.asarray(P, dtype=int)
+        else:
+            arr = np.asarray(spec)
+            if arr.shape not in [(3,), (3, 3)]:
+                raise ValueError(
+                    f"supercell must be an integer target size, a length-3 sequence, or a 3x3 matrix. Got: {spec}"
+                )
+            if not np.allclose(arr, np.round(arr)):
+                raise ValueError(f"supercell must contain integers only. Got: {spec}")
+            arr = np.round(arr).astype(int)
+            P = np.diag(arr) if arr.ndim == 1 else arr
+
+        det = int(round(np.linalg.det(P)))
+        if det == 0:
+            raise ValueError("Supercell transformation matrix has zero determinant.")
+        if det < 0:
+            P = -P
+
+        self.transformation_matrix = P
+        self.nsuper = abs(det)
+        self.supercell_matrix = P @ np.asarray(self.cell)
+        self.lattice_points_frac = lattice_points_in_supercell(P)
+        self.lattice_points_cart = self.lattice_points_frac @ self.supercell_matrix
+
         # we previously just took ndisordergroups = self.cif.ndisordergroups, but
         # this gets tricky when we have multiple assemblies etc. Safer to just take this:
         self.ndisordergroups = int(np.round(np.exp(np.log(nimages_prim) / Z)))
         # total number of configs given this supercell:
-        ncombinations = self.ndisordergroups ** (Z * na * nb * nc)
+        ncombinations = self.ndisordergroups ** (Z * self.nsuper)
         self.logger.debug(
             f"""
         Found {nimages_prim} primitive configurations,
-              {ncombinations} configs for this supercell (Z={Z}, na={na}, nb={nb}, nc={nc}),
+              {ncombinations} configs for this supercell (Z={Z}, nsuper={self.nsuper}, matrix=\n{P}),
               {self.ndisordergroups} ndisordergroups"""
         )
 
         options = list(range(self.ndisordergroups))
-        size = Z * na * nb * nc
+        size = Z * self.nsuper
         if random_configs:
             all_combinations = random_product(options, repeat=size)
         else:
             # this iterator generates all
-            # possible lists of e.g. 0s and 1s etc of length Z*na*nb*nc
+            # possible lists of e.g. 0s and 1s etc of length Z*nsuper
             all_combinations = itertools.product(options, repeat=size)
 
         if fix_ratio:
@@ -712,11 +771,11 @@ class OrderedfromDisordered:
         all_configs = []
         if random_configs:
             self.logger.info(
-                f"Generating {n_configs} random configurations in a {supercell} supercell:"
+                f"Generating {n_configs} random configurations in a {spec} supercell:"
             )
         else:
             self.logger.info(
-                f"Generating {n_configs} out of the {ncombinations} possible configurations in the {supercell} supercell:"
+                f"Generating {n_configs} out of the {ncombinations} possible configurations in the {spec} supercell:"
             )
 
         for i in tqdm(range(n_configs), disable=self.quiet):
@@ -811,35 +870,20 @@ class OrderedfromDisordered:
         get a supercell config
 
         Args:
-            config (np.array): array of integers of length Z*na*nb*nc
+            config (np.array): array of integers of length Z*nsuper
                                 (where Z is the number of sites in the primitive cell
-                                and na, nb, nc are the supercell sizes)
+                                and nsuper is the number of tiled primitive cells)
 
         """
-        na, nb, nc = self.supercell
-        cell = self.cell
-        ndisordergroups = self.ndisordergroups
-
-        transformation_matrix = np.diag([na, nb, nc])
-        supercell_matrix = transformation_matrix @ cell
-
-        supercell_atoms = Atoms(cell=supercell_matrix, pbc=True)
+        supercell_atoms = Atoms(cell=self.supercell_matrix, pbc=True)
         for icell, c in enumerate(
-            select_configs(config, supercell=self.supercell, maxgroups=ndisordergroups)
+            select_configs(config, nsuper=self.nsuper, maxgroups=self.ndisordergroups)
         ):
             # make a copy of prim config c
             # (primitive images are already whole and wrapped by get_all_configs)
             temp = self.images[c].copy()
-
-            # work out what the translation vector should be.
-            # The tile order is a convention (c varies fastest, like the config
-            # chunks read left to right); any bijection onto the tiles is valid.
-            ic = icell % nc
-            ib = (icell // nc) % nb
-            ia = icell // (nc * nb)
-            R = cell.T.dot([ia, ib, ic])
-            # translate primitive copy to correct place
-            temp.translate(R)
+            # translate primitive copy to its lattice point in the supercell
+            temp.translate(self.lattice_points_cart[icell])
             # add this block into the supercell
             supercell_atoms.extend(temp)
         return supercell_atoms
