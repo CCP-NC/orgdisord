@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 
 """Tests for the parse_cif_file module."""
-import pytest
-from orgdisord.parse_cif_file import CifParser
-import numpy as np
 
 # suppress warnings for these tests
 import warnings
+
+import numpy as np
+
+from orgdisord.parse_cif_file import CifParser
 
 warnings.filterwarnings("ignore")
 

@@ -2,16 +2,19 @@
 Contains the class DisorderedStructure, which is used to represent a
 disordered structure.
 """
-from logging import warning
-from orgdisord.utils import molecule_collide, get_unique_atoms, standardise_cell
-from dataclasses import dataclass
-from typing import List, Tuple, Union
-from ase import Atoms, Atom
-from ase.cell import Cell
-from ase.spacegroup import Spacegroup, get_spacegroup
-from ase.geometry import find_mic
-import numpy as np
+
 import warnings
+from dataclasses import dataclass
+
+import numpy as np
+from ase import Atoms
+from ase.geometry import find_mic
+from ase.spacegroup import Spacegroup, get_spacegroup
+
+from orgdisord.utils import (
+    get_unique_atoms,
+    standardise_cell,
+)
 
 
 @dataclass
@@ -31,7 +34,7 @@ class DisorderGroup:
     #       labels array
     atoms: Atoms
     # list of symmetry operations
-    symmetry_operations: List[Tuple[np.ndarray, np.ndarray]]
+    symmetry_operations: list[tuple[np.ndarray, np.ndarray]]
     occupancy: float = None
     special_disorder_symmetry: bool = False
     tag: int = None
@@ -69,7 +72,8 @@ class DisorderGroup:
                 # make sure the occupancies are the same as the group occupancy
                 if not np.allclose(self.atoms.get_array("occupancies"), self.occupancy):
                     warnings.warn(
-                        "Occupancies of atoms in group do not match group occupancy."
+                        "Occupancies of atoms in group do not match group occupancy.",
+                        stacklevel=2,
                     )
         else:
             assert self.atoms.has("occupancies")
@@ -79,7 +83,7 @@ class DisorderGroup:
         self,
         sg: Spacegroup,
         Z: int,
-    ) -> List[Tuple[np.ndarray, np.ndarray]]:
+    ) -> list[tuple[np.ndarray, np.ndarray]]:
         """
         Get the symmetry operations of the group.
 
@@ -111,7 +115,7 @@ class DisorderGroup:
             group_symmetry_operations = all_symmetry_operations
         return group_symmetry_operations
 
-    def get_labels(self) -> List[str]:
+    def get_labels(self) -> list[str]:
         """
         Get the labels of the atoms in the group.
         """
@@ -143,7 +147,7 @@ class DisorderAssembly:
     """
 
     label: str
-    disorder_groups: List[DisorderGroup]
+    disorder_groups: list[DisorderGroup]
     ngroups: int = None
     tag: int = None
 
@@ -184,7 +188,7 @@ class DisorderedStructure:
     Z: int
     # The spacegroup of the structure.
     spacegroup: Spacegroup
-    disorder_assemblies: List[DisorderAssembly]
+    disorder_assemblies: list[DisorderAssembly]
     # Should we treat the system as a molecular crystal?
     molecular_crystal: bool = True
     # are the assemblies in the structure correlated with each other?
@@ -205,7 +209,10 @@ class DisorderedStructure:
         # warning if any assemblies has no groups
         for assembly in self.disorder_assemblies:
             if assembly.ngroups == 0:
-                warning.warn(f"Warning: assembly {assembly.label} has no groups!")
+                warnings.warn(
+                    f"Warning: assembly {assembly.label} has no groups!",
+                    stacklevel=2,
+                )
 
         # drop empty assemblies
         self.disorder_assemblies = [
@@ -225,7 +232,7 @@ class DisorderedStructure:
         """
         return len(self.disorder_assemblies)
 
-    def get_number_of_disorder_groups_per_assembly(self) -> List[int]:
+    def get_number_of_disorder_groups_per_assembly(self) -> list[int]:
         """
         Get the number of disorder groups in each assembly in the structure.
         """
@@ -233,11 +240,11 @@ class DisorderedStructure:
 
     def __repr__(self) -> str:
         rep = "DisorderedStructure:\n"
-        rep += "\tordered_atoms: {}\n".format(self.ordered_atoms)
-        rep += "\tcell: {}\n".format(self.cell)
-        rep += "\tZ: {}\n".format(self.Z)
-        rep += "\tspacegroup: {}\n".format(self.spacegroup)
-        rep += "\tdisorder_assemblies: \n\t{}\n".format(self.disorder_assemblies)
+        rep += f"\tordered_atoms: {self.ordered_atoms}\n"
+        rep += f"\tcell: {self.cell}\n"
+        rep += f"\tZ: {self.Z}\n"
+        rep += f"\tspacegroup: {self.spacegroup}\n"
+        rep += f"\tdisorder_assemblies: \n\t{self.disorder_assemblies}\n"
         return rep
 
     def get_assembly(self, label) -> DisorderAssembly:
@@ -362,10 +369,11 @@ def from_disorder_components(
     if nsymops != Z:
         warnings.warn(
             f"""
-        The number of symmetry operations ({nsymops}) 
+        The number of symmetry operations ({nsymops})
         is not equal to the number of molecular units (Z = {Z}).
         This is not well covered by the code at the moment.
-        Proceed with caution!"""
+        Proceed with caution!""",
+            stacklevel=2,
         )
         symops = symops[0 :: nsymops // Z]
 

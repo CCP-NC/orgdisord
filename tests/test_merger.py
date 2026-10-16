@@ -99,7 +99,9 @@ def test_merge_symm_50_images():
             symprec=1e-4,
             quiet=True,
         )
-        assert len(groups) == 5, f"Expected 5 groups with algo={algo}, got {len(groups)}"
+        assert len(groups) == 5, (
+            f"Expected 5 groups with algo={algo}, got {len(groups)}"
+        )
 
 
 def test_canonical_is_strict_and_symm_falls_back(caplog):
@@ -135,12 +137,22 @@ def test_canonical_is_strict_and_symm_falls_back(caplog):
     symprec = 1e-3
     identity = [(np.eye(3), np.zeros(3))]
     quasi_continuous = [
-        Atoms("C", scaled_positions=[[dx, 0.0, 0.0]], cell=[10, 10, 10], pbc=True, tags=[1])
+        Atoms(
+            "C",
+            scaled_positions=[[dx, 0.0, 0.0]],
+            cell=[10, 10, 10],
+            pbc=True,
+            tags=[1],
+        )
         for dx in (0.0, 0.8 * symprec, 1.5 * symprec)
     ]
     with pytest.raises(NonDiscreteSitesError):
         merge_structures(
-            quasi_continuous, algo="canonical", symops=identity, symprec=symprec, quiet=True
+            quasi_continuous,
+            algo="canonical",
+            symops=identity,
+            symprec=symprec,
+            quiet=True,
         )
     fallback = merge_structures(
         quasi_continuous,
@@ -209,9 +221,9 @@ def test_supercell_synthetic_duplicates():
         # Every copy k + n must belong to the same group as original k
         group_lookup = {idx: gi for gi, grp in enumerate(group_indices) for idx in grp}
         for k in range(n):
-            assert (
-                group_lookup[k] == group_lookup[k + n]
-            ), f"Copy {k} did not merge with original in algo={algo}"
+            assert group_lookup[k] == group_lookup[k + n], (
+                f"Copy {k} did not merge with original in algo={algo}"
+            )
 
 
 def test_supercell_exhaustive_orbits():
@@ -276,7 +288,9 @@ def test_non_diagonal_supercell():
     assert len(merged["canonical"]) < len(images)
 
     originals = images[:40]
-    copies = _equivalent_copies(originals, symops, P.astype(float), np.random.default_rng(7))
+    copies = _equivalent_copies(
+        originals, symops, P.astype(float), np.random.default_rng(7)
+    )
     groups = merge_structures(
         originals + copies,
         algo="canonical",

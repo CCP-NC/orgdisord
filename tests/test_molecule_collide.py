@@ -1,7 +1,7 @@
-from orgdisord.utils import molecule_collide
-from ase.build import molecule
-from ase.visualize import view
 from ase import Atom
+from ase.build import molecule
+
+from orgdisord.utils import molecule_collide
 
 atoms = molecule("CH3CH2OCH3", cell=[10, 10, 10], pbc=True)
 initial_fractional_positions = atoms.get_scaled_positions()
@@ -19,11 +19,11 @@ true_test_positions = [
 ]
 
 assert all(
-    molecule_collide(Atom("H", position=cell.T.dot(pos)), atoms, tolerance=0.2) == False
+    not molecule_collide(Atom("H", position=cell.T.dot(pos)), atoms, tolerance=0.2)
     for pos in false_test_positions
 )
 assert all(
-    molecule_collide(Atom("H", position=cell.T.dot(pos)), atoms, tolerance=0.2) == True
+    molecule_collide(Atom("H", position=cell.T.dot(pos)), atoms, tolerance=0.2)
     for pos in true_test_positions
 )
 

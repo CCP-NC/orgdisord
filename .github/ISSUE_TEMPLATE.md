@@ -1,6 +1,7 @@
-* orgdisord version:
-* Python version:
+* orgdisord version (`python -c "import orgdisord; print(orgdisord.__version__)"` or `uv pip show orgdisord`):
+* Python version (`python --version`):
 * Operating System:
+* Install method (pip, uv, from source, ...):
 
 ### Description
 

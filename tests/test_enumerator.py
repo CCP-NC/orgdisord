@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 
 """Tests for the enumerate.py module."""
-import pytest
-from orgdisord.enumerate import OrderedfromDisordered
-from orgdisord.parse_cif_file import CifParser
-from orgdisord.disordered_structure import from_disorder_components
+
 import numpy as np
 from ase.io import read
 from ase.spacegroup import Spacegroup
+
+from orgdisord.disordered_structure import from_disorder_components
+from orgdisord.enumerate import OrderedfromDisordered
+from orgdisord.parse_cif_file import CifParser
 
 cif = CifParser("tests/EROHEA_modified.cif")
 disordered_structure = cif.get_disordered_structure()
@@ -151,8 +152,7 @@ assert len(images) == 16
 
 
 #  Explicitly create DisorderedAtoms object
-from ase.build import bulk
-from ase.build import molecule
+from ase.build import bulk, molecule  # noqa: E402
 
 # create a disordered structure
 atoms = bulk("Cu", cubic=True)

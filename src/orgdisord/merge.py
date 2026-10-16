@@ -1,11 +1,12 @@
-"""This module implements several structure merging strategies 
+"""This module implements several structure merging strategies
 to reduce a list of ASE atoms objects to the symmetry inequivalent ones."""
 
-import numpy as np
 import logging
 from multiprocessing import Pool, cpu_count
-from scipy.spatial import cKDTree
+
+import numpy as np
 from ase.build.supercells import lattice_points_in_supercell
+from scipy.spatial import cKDTree
 
 # try to import tqdm if not define dummy version
 try:
@@ -167,7 +168,7 @@ def merge_structures(
     logger.debug("-----------------------------")
     logger.debug("---  MERGING STRUCTURES  ---")
     logger.debug("-----------------------------")
-    logger.debug("Algorithm: {}".format(algo))
+    logger.debug(f"Algorithm: {algo}")
 
     if not check_species:
         logger.warning("WARNING: not checking species before comparing coordinates")
@@ -177,7 +178,9 @@ def merge_structures(
 
     if algo in ("symm", "canonical", "pairwise"):
         if symops is None:
-            raise ValueError(f"symops must be provided for the '{algo}' merge algorithm")
+            raise ValueError(
+                f"symops must be provided for the '{algo}' merge algorithm"
+            )
         sc_symops = supercell_symops(symops, supercell)
         groups = None
         if algo in ("symm", "canonical"):
@@ -212,7 +215,7 @@ def merge_structures(
             images, oxidation_states, eps=symprec, parallel=True, quiet=quiet
         )
     else:
-        raise ValueError("Unknown merging algorithm: {}".format(algo))
+        raise ValueError(f"Unknown merging algorithm: {algo}")
 
     logger.debug(f"Merged into {len(groups)} groups:")
     for group in groups:
@@ -404,9 +407,7 @@ def merge_symm(
             is_match = False
             for rot, trans in symops:
                 a2 = _wrap(oth_p @ rot.T + trans)
-                d, mapping = tree_ref.query(
-                    a2, p=np.inf, distance_upper_bound=symprec
-                )
+                d, mapping = tree_ref.query(a2, p=np.inf, distance_upper_bound=symprec)
                 if not np.all(np.isfinite(d)):
                     continue
                 if len(np.unique(mapping)) != len(mapping):
@@ -470,12 +471,12 @@ def merge_rematch(supercell_images, eps=1e-3, quiet=False, parallel=True):
     try:
         from dscribe.descriptors import SOAP
         from dscribe.kernels import REMatchKernel
-    except ImportError:
+    except ImportError as err:
         raise ImportError(
             "The merge_rematch algorithm requires the dscribe package. "
             "Please install orgdisord with the ML option."
             "e.g. \npip install orgdisord[ML]"
-        )
+        ) from err
 
     ncores = 1
     if parallel:
@@ -552,7 +553,7 @@ def merge_ewald(
     logger.info("Adding oxidation states")
     # convert to pymatgen structure
     ewalds = []
-    for i, atoms in enumerate(supercell_images):
+    for atoms in supercell_images:
         structure = AseAtomsAdaptor.get_structure(atoms)
         structure.add_oxidation_state_by_element(oxidation_states)
         # structures.append(structure)
@@ -598,7 +599,6 @@ def ewald_energy(ewald):
             (defaults to 12.0 in pymatgen. Here we just need a quick and dirty answer)
     """
 
-    acc_factor = 3.0
     # print(structure)
     # ewald = EwaldSummation(structure, acc_factor=acc_factor)
     return ewald.total_energy

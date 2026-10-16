@@ -6,6 +6,8 @@ matrix, keep every molecular site in the same lattice image across configs
 (so configs can be mixed tile by tile without artificial overlaps), and that
 molecules are unwrapped correctly however far they extend.
 """
+
+import contextlib
 from pathlib import Path
 
 import numpy as np
@@ -137,17 +139,13 @@ def test_tile_mapping_is_bijective():
     # tile origins via the centroid shift relative to the unshifted image
     cell = np.asarray(od.cell)
     shifts = set()
-    for itile, img_idx in enumerate(
-        select_configs(config, nsuper, od.ndisordergroups)
-    ):
+    for itile, img_idx in enumerate(select_configs(config, nsuper, od.ndisordergroups)):
         tile = atoms[itile * natoms_prim : (itile + 1) * natoms_prim]
         shift = tile.get_positions() - od.images[img_idx].get_positions()
         frac = np.round(shift[0] @ np.linalg.inv(cell)).astype(int)
         assert np.allclose(shift, shift[0])
         shifts.add(tuple(frac))
-    assert shifts == {
-        (a, b, c) for a in range(2) for b in range(3) for c in range(2)
-    }
+    assert shifts == {(a, b, c) for a in range(2) for b in range(3) for c in range(2)}
 
 
 def _zigzag_alkane(n=16):
@@ -253,14 +251,24 @@ def _parse_supercell(text):
 def test_cli_non_diagonal_options(tmp_path):
     """CLI supports --target-size and --matrix and records the supercell matrix."""
     from click.testing import CliRunner
+
     from orgdisord.cli import cli
 
     runner = CliRunner()
     cif_path = str(TESTDIR / "EROHEA_modified.cif")
-    with runner.isolated_filesystem(temp_dir=tmp_path):
+    with contextlib.chdir(tmp_path):
         res = runner.invoke(
             cli,
-            ["enumerate", cif_path, "--target-size", "2", "-N", "2", "--no_write", "-q"],
+            [
+                "enumerate",
+                cif_path,
+                "--target-size",
+                "2",
+                "-N",
+                "2",
+                "--no_write",
+                "-q",
+            ],
         )
         assert res.exception is None, res.output
         assert res.exit_code == 0, res.output
@@ -295,6 +303,7 @@ def test_cli_non_diagonal_options(tmp_path):
 )
 def test_cli_conflicting_size_options(extra):
     from click.testing import CliRunner
+
     from orgdisord.cli import cli
 
     runner = CliRunner()
@@ -327,4 +336,3 @@ def test_no_optimal_supercell_found(monkeypatch, result):
     _, od = _od("EROHEA_modified.cif", molecular_crystal=False)
     with pytest.raises(ValueError, match="Could not find a supercell"):
         od.get_supercell_configs(supercell=4, maxiters=8)
-

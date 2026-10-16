@@ -1,22 +1,24 @@
 """Console script for orgdisord."""
-import sys
+
+import logging
 import os
+import sys
+import time
+
 import click
+import numpy as np
+import pandas as pd
+import spglib
+from ase.io import read
+from ase.units import _amu, kB, kJ, mol  # kB is the Boltzmann constant in eV/K
+from ase.utils import atoms_to_spglib_cell
 from click.core import ParameterSource
+
 from orgdisord.disordered_structure import from_disorder_components
-from orgdisord.parse_cif_file import CifParser
 from orgdisord.enumerate import OrderedfromDisordered
 from orgdisord.merge import merge_structures
+from orgdisord.parse_cif_file import CifParser
 from orgdisord.utils import get_new_labels
-import spglib
-import time
-from ase.io import read
-from ase.units import _amu
-from ase.units import kB, kJ, mol  # kB is the Boltzmann constant in eV/K
-from ase.utils import atoms_to_spglib_cell
-import pandas as pd
-import numpy as np
-import logging
 
 logging.captureWarnings(True)
 
@@ -152,7 +154,6 @@ def cli():
     default="xyz",
     help="Format of output strucuture files.",
 )
-
 # add option to specify verbosity
 @click.option("--quiet", "-q", is_flag=True, default=False, help="Suppress output?")
 # add option to specify log file
@@ -163,7 +164,6 @@ def cli():
     default="orgdisord.log",
     help="Log file name.",
 )
-
 # add option to view structures using ASE gui
 @click.option(
     "--view", is_flag=True, default=False, help="View structures using ASE gui?"
@@ -444,7 +444,9 @@ def main(
         stop = time.time()
         duration = stop - start
         logger.info(f"Merging took {duration:8.2f} s and found {len(groups)} groups")
-        unique_spacegroups = [spglib.get_spacegroup(atoms_to_spglib_cell(g[0])) for g in groups]
+        unique_spacegroups = [
+            spglib.get_spacegroup(atoms_to_spglib_cell(g[0])) for g in groups
+        ]
         for sg, g in zip(unique_spacegroups, groups):
             logger.info(f"Spacegroup: {sg:<20} multiplicity: {g[1]}")
 
@@ -507,7 +509,9 @@ def main(
         nleading_zeros = len(str(len(images)))
         for i, image in enumerate(images):
             # the directory already contains the path part of the prefix
-            filename = f"{os.path.basename(prefix)}-{str(i).zfill(nleading_zeros)}.{format}"
+            filename = (
+                f"{os.path.basename(prefix)}-{str(i).zfill(nleading_zeros)}.{format}"
+            )
             kwargs = {}
             # cif can save labels if we manually specify them
             if format == "cif":
