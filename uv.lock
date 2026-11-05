@@ -2171,14 +2171,14 @@ wheels = [
 
 [[package]]
 name = "pymatgen"
-version = "2026.9.24"
+version = "2026.10.24"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "pymatgen-core" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/f7/db/ce703b4d36836ef703986f3f7c6cdcd3d5318b3a107d5cd70c13209b76aa/pymatgen-2026.9.24.tar.gz", hash = "sha256:eaefbf34e4bc0546543a1e7502efef1d96bce5ef26d882c302caa3fee4469f00", size = 774675, upload-time = "2026-09-23T02:00:50.139Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/64/42/a2441cdc5c6ab009821350f0ee427d116449970d010a6553d087b557de1f/pymatgen-2026.10.24.tar.gz", hash = "sha256:4a150905fe12e9f087e47647a6f18b898d778e21228c8233571f70e4803964f0", size = 782589, upload-time = "2026-10-23T23:04:15.763Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/6b/db/ed35b02b2c88d6bb53961aa9cd9c1b26cf5a47998dd4de350d7b720f70b9/pymatgen-2026.9.24-py3-none-any.whl", hash = "sha256:33273cafc0f83feef15d4ce8edd6e161e0a4d4059559c108598d6414c99aa7ca", size = 825810, upload-time = "2026-09-23T02:00:47.726Z" },
+    { url = "https://files.pythonhosted.org/packages/4a/f0/0207ab3a15f86200f4fe798eb0f05eab0237380d8574b0d9f1ee107bc875/pymatgen-2026.10.24-py3-none-any.whl", hash = "sha256:bd341f2e0550ec38358de2c95a65cabd9f1efa433df48ed5b615cc2d0115d827", size = 829702, upload-time = "2026-10-23T22:39:14.807Z" },
 ]
 
 [[package]]
